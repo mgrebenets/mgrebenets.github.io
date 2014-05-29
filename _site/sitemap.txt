@@ -1,11 +1,18 @@
 
-http://username.github.io/archive.html
-http://username.github.io/atom.xml
-http://username.github.io/categories.html
-http://username.github.io/index.html
-http://username.github.io/pages.html
-http://username.github.io/rss.xml
-http://username.github.io/sitemap.txt
-http://username.github.io/tags.html
+http://mgrebenets.github.io/about.html
+http://mgrebenets.github.io/archive.html
+http://mgrebenets.github.io/atom.xml
+http://mgrebenets.github.io/categories.html
+http://mgrebenets.github.io/index.html
+http://mgrebenets.github.io/pages.html
+http://mgrebenets.github.io/rss.xml
+http://mgrebenets.github.io/sitemap.txt
+http://mgrebenets.github.io/tags.html
 
-http://username.github.io/lessons/2011/12/29/jekyll-introduction
+http://mgrebenets.github.io/xcode/2014/05/29/share-xcode-schemes
+http://mgrebenets.github.io/ios/2014/05/29/resign-appstore-to-enterprise
+http://mgrebenets.github.io/android/2014/05/29/handsfree-android-sdk-update
+http://mgrebenets.github.io/android/2014/05/29/build-android-in-the-cloud
+http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli---rpm
+http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli---homebrew
+http://mgrebenets.github.io/ios/2014/05/29/add-framework-to-xcode-project
