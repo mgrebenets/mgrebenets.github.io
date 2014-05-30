@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <title>
       
-        Share Xcode Schemes - 
+        Atlassian CLI Client - 
       
       NSBogan
     </title>
-    <meta name="description" content="">
+    <meta name="description" content="dsec">
     <meta name="author" content="Maksym Grebenets">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- HTML5 shim, for IE6-8 support of HTML elements -->
@@ -148,7 +148,7 @@
           
 <div class="page-header">
   <h1>
-    Share Xcode Schemes 
+    Atlassian CLI Client 
     
   </h1>
 </div>
@@ -156,15 +156,44 @@
 <div class="row">
   <div class="span8">
     
+<h1 id="atlassian-cli">Atlassian CLI</h1>
+<p>If you happen to use Atlassian products like JIRA, Bamboo, Stash, Confluence, etc., you may be surprised to know that all these products are backed by a handy command line interface, namely <a href="https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+Command+Line+Interface">Atlassian Command Line Interface</a>.</p>
+
+<p>Imagine opening, modifying and closing JIRA issues from command line. What about starting Bamboo build plans, opening and closing Stash pull requests, updating Wiki pages?</p>
+
+<p>“Why would I do that?” you would ask. Indeed, there’s not much benefit to automate these things for you as a user, unless you are some bash addict. However, stop for a moment and think “Automation” and you’ll see how many things a basic shell script can do. All you need is Java and shell interpreter, which are present on any decent build box.</p>
+
+<p>Atlassian CLI Client is available on <a href="https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli">Atlassian Marketplace</a>. It is not developed by Atlassian though, which is very important to know if you plan to use it.</p>
+
+<p>This is where the confusion between Atlassian CLI <em>Plugin</em> and Atlassian CLI <em>Client</em> needs to be cleared up.</p>
+
+<p><em>Plugin</em> is <strong>not free</strong> and should be purchased for Atlassian products, e.g. there’s CLI plugin for JIRA, Bamboo, Stash.</p>
+
+<p><em>Client</em> can be freely downloaded and installed. You can find a few outdated Homebrew formulas on GitHub that automate client installation. So you might easily assume that it’s free, but it’s not.</p>
+
+<blockquote>
+  <p>You must purchase a license for any of the Atlassian CLI Plugins in order to use the Client.</p>
+</blockquote>
+
+<p>The purpose of this post is introduce you to Atlassian CLI Plugin if you didn’t know about it yet. The plugin is <a href="https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation">very</a> <a href="https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use">well</a> <a href="https://bobswift.atlassian.net/wiki/display/ACLI/How+to">documented</a> and comes with tons of examples.</p>
+
+<p>The thing that I didn’t like about it is installation process. It’s an old-style download, move, update <code>PATH</code> process. There’s nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.</p>
+
+<p>So I follow up this post with 2 more</p>
+
+<ul>
+  <li><a href="/2014/05/30/atlassian-cli-homebrew">Install Atlassian CLI with Homebrew</a> (OSX)</li>
+  <li><a href="/atlassian/2014/05/30/atlassian-cli-rpm">Install Atlassian CLI from RPM</a> (Linux)</li>
+</ul>
 
     <hr>
     <div class="pagination btn-group">
       
-        <a class="btn prev" href="/ios/2014/05/29/resign-appstore-to-enterprise" title="Resign AppStore to Enterprise">&larr; Previous</a>
+        <a class="btn prev" href="/ios/2014/05/29/add-framework-to-xcode-project" title="Add Framework to Xcode Project">&larr; Previous</a>
       
         <a class="btn" href="/archive.html">Archive</a>
       
-        <a class="btn next" href="/2014/05/30/atlassian-cli-homebrew" title="Install Atlassian CLI with Homebrew">Next &rarr;</a>
+        <a class="btn next" href="/android/2014/05/29/build-android-in-the-cloud" title="Build Android in the Cloud">Next &rarr;</a>
       
     </div>
     <hr>
@@ -200,7 +229,7 @@
       <section>
         <h4>Category</h4>
         <span class="category">
-          Xcode
+          Atlassian
         </span>
       </section>
          
@@ -214,21 +243,13 @@
 
   
      
-    	<li><a href="/tags.html#apple-ref">apple <span>4</span></a></li>
+    	<li><a href="/tags.html#atlassian-ref">atlassian <span>3</span></a></li>
      
-    	<li><a href="/tags.html#ios-ref">ios <span>3</span></a></li>
+    	<li><a href="/tags.html#cli-ref">cli <span>3</span></a></li>
      
-    	<li><a href="/tags.html#xcode-ref">xcode <span>3</span></a></li>
+    	<li><a href="/tags.html#homebrew-ref">homebrew <span>1</span></a></li>
      
     	<li><a href="/tags.html#osx-ref">osx <span>3</span></a></li>
-     
-    	<li><a href="/tags.html#xcodeproj-ref">xcodeproj <span>2</span></a></li>
-     
-    	<li><a href="/tags.html#ruby-ref">ruby <span>2</span></a></li>
-     
-    	<li><a href="/tags.html#shell-ref">shell <span>4</span></a></li>
-     
-    	<li><a href="/tags.html#resign-ref">resign <span>2</span></a></li>
     
   
 

@@ -4,13 +4,33 @@
  <title>NSBogan</title>
  <link href="http://mgrebenets.github.io/" rel="self"/>
  <link href="http://mgrebenets.github.io"/>
- <updated>2014-05-29T12:40:13+10:00</updated>
+ <updated>2014-05-30T12:42:41+10:00</updated>
  <id>http://mgrebenets.github.io</id>
  <author>
    <name>Maksym Grebenets</name>
    <email>mgrebenets@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Install Atlassian CLI from RPM</title>
+   <link href="http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm"/>
+   <updated>2014-05-30T00:00:00+10:00</updated>
+   <id>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</id>
+   <content type="html">
+&lt;h1 id=&quot;todo&quot;&gt;TODO:&lt;/h1&gt;
+&lt;p&gt;Describe how Atlassian CLI RMP package is created and installed.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Install Atlassian CLI with Homebrew</title>
+   <link href="http://mgrebenets.github.io/2014/05/30/atlassian-cli-homebrew"/>
+   <updated>2014-05-30T00:00:00+10:00</updated>
+   <id>http://mgrebenets.github.io/2014/05/30/atlassian-cli-homebrew</id>
+   <content type="html">
+</content>
+ </entry>
  
  <entry>
    <title>Share Xcode Schemes</title>
@@ -49,24 +69,40 @@
  </entry>
  
  <entry>
-   <title>Atlassian CLI   RPM</title>
-   <link href="http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli---rpm"/>
+   <title>Atlassian CLI Client</title>
+   <link href="http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli"/>
    <updated>2014-05-29T00:00:00+10:00</updated>
-   <id>http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli---rpm</id>
+   <id>http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli</id>
    <content type="html">
-&lt;h1 id=&quot;todo&quot;&gt;TODO:&lt;/h1&gt;
-&lt;p&gt;Describe how Atlassian CLI RMP package is created and installed.&lt;/p&gt;
-</content>
- </entry>
- 
- <entry>
-   <title>Atlassian CLI   Homebrew</title>
-   <link href="http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli---homebrew"/>
-   <updated>2014-05-29T00:00:00+10:00</updated>
-   <id>http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli---homebrew</id>
-   <content type="html">
-&lt;h1 id=&quot;todo&quot;&gt;TODO:&lt;/h1&gt;
-&lt;p&gt;Describe how Atlassian CLI formula is created, and used as a tap.&lt;/p&gt;
+&lt;h1 id=&quot;atlassian-cli&quot;&gt;Atlassian CLI&lt;/h1&gt;
+&lt;p&gt;If you happen to use Atlassian products like JIRA, Bamboo, Stash, Confluence, etc., you may be surprised to know that all these products are backed by a handy command line interface, namely &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+Command+Line+Interface&quot;&gt;Atlassian Command Line Interface&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Imagine opening, modifying and closing JIRA issues from command line. What about starting Bamboo build plans, opening and closing Stash pull requests, updating Wiki pages?&lt;/p&gt;
+
+&lt;p&gt;“Why would I do that?” you would ask. Indeed, there’s not much benefit to automate these things for you as a user, unless you are some bash addict. However, stop for a moment and think “Automation” and you’ll see how many things a basic shell script can do. All you need is Java and shell interpreter, which are present on any decent build box.&lt;/p&gt;
+
+&lt;p&gt;Atlassian CLI Client is available on &lt;a href=&quot;https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli&quot;&gt;Atlassian Marketplace&lt;/a&gt;. It is not developed by Atlassian though, which is very important to know if you plan to use it.&lt;/p&gt;
+
+&lt;p&gt;This is where the confusion between Atlassian CLI &lt;em&gt;Plugin&lt;/em&gt; and Atlassian CLI &lt;em&gt;Client&lt;/em&gt; needs to be cleared up.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Plugin&lt;/em&gt; is &lt;strong&gt;not free&lt;/strong&gt; and should be purchased for Atlassian products, e.g. there’s CLI plugin for JIRA, Bamboo, Stash.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Client&lt;/em&gt; can be freely downloaded and installed. You can find a few outdated Homebrew formulas on GitHub that automate client installation. So you might easily assume that it’s free, but it’s not.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;You must purchase a license for any of the Atlassian CLI Plugins in order to use the Client.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The purpose of this post is introduce you to Atlassian CLI Plugin if you didn’t know about it yet. The plugin is &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation&quot;&gt;very&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use&quot;&gt;well&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/How+to&quot;&gt;documented&lt;/a&gt; and comes with tons of examples.&lt;/p&gt;
+
+&lt;p&gt;The thing that I didn’t like about it is installation process. It’s an old-style download, move, update &lt;code&gt;PATH&lt;/code&gt; process. There’s nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.&lt;/p&gt;
+
+&lt;p&gt;So I follow up this post with 2 more&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;/2014/05/30/atlassian-cli-homebrew&quot;&gt;Install Atlassian CLI with Homebrew&lt;/a&gt; (OSX)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-rpm&quot;&gt;Install Atlassian CLI from RPM&lt;/a&gt; (Linux)&lt;/li&gt;
+&lt;/ul&gt;
 </content>
  </entry>
  
