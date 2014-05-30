@@ -4,7 +4,7 @@
  <title>NSBogan</title>
  <link href="http://mgrebenets.github.io/" rel="self"/>
  <link href="http://mgrebenets.github.io"/>
- <updated>2014-05-30T12:42:41+10:00</updated>
+ <updated>2014-05-30T13:29:19+10:00</updated>
  <id>http://mgrebenets.github.io</id>
  <author>
    <name>Maksym Grebenets</name>
@@ -95,7 +95,7 @@
 
 &lt;p&gt;The purpose of this post is introduce you to Atlassian CLI Plugin if you didn’t know about it yet. The plugin is &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation&quot;&gt;very&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use&quot;&gt;well&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/How+to&quot;&gt;documented&lt;/a&gt; and comes with tons of examples.&lt;/p&gt;
 
-&lt;p&gt;The thing that I didn’t like about it is installation process. It’s an old-style download, move, update &lt;code&gt;PATH&lt;/code&gt; process. There’s nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.&lt;/p&gt;
+&lt;p&gt;The thing that I didn’t like about it is installation process. It’s an straightforward “download, move, update &lt;code&gt;PATH&lt;/code&gt;” process. There’s nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.&lt;/p&gt;
 
 &lt;p&gt;So I follow up this post with 2 more&lt;/p&gt;
 
