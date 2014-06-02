@@ -9,7 +9,7 @@
       
       NSBogan
     </title>
-    <meta name="description" content="">
+    <meta name="description" content="Brew Atlassian CLI">
     <meta name="author" content="Maksym Grebenets">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- HTML5 shim, for IE6-8 support of HTML elements -->
@@ -156,6 +156,59 @@
 <div class="row">
   <div class="span8">
     
+<p>This is a follow to <a href="/atlassian/2014/05/29/atlassian-cli">introduction of Atlassian CLI</a>.</p>
+
+<p>In this post you will learn how to create custom <a href="http://brew.sh/">Homebrew</a> formula, install Atlassian CLI via Homebrew tap and customize tools for you company environment.</p>
+
+<p>If you don’t care about all the details and steps involved, you can jump right to <a href="#tldr">Summary</a> section.</p>
+
+<h1 id="brew">Brew</h1>
+
+<p>TODO: need to install brew and few words about brew</p>
+
+<h2 id="why-brew">Why Brew?</h2>
+<p>A perfectly valid question. Why would you go into all the trouble of creating formula, when you could just unzip, copy and update <code>PATH</code>, or even write a simple shell script to do that.</p>
+
+<p>Well, Homebrew does all that and then much more. After initial installation upgrading the tools is as easy as <code>brew update &amp;&amp; brew upgrade</code>. It also makes installation and upgrade process easier to other people in your organization. And finally, it’s just cool.</p>
+
+<h2 id="ok-lets-brew">OK, Let’s Brew!</h2>
+
+<ul>
+  <li>create formula with brew command</li>
+  <li>set version, release and java_version</li>
+  <li>homepage, url, sha1</li>
+  <li>install
+    <ul>
+      <li>remove windows stuff</li>
+      <li>patch shell scripts</li>
+      <li>move and rename shell scripts</li>
+      <li>install to prefix (what’s metafiles?)</li>
+    </ul>
+  </li>
+  <li>test - few words</li>
+</ul>
+
+<h2 id="customize">Customize</h2>
+
+<ul>
+  <li>why and how you customize</li>
+  <li>nested class, why not using another file…</li>
+  <li>patching</li>
+</ul>
+
+<h2 id="tap-install-and-upgrade">Tap, Install and Upgrade</h2>
+
+<ul>
+  <li>how do you use custom tap</li>
+  <li>how you install</li>
+  <li>and then upgrade</li>
+</ul>
+
+<h1 id="a-nametldr-summary"><a name="tldr"></a> Summary</h1>
+<ul>
+  <li>full file listing</li>
+  <li>bash snapshot for install and upgrade</li>
+</ul>
 
     <hr>
     <div class="pagination btn-group">
@@ -196,6 +249,13 @@
       <h4>Published</h4>
       <div class="date"><span>30 May 2014</span></div>
     </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          atlassian
+        </span>
+      </section>
          
     
       <section>

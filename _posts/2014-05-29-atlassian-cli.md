@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Atlassian CLI Client"
-description: "dsec"
+description: "Atlassian CLI Client"
 category: Atlassian
 tags: [atlassian, cli, homebrew, osx]
 ---
@@ -24,7 +24,7 @@ _Client_ can be freely downloaded and installed. You can find a few outdated Hom
 
 > You must purchase a license for any of the Atlassian CLI Plugins in order to use the Client.
 
-The purpose of this post is introduce you to Atlassian CLI Plugin if you didn't know about it yet. The plugin is [very](https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation) [well](https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use) [documented](https://bobswift.atlassian.net/wiki/display/ACLI/How+to) and comes with tons of examples.
+The purpose of this post is introduce you to Atlassian CLI Plugin if you didn't know about it yet. The plugin is [very](https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation) [well](https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use) [documented](https://bobswift.atlassian.net/wiki/display/ACLI/How+to) and comes with tons of [examples](https://bobswift.atlassian.net/wiki/display/ACLI/Examples).
 
 The thing that I didn't like about it is installation process. It's an straightforward "download, move, update `PATH`" process. There's nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.
 

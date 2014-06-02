@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Install Atlassian CLI from RPM"
-description: ""
+description: "Atlassian CLI RPM"
 category: Atlassian
 tags: [atlassian, cli, rpm, rhel, linux, aws]
 ---

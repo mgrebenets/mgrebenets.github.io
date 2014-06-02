@@ -5,8 +5,8 @@
         <description>NSBogan - Maksym Grebenets</description>
         <link>http://mgrebenets.github.io</link>
         <link>http://mgrebenets.github.io</link>
-        <lastBuildDate>2014-05-30T13:29:19+10:00</lastBuildDate>
-        <pubDate>2014-05-30T13:29:19+10:00</pubDate>
+        <lastBuildDate>2014-06-02T17:26:56+10:00</lastBuildDate>
+        <pubDate>2014-06-02T17:26:56+10:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -24,9 +24,62 @@
         <item>
                 <title>Install Atlassian CLI with Homebrew</title>
                 <description>
+&lt;p&gt;This is a follow to &lt;a href=&quot;/atlassian/2014/05/29/atlassian-cli&quot;&gt;introduction of Atlassian CLI&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this post you will learn how to create custom &lt;a href=&quot;http://brew.sh/&quot;&gt;Homebrew&lt;/a&gt; formula, install Atlassian CLI via Homebrew tap and customize tools for you company environment.&lt;/p&gt;
+
+&lt;p&gt;If you don’t care about all the details and steps involved, you can jump right to &lt;a href=&quot;#tldr&quot;&gt;Summary&lt;/a&gt; section.&lt;/p&gt;
+
+&lt;h1 id=&quot;brew&quot;&gt;Brew&lt;/h1&gt;
+
+&lt;p&gt;TODO: need to install brew and few words about brew&lt;/p&gt;
+
+&lt;h2 id=&quot;why-brew&quot;&gt;Why Brew?&lt;/h2&gt;
+&lt;p&gt;A perfectly valid question. Why would you go into all the trouble of creating formula, when you could just unzip, copy and update &lt;code&gt;PATH&lt;/code&gt;, or even write a simple shell script to do that.&lt;/p&gt;
+
+&lt;p&gt;Well, Homebrew does all that and then much more. After initial installation upgrading the tools is as easy as &lt;code&gt;brew update &amp;amp;&amp;amp; brew upgrade&lt;/code&gt;. It also makes installation and upgrade process easier to other people in your organization. And finally, it’s just cool.&lt;/p&gt;
+
+&lt;h2 id=&quot;ok-lets-brew&quot;&gt;OK, Let’s Brew!&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;create formula with brew command&lt;/li&gt;
+  &lt;li&gt;set version, release and java_version&lt;/li&gt;
+  &lt;li&gt;homepage, url, sha1&lt;/li&gt;
+  &lt;li&gt;install
+    &lt;ul&gt;
+      &lt;li&gt;remove windows stuff&lt;/li&gt;
+      &lt;li&gt;patch shell scripts&lt;/li&gt;
+      &lt;li&gt;move and rename shell scripts&lt;/li&gt;
+      &lt;li&gt;install to prefix (what’s metafiles?)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;test - few words&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;customize&quot;&gt;Customize&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;why and how you customize&lt;/li&gt;
+  &lt;li&gt;nested class, why not using another file…&lt;/li&gt;
+  &lt;li&gt;patching&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;tap-install-and-upgrade&quot;&gt;Tap, Install and Upgrade&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;how do you use custom tap&lt;/li&gt;
+  &lt;li&gt;how you install&lt;/li&gt;
+  &lt;li&gt;and then upgrade&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;a-nametldr-summary&quot;&gt;&lt;a name=&quot;tldr&quot;&gt;&lt;/a&gt; Summary&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;full file listing&lt;/li&gt;
+  &lt;li&gt;bash snapshot for install and upgrade&lt;/li&gt;
+&lt;/ul&gt;
 </description>
-                <link>http://mgrebenets.github.io/2014/05/30/atlassian-cli-homebrew</link>
-                <guid>http://mgrebenets.github.io/2014/05/30/atlassian-cli-homebrew</guid>
+                <link>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-homebrew</link>
+                <guid>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-homebrew</guid>
                 <pubDate>2014-05-30T00:00:00+10:00</pubDate>
         </item>
 
@@ -88,14 +141,14 @@
   &lt;p&gt;You must purchase a license for any of the Atlassian CLI Plugins in order to use the Client.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;The purpose of this post is introduce you to Atlassian CLI Plugin if you didn’t know about it yet. The plugin is &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation&quot;&gt;very&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use&quot;&gt;well&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/How+to&quot;&gt;documented&lt;/a&gt; and comes with tons of examples.&lt;/p&gt;
+&lt;p&gt;The purpose of this post is introduce you to Atlassian CLI Plugin if you didn’t know about it yet. The plugin is &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation&quot;&gt;very&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use&quot;&gt;well&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/How+to&quot;&gt;documented&lt;/a&gt; and comes with tons of &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Examples&quot;&gt;examples&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;The thing that I didn’t like about it is installation process. It’s an straightforward “download, move, update &lt;code&gt;PATH&lt;/code&gt;” process. There’s nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.&lt;/p&gt;
 
 &lt;p&gt;So I follow up this post with 2 more&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;/2014/05/30/atlassian-cli-homebrew&quot;&gt;Install Atlassian CLI with Homebrew&lt;/a&gt; (OSX)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Install Atlassian CLI with Homebrew&lt;/a&gt; (OSX)&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-rpm&quot;&gt;Install Atlassian CLI from RPM&lt;/a&gt; (Linux)&lt;/li&gt;
 &lt;/ul&gt;
 </description>
