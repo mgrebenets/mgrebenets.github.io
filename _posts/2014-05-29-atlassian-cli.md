@@ -30,5 +30,5 @@ The thing that I didn't like about it is installation process. It's an straightf
 
 So I follow up this post with 2 more
 
-- [Install Atlassian CLI with Homebrew]({% post_url 2014-05-30-atlassian-cli-homebrew %}) (OSX)
+- [Install Atlassian CLI with Homebrew]({% post_url 2014-05-30-atlassian-cli-homebrew %}) (OS X)
 - [Install Atlassian CLI from RPM]({% post_url 2014-05-30-atlassian-cli-rpm %}) (Linux)

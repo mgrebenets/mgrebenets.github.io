@@ -4,7 +4,7 @@
  <title>NSBogan</title>
  <link href="http://mgrebenets.github.io/" rel="self"/>
  <link href="http://mgrebenets.github.io"/>
- <updated>2014-06-02T17:26:56+10:00</updated>
+ <updated>2014-06-04T17:07:39+10:00</updated>
  <id>http://mgrebenets.github.io</id>
  <author>
    <name>Maksym Grebenets</name>
@@ -29,7 +29,7 @@
    <updated>2014-05-30T00:00:00+10:00</updated>
    <id>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-homebrew</id>
    <content type="html">
-&lt;p&gt;This is a follow to &lt;a href=&quot;/atlassian/2014/05/29/atlassian-cli&quot;&gt;introduction of Atlassian CLI&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This is a follow up to &lt;a href=&quot;/atlassian/2014/05/29/atlassian-cli&quot;&gt;introduction of Atlassian CLI&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;In this post you will learn how to create custom &lt;a href=&quot;http://brew.sh/&quot;&gt;Homebrew&lt;/a&gt; formula, install Atlassian CLI via Homebrew tap and customize tools for you company environment.&lt;/p&gt;
 
@@ -37,7 +37,11 @@
 
 &lt;h1 id=&quot;brew&quot;&gt;Brew&lt;/h1&gt;
 
-&lt;p&gt;TODO: need to install brew and few words about brew&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://brew.sh/&quot;&gt;Homebrew&lt;/a&gt; (aka “brew”) is a missing package manager for OS X.
+After you install it, you need to update your &lt;code&gt;PATH&lt;/code&gt;. By default &lt;code&gt;/usr/local/bin&lt;/code&gt; is not in the system path, so modify your &lt;code&gt;~/.bash_profile&lt;/code&gt; before you continue.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# ~/.bash_profile&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/bin:&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;why-brew&quot;&gt;Why Brew?&lt;/h2&gt;
 &lt;p&gt;A perfectly valid question. Why would you go into all the trouble of creating formula, when you could just unzip, copy and update &lt;code&gt;PATH&lt;/code&gt;, or even write a simple shell script to do that.&lt;/p&gt;
@@ -46,42 +50,427 @@
 
 &lt;h2 id=&quot;ok-lets-brew&quot;&gt;OK, Let’s Brew!&lt;/h2&gt;
 
+&lt;h3 id=&quot;create-formula&quot;&gt;Create Formula&lt;/h3&gt;
+&lt;p&gt;You could use &lt;code&gt;brew create &amp;lt;link&amp;gt;&lt;/code&gt; command, but that will create formula in &lt;code&gt;/usr/loca/Library/Formula&lt;/code&gt;. Instead let’s create it manually.&lt;/p&gt;
+
+&lt;p&gt;Let’s say our company is called News, so create new Ruby file&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;touch news-atlassian-cli.rb&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;With contents like this&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;formula&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NewsAtlassianCli&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Formula&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;3.9.0&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;homepage&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;.&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;sha1&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;c18174f5dee921f69fedd663bd4a9e330565a7d3&amp;quot;&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;install&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# TODO:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Test&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;version: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;release&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;sx&quot;&gt;%x[ jira ]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;These are the basics of brewing.&lt;/p&gt;
+
 &lt;ul&gt;
-  &lt;li&gt;create formula with brew command&lt;/li&gt;
-  &lt;li&gt;set version, release and java_version&lt;/li&gt;
-  &lt;li&gt;homepage, url, sha1&lt;/li&gt;
-  &lt;li&gt;install
-    &lt;ul&gt;
-      &lt;li&gt;remove windows stuff&lt;/li&gt;
-      &lt;li&gt;patch shell scripts&lt;/li&gt;
-      &lt;li&gt;move and rename shell scripts&lt;/li&gt;
-      &lt;li&gt;install to prefix (what’s metafiles?)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;test - few words&lt;/li&gt;
+  &lt;li&gt;Your custom formula class needs to subclass &lt;code&gt;Formula&lt;/code&gt; class.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;version&lt;/code&gt; in our case is “3.9.0”, that’s the latest Atlassian CLI Client version at the moment of writing this post.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;homepage&lt;/code&gt; points to &lt;a href=&quot;https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli&quot;&gt;Atlassian Marketplace page&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;url&lt;/code&gt; is used to download source code. Note a bit of tweaking at the end of the link &lt;code&gt;#{version.to_s.delete(&#39;.&#39;)}&lt;/code&gt;, originally it was “390”.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;sha1&lt;/code&gt; obviously is SHA-1 calculated for file downloaded from &lt;code&gt;url&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# calculate SHA-1&lt;/span&gt;
+wget https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/390
+openssl sha1 atlassian-cli-3.9.0-distribution.zip
+&lt;span class=&quot;c&quot;&gt;# SHA1(atlassian-cli-3.9.0-distribution.zip)= c18174f5dee921f69fedd663bd4a9e330565a7d3&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;install&lt;/code&gt; method is where you do all the installation magic once the source is downloaded in unzipped.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;test&lt;/code&gt; is used to test formula after installation. Normally you just execute main program installed by the formula, in our case it can be &lt;code&gt;jira&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now let’s take advantage of the fact that Homebrew formula is just a Ruby class and add few more custom lines to use later.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;3.9.0&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;release&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;1&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;java_version&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;JAVA_VERSION&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;1.6&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;release&lt;/code&gt; will be used for managing multiple releases for same version&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;java_version&lt;/code&gt; will come handy for setting &lt;code&gt;JAVA_HOME&lt;/code&gt; environment variable. Default is “1.6” but you can user &lt;code&gt;JAVA_VERSION&lt;/code&gt; environment variable to override default settings.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Atlassian CLI Client &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Compatibility+-+3.9&quot;&gt;Compatibility page&lt;/a&gt; claims that “Client requires &lt;strong&gt;Java 1.6&lt;/strong&gt; (recommended) or above.” I have had problems using it with Java 1.7, so in this guide we’ll stick with 1.6.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;install&quot;&gt;&lt;code&gt;install&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;Once execution enters &lt;code&gt;install&lt;/code&gt; method, the source is already downloaded and unzipped. Things that you do in &lt;code&gt;install&lt;/code&gt; method occur in temporary directory created by Homebrew.&lt;/p&gt;
+
+&lt;p&gt;This is the place to run things like &lt;code&gt;./configure&lt;/code&gt; and &lt;code&gt;make&lt;/code&gt;. However in our case we have no source code to compile. Atlassian CLI is basically a collection of JAR files with shell wrappers for them.&lt;/p&gt;
+
+&lt;p&gt;Our job is to cleanup first, then patch and rename some scripts and finally move the whole bunch to &lt;code&gt;/usr/local&lt;/code&gt;. &lt;code&gt;/usr/local&lt;/code&gt; is also called &lt;em&gt;prefix&lt;/em&gt;, this is the location where Homebrew installs all packages, additionally there’s a special &lt;code&gt;prefix&lt;/code&gt; variable available in the formula.&lt;/p&gt;
+
+&lt;h4 id=&quot;cleanup&quot;&gt;Cleanup&lt;/h4&gt;
+&lt;p&gt;So let’s cleanup. Since we are installing on OSX, we don’t need all the Windows stuff.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Delete Windows batch scripts&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;*.bat&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As an improvement, this could be a good place to remove examples.&lt;/p&gt;
+
+&lt;h4 id=&quot;patch-and-move&quot;&gt;Patch and Move&lt;/h4&gt;
+
+&lt;p&gt;Now it’s the time to mention one of the things done &lt;em&gt;wrong&lt;/em&gt; in Atlassian CLI tools package. There’s a reason for having all those folders like &lt;code&gt;lib&lt;/code&gt;, &lt;code&gt;libexec&lt;/code&gt;, &lt;code&gt;etc&lt;/code&gt; and so on. In Homebrew world each of those folders serves a special purpose. Yet the most important folder of all is missing, that is &lt;code&gt;bin&lt;/code&gt;!&lt;/p&gt;
+
+&lt;p&gt;Remember that part where you added &lt;code&gt;/usr/local/bin&lt;/code&gt; to your &lt;code&gt;PATH&lt;/code&gt;? When Homebrew installs a package it copies things from temp folder to prefix (&lt;code&gt;/usr/local&lt;/code&gt;), &lt;code&gt;bin&lt;/code&gt; is copied too. Every executable in the &lt;code&gt;bin&lt;/code&gt; becomes available system-wide because of the way you updated &lt;code&gt;PATH&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In case of Atlassian CLI, all the shell scripts are sitting in the root folder, &lt;code&gt;bin&lt;/code&gt; is not there at all. This needs to be fixed. We will do it in 2 steps&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Create &lt;code&gt;bin&lt;/code&gt; folder and move scripts to it&lt;/li&gt;
+  &lt;li&gt;Patch the scripts&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The order doesn’t really matter.
+Patching is required because each shell script is a wrapper around JAR file and contains relative path to that JAR. So if you move the shell script, you have to update the relative path as well.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# patch before moving to bin&lt;/span&gt;
+&lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;*.sh&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# patch by updating path to lib folder&lt;/span&gt;
+    &lt;span class=&quot;sx&quot;&gt;%x[ sed -i -e &amp;#39;s,/lib,/../lib,g&amp;#39; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# patch by inserting and setting JAVA_HOME&lt;/span&gt;
+    &lt;span class=&quot;sx&quot;&gt;%x[ awk &amp;#39;NR==2 {print &amp;quot;export JAVA_HOME=$(/usr/libexec/java_home -v &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;java_version&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;)&amp;quot;} {print}&amp;#39; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; &amp;gt; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;.bak &amp;amp;&amp;amp; mv &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;.bak &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here we replace relative path to &lt;code&gt;lib&lt;/code&gt; with &lt;code&gt;../lib&lt;/code&gt;.
+We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&lt;/code&gt; OS X utility and &lt;code&gt;java_version&lt;/code&gt; method. This is to be sure Java version is as we expect it.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# move to bin and rename&lt;/span&gt;
+&lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bin&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;*.sh&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bin/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;.sh&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# all.sh, really? how about atlassian-all?&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bin/all&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bin/atlassian-all&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We just moved all the &lt;code&gt;.sh&lt;/code&gt; scripts to &lt;code&gt;bin&lt;/code&gt; folder. I also prefer to drop the &lt;code&gt;.sh&lt;/code&gt; part. Finally &lt;code&gt;all&lt;/code&gt; feels too ambiguous, so rename it to &lt;code&gt;atlassian-all&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;install-to-prefix&quot;&gt;Install to Prefix&lt;/h4&gt;
+
+&lt;p&gt;We can finally install everything to prefix (&lt;code&gt;/usr/local&lt;/code&gt;), that’s where &lt;code&gt;prefix&lt;/code&gt; variable is used&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;install_metafiles&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;customize&quot;&gt;Customize&lt;/h2&gt;
 
+&lt;p&gt;This part is optional. Unless you customize the scripts you will have to use &lt;code&gt;--server&lt;/code&gt;, &lt;code&gt;--user&lt;/code&gt; and &lt;code&gt;--password&lt;/code&gt; switches each time you call commands, this is to provide server, username and password.&lt;/p&gt;
+
+&lt;p&gt;Of course this can be solved with aliases, but then you’d have to configure aliases on each build box. Anyway, the developers of the CLI package offer you another solution. As I said, this part is optional, if you don’t need customization you can skip to &lt;a href=&quot;#tap-install&quot;&gt;next section&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;atlassian.sh&lt;/code&gt; (which we renamed to &lt;code&gt;atlassian&lt;/code&gt; and moved to &lt;code&gt;bin&lt;/code&gt;) is there for customization. Have a look inside that file&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# - - - - - - - - - - - - - - - - - - - - START CUSTOMIZE FOR YOUR INSTALLATION !!!&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;automation&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;automation&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;settings&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# - - - - - - - - - - - - - - - - - - - - - END CUSTOMIZE FOR YOUR INSTALLATION !!!&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is where you can customize your Atlassian products username and password, as well as additional JVM settings. That’s usual practice for organizations, you have a special user account (service account) than can access all the range of products with single username and password.&lt;/p&gt;
+
+&lt;p&gt;And there’s another block of code like this, which is used to customize Atlassian products server urls.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# - - - - - - - - - - - - - - - - - - - - START CUSTOMIZE FOR YOUR INSTALLATION !!!&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;confluence&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;confluence-cli-3.9.0.jar --server https://confluence.example.com --user $user --password $password&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;jira&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;jira-cli-3.9.0.jar --server https://jira.example.com --user $user --password $password&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;fisheye&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;fisheye-cli-3.9.0.jar --server https://fisheye.example.com --user $user --password $password&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;crucible&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;crucible-cli-3.9.0.jar --server https://crucible.example.com --user $user --password $password&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bamboo&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;bamboo-cli-3.9.0.jar --server https://bamboo.example.com --user $user --password $password&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;stash&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;stash-cli-3.9.0.jar --server https://stash.example.com --user $user --password $password&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Missing application parameter. Specify an application like confluence, jira, or similar.&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$0 &amp;lt;application name&amp;gt; &amp;lt;application specific parameters&amp;gt;&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt; -99
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Application $application not found in $0&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt; -99
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# - - - - - - - - - - - - - - - - - - - - - END CUSTOMIZE FOR YOUR INSTALLATION !!!&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You will need to replace all the &lt;code&gt;https://***.example.com&lt;/code&gt; with your company urls. If you have multiple instances of same product in your organization, you can add another &lt;code&gt;elif&lt;/code&gt; block for that. For example you are in the middle of migration from Confluence server &lt;code&gt;https://confluence.example.com&lt;/code&gt; to a new instance &lt;code&gt;https://confluence.ni.example.com&lt;/code&gt;, for a while you want to be able to use both, so add another block like this&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;confluence&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;confluence-cli-3.9.0.jar --server https://confluence.example.com --user $user --password $password&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;$application&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;confluence.ni&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;jira-cli-3.9.0.jar --server https://confluence.ni.example.com --user $user --password $password&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ***&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;In this example there won’t be multiple instances for same product, but it would be possible to customize scripts to handle that case as well.&lt;/p&gt;
+
+&lt;p&gt;So let’s write some Ruby again. For the company called News we will create a nested class &lt;code&gt;NewsEnv&lt;/code&gt; that will contain all the company specific environment settings.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# nested news environment class&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NewsEnv&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# Patch the shell script above&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @param [String] filename name of shell script to patch&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# system &amp;quot;sed -i -e \&amp;quot;s/\\(.*user=\\)&amp;#39;.*&amp;#39;/\\1&amp;#39;#{env.username}&amp;#39;/g\&amp;quot; #{filename}&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# username and password&lt;/span&gt;
+        &lt;span class=&quot;sx&quot;&gt;%x[ sed -i -e &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;s/\\(.*user=\\)&amp;#39;.*&amp;#39;/\\1&amp;#39;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;&amp;#39;/g&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+        &lt;span class=&quot;sx&quot;&gt;%x[ sed -i -e &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;s/\\(.*password=\\)&amp;#39;.*&amp;#39;/\\1&amp;#39;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;&amp;#39;/g&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# server urls for products, use internal knowledge that atlassian.sh has links like https://&amp;lt;product&amp;gt;.example.com&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+            &lt;span class=&quot;sx&quot;&gt;%x[ sed -i -e &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;s,\\(.*\\)https://&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_s&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;.example.com\\(.*\\),\\1&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;\\2,g&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Get list of products for enumeration&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @return [Array&amp;lt;Symbol&amp;gt;] array of product types&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;products&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:jira&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:bamboo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:stash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:confluence&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fisheye&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:crucible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Atlassian Product servers&lt;/span&gt;
+    &lt;span class=&quot;vc&quot;&gt;@@servers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:jira&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://dashboard.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:bamboo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://bamboo.ni.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:stash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://stash.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:confluence&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://wiki.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:fisheye&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://fisheye.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# example&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:crucible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://crucible.example.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# example&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Get server url for product&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @param [Symbol] product +:jira+, +:bamboo+, +:stash+, +:confluence+, +:fisheye+, +:crucible+&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @return [String] server url&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;vc&quot;&gt;@@servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_sym&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Username for Atlassian servers&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @note Optionally use ATLASSAIN_USERNAME environment variable when installing&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @return [String] username&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;username&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NEWS_USERNAME&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Username for Atlassian servers&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @note Optionally use ATLASSAIN_PASSWORD environment variable when installing&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @return [String] password&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;password&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NEWS_PASSWORD&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code&gt;username&lt;/code&gt; and &lt;code&gt;password&lt;/code&gt; methods pick up values from &lt;code&gt;NEWS_USERNAME&lt;/code&gt; and &lt;code&gt;NEWS_PASSWORD&lt;/code&gt; environment variables. Set those when running &lt;code&gt;brew install&lt;/code&gt; or &lt;code&gt;brew upgrade&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Next the &lt;code&gt;server&lt;/code&gt; method returns server url for each product type.&lt;/p&gt;
+
+&lt;p&gt;Finally &lt;code&gt;patch&lt;/code&gt; method patches the shell script the way we want it.&lt;/p&gt;
+
 &lt;ul&gt;
-  &lt;li&gt;why and how you customize&lt;/li&gt;
-  &lt;li&gt;nested class, why not using another file…&lt;/li&gt;
-  &lt;li&gt;patching&lt;/li&gt;
+  &lt;li&gt;Replace default username and password with values provided via environment variables&lt;/li&gt;
+  &lt;li&gt;Replace all the server urls with your company urls&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;tap-install-and-upgrade&quot;&gt;Tap, Install and Upgrade&lt;/h2&gt;
+&lt;p&gt;You have to add one more line to &lt;code&gt;install&lt;/code&gt; method in the formula&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;how do you use custom tap&lt;/li&gt;
-  &lt;li&gt;how you install&lt;/li&gt;
-  &lt;li&gt;and then upgrade&lt;/li&gt;
-&lt;/ul&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;no&quot;&gt;NewsEnv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;atlassian.sh&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Make sure to put this line &lt;strong&gt;before&lt;/strong&gt; &lt;code&gt;atlassian.sh&lt;/code&gt; is moved and renamed.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The nested class is used because Homebrew only expects one formula file. If you have other files used as an external dependencies, Homebew will not fetch them from repository when running &lt;code&gt;tap&lt;/code&gt; command.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;push-to-scm&quot;&gt;Push to SCM&lt;/h3&gt;
+
+&lt;p&gt;We are done with the formula. It’s time now to push it to a repository. Whatever is you favorite SCM - use it. In this example we will use Git repository hosted with Stash. For example&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;a-nametap-installtap-install-and-upgrade&quot;&gt;&lt;a name=&quot;tap-install&quot;&gt;&lt;/a&gt;Tap, Install and Upgrade&lt;/h2&gt;
+
+&lt;h3 id=&quot;tap&quot;&gt;Tap&lt;/h3&gt;
+&lt;p&gt;One of the ways to install Homebrew packages from custom repositories is to use &lt;a href=&quot;https://github.com/Homebrew/homebrew/wiki/brew-tap&quot;&gt;&lt;em&gt;Taps&lt;/em&gt;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;There’s a number of rules to follow when creating your taps. That mostly matters if you plan to share this formula with the rest of the world. For internal use in your organization you can neglect some of these rules.&lt;/p&gt;
+
+&lt;p&gt;But there’s a trade off as well. Since we didn’t name the tap repository properly, we won’t be able to use tap command like &lt;code&gt;brew tap username/repository&lt;/code&gt;. Instead we will do same actions as &lt;code&gt;tap&lt;/code&gt; does only with few lines of shell script.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;brew tap&lt;/code&gt; clones the repository from GitHub and puts it into the taps directory. This is how you can do it directly&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;TAP_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news-atlassian-cli
+&lt;span class=&quot;c&quot;&gt;# find out what&amp;#39;s the tap directory&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;$(brew --repository)/Library/Taps/${TAP_NAME}&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# clone the formula repository to tap directory&lt;/span&gt;
+git clone --quiet ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tell brew to repair the taps, that will make brew to pick up newly added tap&lt;/span&gt;
+brew tap --repair&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;install-1&quot;&gt;Install&lt;/h3&gt;
+
+&lt;p&gt;Now you can install, this part is simple&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;brew install news-atlassian-cli
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;upgrade&quot;&gt;Upgrade&lt;/h3&gt;
+
+&lt;p&gt;To upgrade you need to update brew repositories, including the taps, then upgrade the specific package.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# update brew&lt;/span&gt;
+brew update
+&lt;span class=&quot;c&quot;&gt;# upgrade news atlassian cli&lt;/span&gt;
+brew upgrade news-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h1 id=&quot;a-nametldr-summary&quot;&gt;&lt;a name=&quot;tldr&quot;&gt;&lt;/a&gt; Summary&lt;/h1&gt;
+
 &lt;ul&gt;
-  &lt;li&gt;full file listing&lt;/li&gt;
-  &lt;li&gt;bash snapshot for install and upgrade&lt;/li&gt;
+  &lt;li&gt;Create formula Ruby file and put it into a repository&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;formula&amp;#39;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Homebrew formula to install atlassian CLI tools&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NewsAtlassianCli&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Formula&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;3.9.0&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;release&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;1&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# custom release field&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;java_version&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;JAVA_VERSION&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;1.6&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# java version to set JAVA_HOME&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;homepage&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli&amp;#39;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;.&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;sha1&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;c18174f5dee921f69fedd663bd4a9e330565a7d3&amp;#39;&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# nested news environment class&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NewsEnv&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# Patch the shell script above&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# @param [String] filename name of shell script to patch&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;# username and password&lt;/span&gt;
+            &lt;span class=&quot;sx&quot;&gt;%x[ sed -i -e &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;s/\\(.*user=\\)&amp;#39;.*&amp;#39;/\\1&amp;#39;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;&amp;#39;/g&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+            &lt;span class=&quot;sx&quot;&gt;%x[ sed -i -e &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;s/\\(.*password=\\)&amp;#39;.*&amp;#39;/\\1&amp;#39;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;&amp;#39;/g&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;# server urls for products, use internal knowledge that atlassian.sh has links like https://&amp;lt;product&amp;gt;.example.com&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+                &lt;span class=&quot;sx&quot;&gt;%x[ sed -i -e &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;s,\\(.*\\)https://&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_s&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;.example.com\\(.*\\),\\1&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;\\2,g&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&amp;quot;&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# Get list of products for enumeration&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# @return [Array&amp;lt;Symbol&amp;gt;] array of product types&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;products&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:jira&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:bamboo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:stash&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:confluence&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:fisheye&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:crucible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# Atlassian Product servers&lt;/span&gt;
+        &lt;span class=&quot;vc&quot;&gt;@@servers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:jira&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://dashboard.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:bamboo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://bamboo.ni.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:stash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://stash.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:confluence&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://wiki.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:fisheye&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://fisheye.news.com.au/&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# example&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:crucible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://crucible.example.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# example&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# Get server url for product&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# @param [Symbol] product +:jira+, +:bamboo+, +:stash+, +:confluence+, +:fisheye+, +:crucible+&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# @return [String] server url&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;vc&quot;&gt;@@servers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_sym&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# Username for Atlassian servers&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# @note Optionally use ATLASSAIN_USERNAME environment variable when installing&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# @return [String] username&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;username&lt;/span&gt;
+            &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NEWS_USERNAME&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# Username for Atlassian servers&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# @note Optionally use ATLASSAIN_PASSWORD environment variable when installing&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# @return [String] password&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;password&lt;/span&gt;
+            &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NEWS_PASSWORD&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# dependencies (if any)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Install&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;install&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# this is garbage&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Cleaning up windows stuff...&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;*.bat&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# TODO: consider removing examples and all the other stuff&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# patch before moving to bin&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Patching shell scripts and moving them to bin...&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;*.sh&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;# patch by updating path to lib folder&lt;/span&gt;
+            &lt;span class=&quot;sx&quot;&gt;%x[ sed -i -e &amp;#39;s,/lib,/../lib,g&amp;#39; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;# patch by inserting and setting JAVA_HOME&lt;/span&gt;
+            &lt;span class=&quot;sx&quot;&gt;%x[ awk &amp;#39;NR==2 {print &amp;quot;export JAVA_HOME=$(/usr/libexec/java_home -v &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;java_version&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;)&amp;quot;} {print}&amp;#39; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; &amp;gt; &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;.bak &amp;amp;&amp;amp; mv &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;.bak &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt; ]&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# customize bin/atlassian (renamed from atlassian.sh) with username, password and server urls&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# !!!: must patch before install command&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Customizing product endpoints, username and password....&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;NewsEnv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;atlassian.sh&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+        &lt;span class=&quot;c1&quot;&gt;# move all shell executables to bin, that&amp;#39;s the way homebrew understands it&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# also drop the .sh part&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bin&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;*.sh&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bin/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;.sh&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;# all.sh, really? how about atlassian-all?&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bin/all&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;bin/atlassian-all&amp;quot;&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;install_metafiles&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+    &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+        &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;version: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;release&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
+        &lt;span class=&quot;sx&quot;&gt;%x[ jira ]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Create a Homebrew tap, install and upgrade&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;TAP_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news-atlassian-cli
+&lt;span class=&quot;c&quot;&gt;# find out what&amp;#39;s the tap directory&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;$(brew --repository)/Library/Taps/${TAP_NAME}&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# clone the formula repository to tap directory&lt;/span&gt;
+git clone --quiet ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# tell brew to repair the taps, that will make brew to pick up newly added tap&lt;/span&gt;
+brew tap --repair
+
+&lt;span class=&quot;c&quot;&gt;# install&lt;/span&gt;
+brew install news-atlassian-cli
+
+&lt;span class=&quot;c&quot;&gt;# upgrade&lt;/span&gt;
+brew update
+brew upgrade news-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 </content>
  </entry>
  
@@ -153,7 +542,7 @@
 &lt;p&gt;So I follow up this post with 2 more&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Install Atlassian CLI with Homebrew&lt;/a&gt; (OSX)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Install Atlassian CLI with Homebrew&lt;/a&gt; (OS X)&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-rpm&quot;&gt;Install Atlassian CLI from RPM&lt;/a&gt; (Linux)&lt;/li&gt;
 &lt;/ul&gt;
 </content>
