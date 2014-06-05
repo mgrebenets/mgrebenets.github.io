@@ -5,8 +5,8 @@
         <description>NSBogan - Maksym Grebenets</description>
         <link>http://mgrebenets.github.io</link>
         <link>http://mgrebenets.github.io</link>
-        <lastBuildDate>2014-06-04T17:07:39+10:00</lastBuildDate>
-        <pubDate>2014-06-04T17:07:39+10:00</pubDate>
+        <lastBuildDate>2014-06-04T19:09:01+10:00</lastBuildDate>
+        <pubDate>2014-06-04T19:09:01+10:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -24,7 +24,7 @@
         <item>
                 <title>Install Atlassian CLI with Homebrew</title>
                 <description>
-&lt;p&gt;This is a follow up to &lt;a href=&quot;/atlassian/2014/05/29/atlassian-cli&quot;&gt;introduction of Atlassian CLI&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This is a follow up to &lt;a href=&quot;/atlassian/2014/05/29/atlassian-cli&quot;&gt;introduction to Atlassian CLI&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;In this post you will learn how to create custom &lt;a href=&quot;http://brew.sh/&quot;&gt;Homebrew&lt;/a&gt; formula, install Atlassian CLI via Homebrew tap and customize tools for you company environment.&lt;/p&gt;
 
@@ -322,8 +322,10 @@ brew tap --repair&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Now you can install, this part is simple&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;brew install news-atlassian-cli
-&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# no username/password customization&lt;/span&gt;
+brew install news-atlassian-cli
+&lt;span class=&quot;c&quot;&gt;# set username/password for service account&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;NEWS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news &lt;span class=&quot;nv&quot;&gt;NEWS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew install news-app-tools&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;upgrade&quot;&gt;Upgrade&lt;/h3&gt;
 
@@ -332,7 +334,9 @@ brew tap --repair&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# update brew&lt;/span&gt;
 brew update
 &lt;span class=&quot;c&quot;&gt;# upgrade news atlassian cli&lt;/span&gt;
-brew upgrade news-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+brew upgrade news-atlassian-cli
+&lt;span class=&quot;c&quot;&gt;# customized upgrade&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;NEWS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news &lt;span class=&quot;nv&quot;&gt;NEWS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew upgrade news-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h1 id=&quot;a-nametldr-summary&quot;&gt;&lt;a name=&quot;tldr&quot;&gt;&lt;/a&gt; Summary&lt;/h1&gt;
 
@@ -461,10 +465,15 @@ brew tap --repair
 
 &lt;span class=&quot;c&quot;&gt;# install&lt;/span&gt;
 brew install news-atlassian-cli
+&lt;span class=&quot;c&quot;&gt;# or customized install&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;NEWS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news &lt;span class=&quot;nv&quot;&gt;NEWS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew install news-atlassian-cli
 
-&lt;span class=&quot;c&quot;&gt;# upgrade&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# update&lt;/span&gt;
 brew update
-brew upgrade news-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;c&quot;&gt;# then upgrade&lt;/span&gt;
+brew upgrade news-atlassian-cli
+&lt;span class=&quot;c&quot;&gt;# or customized upgrade&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;NEWS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news &lt;span class=&quot;nv&quot;&gt;NEWS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew upgrade news-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 </description>
                 <link>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-homebrew</link>

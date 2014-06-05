@@ -7,7 +7,7 @@ tags: [atlassian, cli, osx, mac, apple]
 ---
 {% include JB/setup %}
 
-This is a follow up to [introduction of Atlassian CLI]({% post_url 2014-05-29-atlassian-cli %}).
+This is a follow up to [introduction to Atlassian CLI]({% post_url 2014-05-29-atlassian-cli %}).
 
 In this post you will learn how to create custom [Homebrew](http://brew.sh/) formula, install Atlassian CLI via Homebrew tap and customize tools for you company environment.
 
@@ -319,7 +319,12 @@ brew tap --repair
 
 Now you can install, this part is simple
 
-    brew install news-atlassian-cli
+{% highlight bash %}
+# no username/password customization
+brew install news-atlassian-cli
+# set username/password for service account
+NEWS_USERNAME=news NEWS_PASSWORD=password brew install news-app-tools
+{% endhighlight %}
 
 ### Upgrade
 
@@ -330,6 +335,8 @@ To upgrade you need to update brew repositories, including the taps, then upgrad
 brew update
 # upgrade news atlassian cli
 brew upgrade news-atlassian-cli
+# customized upgrade
+NEWS_USERNAME=news NEWS_PASSWORD=password brew upgrade news-atlassian-cli
 {% endhighlight %}
 
 # <a name="tldr"/> Summary
@@ -458,8 +465,13 @@ brew tap --repair
 
 # install
 brew install news-atlassian-cli
+# or customized install
+NEWS_USERNAME=news NEWS_PASSWORD=password brew install news-atlassian-cli
 
-# upgrade
+# update
 brew update
+# then upgrade
 brew upgrade news-atlassian-cli
+# or customized upgrade
+NEWS_USERNAME=news NEWS_PASSWORD=password brew upgrade news-atlassian-cli
 {% endhighlight %}

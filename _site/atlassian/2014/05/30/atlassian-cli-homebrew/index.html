@@ -156,7 +156,7 @@
 <div class="row">
   <div class="span8">
     
-<p>This is a follow up to <a href="/atlassian/2014/05/29/atlassian-cli">introduction of Atlassian CLI</a>.</p>
+<p>This is a follow up to <a href="/atlassian/2014/05/29/atlassian-cli">introduction to Atlassian CLI</a>.</p>
 
 <p>In this post you will learn how to create custom <a href="http://brew.sh/">Homebrew</a> formula, install Atlassian CLI via Homebrew tap and customize tools for you company environment.</p>
 
@@ -454,8 +454,10 @@ brew tap --repair</code></pre></div>
 
 <p>Now you can install, this part is simple</p>
 
-<pre><code>brew install news-atlassian-cli
-</code></pre>
+<div class="highlight"><pre><code class="bash"><span class="c"># no username/password customization</span>
+brew install news-atlassian-cli
+<span class="c"># set username/password for service account</span>
+<span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew install news-app-tools</code></pre></div>
 
 <h3 id="upgrade">Upgrade</h3>
 
@@ -464,7 +466,9 @@ brew tap --repair</code></pre></div>
 <div class="highlight"><pre><code class="bash"><span class="c"># update brew</span>
 brew update
 <span class="c"># upgrade news atlassian cli</span>
-brew upgrade news-atlassian-cli</code></pre></div>
+brew upgrade news-atlassian-cli
+<span class="c"># customized upgrade</span>
+<span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew upgrade news-atlassian-cli</code></pre></div>
 
 <h1 id="a-nametldr-summary"><a name="tldr"></a> Summary</h1>
 
@@ -593,10 +597,15 @@ brew tap --repair
 
 <span class="c"># install</span>
 brew install news-atlassian-cli
+<span class="c"># or customized install</span>
+<span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew install news-atlassian-cli
 
-<span class="c"># upgrade</span>
+<span class="c"># update</span>
 brew update
-brew upgrade news-atlassian-cli</code></pre></div>
+<span class="c"># then upgrade</span>
+brew upgrade news-atlassian-cli
+<span class="c"># or customized upgrade</span>
+<span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew upgrade news-atlassian-cli</code></pre></div>
 
 
     <hr>
