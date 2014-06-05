@@ -4,7 +4,7 @@
  <title>NSBogan</title>
  <link href="http://mgrebenets.github.io/" rel="self"/>
  <link href="http://mgrebenets.github.io"/>
- <updated>2014-06-05T17:47:27+10:00</updated>
+ <updated>2014-06-05T18:02:28+10:00</updated>
  <id>http://mgrebenets.github.io</id>
  <author>
    <name>Maksym Grebenets</name>
@@ -487,6 +487,30 @@ brew upgrade news-atlassian-cli
  </entry>
  
  <entry>
+   <title>Share Xcode Schemes</title>
+   <link href="http://mgrebenets.github.io/xcode/2014/05/29/share-xcode-schemes"/>
+   <updated>2014-05-29T00:00:00+10:00</updated>
+   <id>http://mgrebenets.github.io/xcode/2014/05/29/share-xcode-schemes</id>
+   <content type="html">
+&lt;p&gt;&lt;em&gt;Coming Soon…&lt;/em&gt;&lt;/p&gt;
+
+&lt;!--more--&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Resign AppStore to Enterprise</title>
+   <link href="http://mgrebenets.github.io/ios/2014/05/29/resign-appstore-to-enterprise"/>
+   <updated>2014-05-29T00:00:00+10:00</updated>
+   <id>http://mgrebenets.github.io/ios/2014/05/29/resign-appstore-to-enterprise</id>
+   <content type="html">
+&lt;p&gt;&lt;em&gt;Coming Soon…&lt;/em&gt;&lt;/p&gt;
+
+&lt;!--more--&gt;
+</content>
+ </entry>
+ 
+ <entry>
    <title>Build Android in the Cloud</title>
    <link href="http://mgrebenets.github.io/android/2014/05/29/build-android-in-the-cloud"/>
    <updated>2014-05-29T00:00:00+10:00</updated>
@@ -683,6 +707,18 @@ cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;
   &lt;li&gt;&lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Install Atlassian CLI with Homebrew&lt;/a&gt; (OS X)&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-rpm&quot;&gt;Install Atlassian CLI from RPM&lt;/a&gt; (Linux)&lt;/li&gt;
 &lt;/ul&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Add Framework to Xcode Project</title>
+   <link href="http://mgrebenets.github.io/ios/2014/05/29/add-framework-to-xcode-project"/>
+   <updated>2014-05-29T00:00:00+10:00</updated>
+   <id>http://mgrebenets.github.io/ios/2014/05/29/add-framework-to-xcode-project</id>
+   <content type="html">
+&lt;p&gt;&lt;em&gt;Coming Soon…&lt;/em&gt;&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
