@@ -5,16 +5,15 @@
         <description>NSBogan - Maksym Grebenets</description>
         <link>http://mgrebenets.github.io</link>
         <link>http://mgrebenets.github.io</link>
-        <lastBuildDate>2014-06-05T17:19:47+10:00</lastBuildDate>
-        <pubDate>2014-06-05T17:19:47+10:00</pubDate>
+        <lastBuildDate>2014-06-05T17:23:50+10:00</lastBuildDate>
+        <pubDate>2014-06-05T17:23:50+10:00</pubDate>
         <ttl>1800</ttl>
 
 
         <item>
                 <title>Install Atlassian CLI from RPM</title>
                 <description>
-&lt;h1 id=&quot;todo&quot;&gt;TODO:&lt;/h1&gt;
-&lt;p&gt;Describe how Atlassian CLI RMP package is created and installed.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Coming Soon…&lt;/em&gt;&lt;/p&gt;
 </description>
                 <link>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</link>
                 <guid>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</guid>
@@ -482,24 +481,6 @@ brew upgrade news-atlassian-cli
         </item>
 
         <item>
-                <title>Share Xcode Schemes</title>
-                <description>
-</description>
-                <link>http://mgrebenets.github.io/xcode/2014/05/29/share-xcode-schemes</link>
-                <guid>http://mgrebenets.github.io/xcode/2014/05/29/share-xcode-schemes</guid>
-                <pubDate>2014-05-29T00:00:00+10:00</pubDate>
-        </item>
-
-        <item>
-                <title>Resign AppStore to Enterprise</title>
-                <description>
-</description>
-                <link>http://mgrebenets.github.io/ios/2014/05/29/resign-appstore-to-enterprise</link>
-                <guid>http://mgrebenets.github.io/ios/2014/05/29/resign-appstore-to-enterprise</guid>
-                <pubDate>2014-05-29T00:00:00+10:00</pubDate>
-        </item>
-
-        <item>
                 <title>Build Android in the Cloud</title>
                 <description>
 &lt;h1 id=&quot;goal&quot;&gt;Goal&lt;/h1&gt;
@@ -693,15 +674,6 @@ cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;
 </description>
                 <link>http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli</link>
                 <guid>http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli</guid>
-                <pubDate>2014-05-29T00:00:00+10:00</pubDate>
-        </item>
-
-        <item>
-                <title>Add Framework to Xcode Project</title>
-                <description>
-</description>
-                <link>http://mgrebenets.github.io/xcode/2014/05/29/add-framework-to-xcode-project</link>
-                <guid>http://mgrebenets.github.io/xcode/2014/05/29/add-framework-to-xcode-project</guid>
                 <pubDate>2014-05-29T00:00:00+10:00</pubDate>
         </item>
 

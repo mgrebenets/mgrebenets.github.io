@@ -11,8 +11,5 @@ http://mgrebenets.github.io/tags.html
 
 http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm
 http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-homebrew
-http://mgrebenets.github.io/xcode/2014/05/29/share-xcode-schemes
-http://mgrebenets.github.io/ios/2014/05/29/resign-appstore-to-enterprise
 http://mgrebenets.github.io/android/2014/05/29/build-android-in-the-cloud
 http://mgrebenets.github.io/atlassian/2014/05/29/atlassian-cli
-http://mgrebenets.github.io/xcode/2014/05/29/add-framework-to-xcode-project
