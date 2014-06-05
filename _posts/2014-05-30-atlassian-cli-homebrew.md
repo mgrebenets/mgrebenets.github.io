@@ -11,6 +11,8 @@ This is a follow up to [introduction to Atlassian CLI]({% post_url 2014-05-29-at
 
 In this post you will learn how to create custom [Homebrew](http://brew.sh/) formula, install Atlassian CLI via Homebrew tap and customize tools for you company environment.
 
+<!--more-->
+
 If you don't care about all the details and steps involved, you can jump right to [Summary](#tldr) section.
 
 # Brew

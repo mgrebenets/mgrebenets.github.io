@@ -1,15 +1,16 @@
 ---
 layout: page
 title: NSBogan
-tagline:
+tagline: An Automation Blog
 ---
 {% include JB/setup %}
 
-## Write Something
-
-<ul class="posts">
+<ul>
   {% for post in site.posts %}
-    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+      {{ post.excerpt }}
+    </li>
   {% endfor %}
 </ul>
 

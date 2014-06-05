@@ -1,14 +1,15 @@
 ---
 layout: post
 title: "Atlassian CLI Client"
-description: "Atlassian CLI Client"
+description: "Introduction to Atlassian CLI Client"
 category: Atlassian
 tags: [atlassian, cli, homebrew, osx]
 ---
 {% include JB/setup %}
 
-# Atlassian CLI
 If you happen to use Atlassian products like JIRA, Bamboo, Stash, Confluence, etc., you may be surprised to know that all these products are backed by a handy command line interface, namely [Atlassian Command Line Interface](https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+Command+Line+Interface).
+
+<!--more-->
 
 Imagine opening, modifying and closing JIRA issues from command line. What about starting Bamboo build plans, opening and closing Stash pull requests, updating Wiki pages?
 

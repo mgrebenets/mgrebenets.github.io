@@ -5,15 +5,17 @@
         <description>NSBogan - Maksym Grebenets</description>
         <link>http://mgrebenets.github.io</link>
         <link>http://mgrebenets.github.io</link>
-        <lastBuildDate>2014-06-05T17:23:50+10:00</lastBuildDate>
-        <pubDate>2014-06-05T17:23:50+10:00</pubDate>
+        <lastBuildDate>2014-06-05T17:47:27+10:00</lastBuildDate>
+        <pubDate>2014-06-05T17:47:27+10:00</pubDate>
         <ttl>1800</ttl>
 
 
         <item>
-                <title>Install Atlassian CLI from RPM</title>
+                <title>Install Atlassian CLI with RPM</title>
                 <description>
 &lt;p&gt;&lt;em&gt;Coming Soon…&lt;/em&gt;&lt;/p&gt;
+
+&lt;!--more--&gt;
 </description>
                 <link>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</link>
                 <guid>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</guid>
@@ -26,6 +28,8 @@
 &lt;p&gt;This is a follow up to &lt;a href=&quot;/atlassian/2014/05/29/atlassian-cli&quot;&gt;introduction to Atlassian CLI&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;In this post you will learn how to create custom &lt;a href=&quot;http://brew.sh/&quot;&gt;Homebrew&lt;/a&gt; formula, install Atlassian CLI via Homebrew tap and customize tools for you company environment.&lt;/p&gt;
+
+&lt;!--more--&gt;
 
 &lt;p&gt;If you don’t care about all the details and steps involved, you can jump right to &lt;a href=&quot;#tldr&quot;&gt;Summary&lt;/a&gt; section.&lt;/p&gt;
 
@@ -483,11 +487,13 @@ brew upgrade news-atlassian-cli
         <item>
                 <title>Build Android in the Cloud</title>
                 <description>
-&lt;h1 id=&quot;goal&quot;&gt;Goal&lt;/h1&gt;
-
 &lt;p&gt;In this example, you are given a task to build Android app on a 64-bit AWS Linux build agent running in Amazon Cloud (AWS).&lt;/p&gt;
 
+&lt;!--more--&gt;
+
 &lt;h1 id=&quot;install-android-sdk&quot;&gt;Install Android SDK&lt;/h1&gt;
+
+&lt;p&gt;You have to start with installing Android SDK first.&lt;/p&gt;
 
 &lt;h2 id=&quot;download&quot;&gt;Download&lt;/h2&gt;
 &lt;p&gt;Start with downloading latest Linux version, found on &lt;a href=&quot;https://developer.android.com/sdk/index.html&quot;&gt;this page&lt;/a&gt;. You can find direct link to tarball in “DOWNLOAD FOR OTHER PLATFORMS” section.&lt;/p&gt;
@@ -642,8 +648,9 @@ cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;
         <item>
                 <title>Atlassian CLI Client</title>
                 <description>
-&lt;h1 id=&quot;atlassian-cli&quot;&gt;Atlassian CLI&lt;/h1&gt;
 &lt;p&gt;If you happen to use Atlassian products like JIRA, Bamboo, Stash, Confluence, etc., you may be surprised to know that all these products are backed by a handy command line interface, namely &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+Command+Line+Interface&quot;&gt;Atlassian Command Line Interface&lt;/a&gt;.&lt;/p&gt;
+
+&lt;!--more--&gt;
 
 &lt;p&gt;Imagine opening, modifying and closing JIRA issues from command line. What about starting Bamboo build plans, opening and closing Stash pull requests, updating Wiki pages?&lt;/p&gt;
 

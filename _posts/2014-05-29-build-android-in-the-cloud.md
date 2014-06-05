@@ -7,11 +7,13 @@ tags: [android, google, aws, amazon, linux, 32-bit, gradle]
 ---
 {% include JB/setup %}
 
-# Goal
-
 In this example, you are given a task to build Android app on a 64-bit AWS Linux build agent running in Amazon Cloud (AWS).
 
+<!--more-->
+
 # Install Android SDK
+
+You have to start with installing Android SDK first.
 
 ## Download
 Start with downloading latest Linux version, found on [this page](https://developer.android.com/sdk/index.html). You can find direct link to tarball in "DOWNLOAD FOR OTHER PLATFORMS" section.
