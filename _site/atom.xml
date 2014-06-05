@@ -4,7 +4,7 @@
  <title>NSBogan</title>
  <link href="http://mgrebenets.github.io/" rel="self"/>
  <link href="http://mgrebenets.github.io"/>
- <updated>2014-06-05T15:32:07+10:00</updated>
+ <updated>2014-06-05T17:19:47+10:00</updated>
  <id>http://mgrebenets.github.io</id>
  <author>
    <name>Maksym Grebenets</name>
@@ -502,20 +502,161 @@ brew upgrade news-atlassian-cli
  </entry>
  
  <entry>
-   <title>Handsfree Android SDK Update</title>
-   <link href="http://mgrebenets.github.io/android/2014/05/29/handsfree-android-sdk-update"/>
-   <updated>2014-05-29T00:00:00+10:00</updated>
-   <id>http://mgrebenets.github.io/android/2014/05/29/handsfree-android-sdk-update</id>
-   <content type="html">
-</content>
- </entry>
- 
- <entry>
    <title>Build Android in the Cloud</title>
    <link href="http://mgrebenets.github.io/android/2014/05/29/build-android-in-the-cloud"/>
    <updated>2014-05-29T00:00:00+10:00</updated>
    <id>http://mgrebenets.github.io/android/2014/05/29/build-android-in-the-cloud</id>
    <content type="html">
+&lt;h1 id=&quot;goal&quot;&gt;Goal&lt;/h1&gt;
+
+&lt;p&gt;In this example, you are given a task to build Android app on a 64-bit AWS Linux build agent running in Amazon Cloud (AWS).&lt;/p&gt;
+
+&lt;h1 id=&quot;install-android-sdk&quot;&gt;Install Android SDK&lt;/h1&gt;
+
+&lt;h2 id=&quot;download&quot;&gt;Download&lt;/h2&gt;
+&lt;p&gt;Start with downloading latest Linux version, found on &lt;a href=&quot;https://developer.android.com/sdk/index.html&quot;&gt;this page&lt;/a&gt;. You can find direct link to tarball in “DOWNLOAD FOR OTHER PLATFORMS” section.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;wget http://dl.google.com/android/android-sdk_r22.6.2-linux.tgz&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;extract-and-move&quot;&gt;Extract and Move&lt;/h2&gt;
+&lt;p&gt;Extract it and put in preferred location, in this example it’s &lt;code&gt;/usr/local/opt/android-sdk&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# extract&lt;/span&gt;
+tar xzf android-sdk_r22.6.2-linux.tgz
+&lt;span class=&quot;c&quot;&gt;# move&lt;/span&gt;
+mv android-sdk-linux /usr/local/opt/android-sdk&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;configure-path&quot;&gt;Configure PATH&lt;/h2&gt;
+&lt;p&gt;Now configure &lt;code&gt;ANDROID_HOME&lt;/code&gt; and update the path. That is done by modifying &lt;code&gt;~/.bash_profile&lt;/code&gt;, create the file if you don’t have it yet.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;ANDROID_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/opt/android-sdk
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;:&lt;span class=&quot;nv&quot;&gt;$ANDROID_HOME&lt;/span&gt;/tools
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;:&lt;span class=&quot;nv&quot;&gt;$ANDROID_HOME&lt;/span&gt;/platform-tools
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; -d &lt;span class=&quot;nv&quot;&gt;$ANDROID_HOME&lt;/span&gt;/build-tools &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;ANDROID_BUILD_TOOLS_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;dirname &lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;find &lt;span class=&quot;nv&quot;&gt;$ANDROID_HOME&lt;/span&gt;/build-tools -name aapt &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; tail -1&lt;span class=&quot;k&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Built Tools located: $ANDROID_BUILD_TOOLS_HOME&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$ANDROID_BUILD_TOOLS_HOME&lt;/span&gt;:&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;fi&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You noticed that adding Android Build Tools to the path is optional. That’s because we didn’t install Build Tools yet.&lt;/p&gt;
+
+&lt;h2 id=&quot;update-android-sdk&quot;&gt;Update Android SDK&lt;/h2&gt;
+
+&lt;p&gt;This is where you update Android SDK, install all the tools and APIs, including Build Tools and Android Support Repository and Library. Remember, this Linux instance is running in the AWS Cloud meaning it’s headless (no GUI) and you only can work with the shell.&lt;/p&gt;
+
+&lt;p&gt;You might say “So what? &lt;code&gt;android update sdk&lt;/code&gt; command has &lt;code&gt;--no-ui&lt;/code&gt; switch. What’s the big deal?” You are right, this will work, but you still have to do it manually, one of the reasons is that you have to answer the command line prompt with &lt;em&gt;“y”&lt;/em&gt;. It won’t work if you run Android SDK Update as part of build task. Also, updating and installing the Build Tools needs a bit of extra work, same problem with Android Support. You need to install Build Tools if you use &lt;code&gt;aapt&lt;/code&gt; or any other build tool, and most of the Android apps need stuff from Android Support Repository and Library.&lt;/p&gt;
+
+&lt;h3 id=&quot;update-basic-packages&quot;&gt;Update Basic Packages&lt;/h3&gt;
+
+&lt;p&gt;So, the first part (answering the prompt) is easy, &lt;code&gt;echo &quot;y&quot;&lt;/code&gt; is your friend. This is how you can install and update Tools, Platform Tools, Platform.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;y&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; android update sdk --filter tool,platform,platform-tool --no-ui&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that there’s no &lt;code&gt;build-tool&lt;/code&gt; or &lt;code&gt;android-support&lt;/code&gt; in the filter. That’s because those are not “default” filters. You have to create custom filter for them.&lt;/p&gt;
+
+&lt;h3 id=&quot;build-tools-android-support-repository-and-library&quot;&gt;Build-tools, Android Support Repository and Library&lt;/h3&gt;
+
+&lt;p&gt;Next let’s get the full list of SDK packages and use it to create a custom filter.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sdk-list.txt
+android list sdk &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now grep all the lines that contain package names which you need.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;filter.txt
+&lt;span class=&quot;c&quot;&gt;# grep the build tools&lt;/span&gt;
+cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android SDK Build-tools&amp;quot;&lt;/span&gt; &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# grep the support repository and library&lt;/span&gt;
+cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Support&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Other than &lt;code&gt;tool&lt;/code&gt;, &lt;code&gt;platform&lt;/code&gt; or &lt;code&gt;platform-tool&lt;/code&gt; filters, &lt;code&gt;--filter&lt;/code&gt; option for &lt;code&gt;android update sdk&lt;/code&gt; also understands package identifiers. Package identifier is a number listed on the left of the package name.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;Packages available &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;installation or update: 97
+    1- Android SDK Tools, revision 22.6.2
+    2- Android SDK Platform-tools, revision 19.0.1
+    3- Android SDK Build-tools, revision 19.0.3
+    4- Android SDK Build-tools, revision 19.0.2
+    5- Android SDK Build-tools, revision 19.0.1
+    &lt;span class=&quot;c&quot;&gt;# ***&lt;/span&gt;
+    36- Android Support Repository, revision 5
+    37- Android Support Library, revision 19&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;In this example &lt;em&gt;3&lt;/em&gt; is an ID for &lt;em&gt;Android SDK Build-tools, revision 19.0.3&lt;/em&gt;, &lt;em&gt;36&lt;/em&gt; is an ID for &lt;em&gt;Android Support Repository, revision 5&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;You need to parse these identifiers and make a comma-separated list for a filter. And you already have reduced the list of packages and saved it in &lt;code&gt;filter.txt&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# read filter.txt ($FILTER) line by line and parse the id to use later&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;read &lt;/span&gt;p
+&lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# cut by &amp;quot;-&amp;quot;, take the first part and trim the spaces&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$p&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; cut -d- -f1 &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; tr -d &lt;span class=&quot;s1&quot;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# add to comma-separated list&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;ARR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;${ARR}${ID},&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt; &amp;lt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# cut off the trailing comma&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ARR&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; rev &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; cut -d, -f2- &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; rev&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code&gt;$ARR&lt;/code&gt; now contains a comma-separated list of package IDs, time to use it as a filter.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;y&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; android update sdk --filter &lt;span class=&quot;nv&quot;&gt;$ARR&lt;/span&gt; --no-ui&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;install-32-bit-libraries&quot;&gt;Install 32-bit Libraries&lt;/h1&gt;
+&lt;p&gt;Before you try to build anything, you have to do one more thing.&lt;/p&gt;
+
+&lt;p&gt;Remember, the host OS is 64-bit Linux system. Android requires a bunch of 32-bit libraries and you have to install them. The Linux system in question is RPM-based so this example uses &lt;code&gt;yum&lt;/code&gt; command, change it to &lt;code&gt;apt-get&lt;/code&gt; or another package manager specific for your OS.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# install 32-bit libraries&lt;/span&gt;
+sudo yum install glibc.i686, zlib.i686, libstdc++.so.6 libz.so.1&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now you’re good to go!&lt;/p&gt;
+
+&lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;This is a TLDR or a summary section, that simply lists the solution “as is”.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# install 32-bit libraries&lt;/span&gt;
+sudo yum install glibc.i686, zlib.i686, libstdc++.so.6 libz.so.1&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Update Android SDK&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Tools, Platforms, Platform Tools and Build tools&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# --- Step 1 ---&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# update all &amp;quot;default&amp;quot; tools and platorm&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;y&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; android update sdk --filter tool,platform,platform-tool --no-ui
+
+&lt;span class=&quot;c&quot;&gt;# --- Step 2 ---&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# capture all the tools in a text file to speed things up&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sdk-list.txt
+android list sdk &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;filter.txt
+&lt;span class=&quot;c&quot;&gt;# grep the build tools&lt;/span&gt;
+cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android SDK Build-tools&amp;quot;&lt;/span&gt; &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# grep the support repository and library&lt;/span&gt;
+cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Support&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# if there&amp;#39;s nothing to install, stop the task&lt;/span&gt;
+! &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; -s &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Blank filter - Nothing to install&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;0
+
+&lt;span class=&quot;c&quot;&gt;# read line by line and parse the id to use later&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;while &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;read &lt;/span&gt;p
+&lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# cut by &amp;quot;-&amp;quot;, take the first part and trim the spaces&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$p&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; cut -d- -f1 &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; tr -d &lt;span class=&quot;s1&quot;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# add to comma-separated list&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;ARR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;${ARR}${ID},&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;done&lt;/span&gt; &amp;lt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# cut off the trailing comma&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$ARR&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; rev &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; cut -d, -f2- &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; rev
+
+&lt;span class=&quot;c&quot;&gt;# now install&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;y&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; android update sdk --filter &lt;span class=&quot;nv&quot;&gt;$ARR&lt;/span&gt; --no-ui
+
+&lt;span class=&quot;c&quot;&gt;# EOF&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 </content>
  </entry>
  
@@ -559,9 +700,9 @@ brew upgrade news-atlassian-cli
  
  <entry>
    <title>Add Framework to Xcode Project</title>
-   <link href="http://mgrebenets.github.io/ios/2014/05/29/add-framework-to-xcode-project"/>
+   <link href="http://mgrebenets.github.io/xcode/2014/05/29/add-framework-to-xcode-project"/>
    <updated>2014-05-29T00:00:00+10:00</updated>
-   <id>http://mgrebenets.github.io/ios/2014/05/29/add-framework-to-xcode-project</id>
+   <id>http://mgrebenets.github.io/xcode/2014/05/29/add-framework-to-xcode-project</id>
    <content type="html">
 </content>
  </entry>

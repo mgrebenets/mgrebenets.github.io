@@ -2,7 +2,7 @@
 layout: post
 title: "Add Framework to Xcode Project"
 description: ""
-category: iOS
+category: Xcode
 tags: [xcode, ios, apple, xcodeproj, ruby, shell]
 ---
 {% include JB/setup %}

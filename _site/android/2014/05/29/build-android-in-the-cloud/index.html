@@ -156,6 +156,156 @@
 <div class="row">
   <div class="span8">
     
+<h1 id="goal">Goal</h1>
+
+<p>In this example, you are given a task to build Android app on a 64-bit AWS Linux build agent running in Amazon Cloud (AWS).</p>
+
+<h1 id="install-android-sdk">Install Android SDK</h1>
+
+<h2 id="download">Download</h2>
+<p>Start with downloading latest Linux version, found on <a href="https://developer.android.com/sdk/index.html">this page</a>. You can find direct link to tarball in “DOWNLOAD FOR OTHER PLATFORMS” section.</p>
+
+<div class="highlight"><pre><code class="bash">wget http://dl.google.com/android/android-sdk_r22.6.2-linux.tgz</code></pre></div>
+
+<h2 id="extract-and-move">Extract and Move</h2>
+<p>Extract it and put in preferred location, in this example it’s <code>/usr/local/opt/android-sdk</code></p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># extract</span>
+tar xzf android-sdk_r22.6.2-linux.tgz
+<span class="c"># move</span>
+mv android-sdk-linux /usr/local/opt/android-sdk</code></pre></div>
+
+<h2 id="configure-path">Configure PATH</h2>
+<p>Now configure <code>ANDROID_HOME</code> and update the path. That is done by modifying <code>~/.bash_profile</code>, create the file if you don’t have it yet.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nb">export </span><span class="nv">ANDROID_HOME</span><span class="o">=</span>/usr/local/opt/android-sdk
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$ANDROID_HOME</span>/tools
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$ANDROID_HOME</span>/platform-tools
+<span class="k">if</span> <span class="o">[[</span> -d <span class="nv">$ANDROID_HOME</span>/build-tools <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">    </span><span class="nv">ANDROID_BUILD_TOOLS_HOME</span><span class="o">=</span><span class="k">$(</span>dirname <span class="k">$(</span>find <span class="nv">$ANDROID_HOME</span>/build-tools -name aapt <span class="p">|</span> tail -1<span class="k">))</span>
+    <span class="nb">echo</span> <span class="s2">&quot;Android Built Tools located: $ANDROID_BUILD_TOOLS_HOME&quot;</span>
+    <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$ANDROID_BUILD_TOOLS_HOME</span>:<span class="nv">$PATH</span>
+<span class="k">fi</span></code></pre></div>
+
+<p>You noticed that adding Android Build Tools to the path is optional. That’s because we didn’t install Build Tools yet.</p>
+
+<h2 id="update-android-sdk">Update Android SDK</h2>
+
+<p>This is where you update Android SDK, install all the tools and APIs, including Build Tools and Android Support Repository and Library. Remember, this Linux instance is running in the AWS Cloud meaning it’s headless (no GUI) and you only can work with the shell.</p>
+
+<p>You might say “So what? <code>android update sdk</code> command has <code>--no-ui</code> switch. What’s the big deal?” You are right, this will work, but you still have to do it manually, one of the reasons is that you have to answer the command line prompt with <em>“y”</em>. It won’t work if you run Android SDK Update as part of build task. Also, updating and installing the Build Tools needs a bit of extra work, same problem with Android Support. You need to install Build Tools if you use <code>aapt</code> or any other build tool, and most of the Android apps need stuff from Android Support Repository and Library.</p>
+
+<h3 id="update-basic-packages">Update Basic Packages</h3>
+
+<p>So, the first part (answering the prompt) is easy, <code>echo "y"</code> is your friend. This is how you can install and update Tools, Platform Tools, Platform.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nb">echo</span> <span class="s2">&quot;y&quot;</span> <span class="p">|</span> android update sdk --filter tool,platform,platform-tool --no-ui</code></pre></div>
+
+<p>Note that there’s no <code>build-tool</code> or <code>android-support</code> in the filter. That’s because those are not “default” filters. You have to create custom filter for them.</p>
+
+<h3 id="build-tools-android-support-repository-and-library">Build-tools, Android Support Repository and Library</h3>
+
+<p>Next let’s get the full list of SDK packages and use it to create a custom filter.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">SDK_LIST</span><span class="o">=</span>sdk-list.txt
+android list sdk &gt; <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span></code></pre></div>
+
+<p>Now grep all the lines that contain package names which you need.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nv">FILTER</span><span class="o">=</span>filter.txt
+<span class="c"># grep the build tools</span>
+cat <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> <span class="p">|</span> grep <span class="s2">&quot;Android SDK Build-tools&quot;</span> &gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+<span class="c"># grep the support repository and library</span>
+cat <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> <span class="p">|</span> grep <span class="s2">&quot;Android Support&quot;</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span></code></pre></div>
+
+<p>Other than <code>tool</code>, <code>platform</code> or <code>platform-tool</code> filters, <code>--filter</code> option for <code>android update sdk</code> also understands package identifiers. Package identifier is a number listed on the left of the package name.</p>
+
+<div class="highlight"><pre><code class="bash">Packages available <span class="k">for </span>installation or update: 97
+    1- Android SDK Tools, revision 22.6.2
+    2- Android SDK Platform-tools, revision 19.0.1
+    3- Android SDK Build-tools, revision 19.0.3
+    4- Android SDK Build-tools, revision 19.0.2
+    5- Android SDK Build-tools, revision 19.0.1
+    <span class="c"># ***</span>
+    36- Android Support Repository, revision 5
+    37- Android Support Library, revision 19</code></pre></div>
+
+<p>In this example <em>3</em> is an ID for <em>Android SDK Build-tools, revision 19.0.3</em>, <em>36</em> is an ID for <em>Android Support Repository, revision 5</em>.</p>
+
+<p>You need to parse these identifiers and make a comma-separated list for a filter. And you already have reduced the list of packages and saved it in <code>filter.txt</code>.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># read filter.txt ($FILTER) line by line and parse the id to use later</span>
+<span class="k">while </span><span class="nb">read </span>p
+<span class="k">do</span>
+    <span class="c"># cut by &quot;-&quot;, take the first part and trim the spaces</span>
+    <span class="nv">ID</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$p</span> <span class="p">|</span> cut -d- -f1 <span class="p">|</span> tr -d <span class="s1">&#39; &#39;</span><span class="k">)</span>
+    <span class="c"># add to comma-separated list</span>
+    <span class="nv">ARR</span><span class="o">=</span><span class="s2">&quot;${ARR}${ID},&quot;</span>
+<span class="k">done</span> &lt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+
+<span class="c"># cut off the trailing comma</span>
+<span class="nb">echo</span> <span class="nv">$ARR</span> <span class="p">|</span> rev <span class="p">|</span> cut -d, -f2- <span class="p">|</span> rev</code></pre></div>
+
+<p>The <code>$ARR</code> now contains a comma-separated list of package IDs, time to use it as a filter.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="nb">echo</span> <span class="s2">&quot;y&quot;</span> <span class="p">|</span> android update sdk --filter <span class="nv">$ARR</span> --no-ui</code></pre></div>
+
+<h1 id="install-32-bit-libraries">Install 32-bit Libraries</h1>
+<p>Before you try to build anything, you have to do one more thing.</p>
+
+<p>Remember, the host OS is 64-bit Linux system. Android requires a bunch of 32-bit libraries and you have to install them. The Linux system in question is RPM-based so this example uses <code>yum</code> command, change it to <code>apt-get</code> or another package manager specific for your OS.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># install 32-bit libraries</span>
+sudo yum install glibc.i686, zlib.i686, libstdc++.so.6 libz.so.1</code></pre></div>
+
+<p>Now you’re good to go!</p>
+
+<h1 id="summary">Summary</h1>
+
+<p>This is a TLDR or a summary section, that simply lists the solution “as is”.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># install 32-bit libraries</span>
+sudo yum install glibc.i686, zlib.i686, libstdc++.so.6 libz.so.1</code></pre></div>
+
+<div class="highlight"><pre><code class="bash"><span class="c">#!/bin/bash</span>
+
+<span class="c"># Update Android SDK</span>
+<span class="c"># Tools, Platforms, Platform Tools and Build tools</span>
+
+<span class="c"># --- Step 1 ---</span>
+<span class="c"># update all &quot;default&quot; tools and platorm</span>
+<span class="nb">echo</span> <span class="s2">&quot;y&quot;</span> <span class="p">|</span> android update sdk --filter tool,platform,platform-tool --no-ui
+
+<span class="c"># --- Step 2 ---</span>
+<span class="c"># capture all the tools in a text file to speed things up</span>
+<span class="nv">SDK_LIST</span><span class="o">=</span>sdk-list.txt
+android list sdk &gt; <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span>
+
+<span class="nv">FILTER</span><span class="o">=</span>filter.txt
+<span class="c"># grep the build tools</span>
+cat <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> <span class="p">|</span> grep <span class="s2">&quot;Android SDK Build-tools&quot;</span> &gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+<span class="c"># grep the support repository and library</span>
+cat <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> <span class="p">|</span> grep <span class="s2">&quot;Android Support&quot;</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+
+<span class="c"># if there&#39;s nothing to install, stop the task</span>
+! <span class="o">[[</span> -s <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;Blank filter - Nothing to install&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">exit </span>0
+
+<span class="c"># read line by line and parse the id to use later</span>
+<span class="k">while </span><span class="nb">read </span>p
+<span class="k">do</span>
+    <span class="c"># cut by &quot;-&quot;, take the first part and trim the spaces</span>
+    <span class="nv">ID</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$p</span> <span class="p">|</span> cut -d- -f1 <span class="p">|</span> tr -d <span class="s1">&#39; &#39;</span><span class="k">)</span>
+    <span class="c"># add to comma-separated list</span>
+    <span class="nv">ARR</span><span class="o">=</span><span class="s2">&quot;${ARR}${ID},&quot;</span>
+<span class="k">done</span> &lt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+
+<span class="c"># cut off the trailing comma</span>
+<span class="nb">echo</span> <span class="nv">$ARR</span> <span class="p">|</span> rev <span class="p">|</span> cut -d, -f2- <span class="p">|</span> rev
+
+<span class="c"># now install</span>
+<span class="nb">echo</span> <span class="s2">&quot;y&quot;</span> <span class="p">|</span> android update sdk --filter <span class="nv">$ARR</span> --no-ui
+
+<span class="c"># EOF</span></code></pre></div>
 
     <hr>
     <div class="pagination btn-group">
@@ -164,7 +314,7 @@
       
         <a class="btn" href="/archive.html">Archive</a>
       
-        <a class="btn next" href="/android/2014/05/29/handsfree-android-sdk-update" title="Handsfree Android SDK Update">Next &rarr;</a>
+        <a class="btn next" href="/ios/2014/05/29/resign-appstore-to-enterprise" title="Resign AppStore to Enterprise">Next &rarr;</a>
       
     </div>
     <hr>
@@ -214,9 +364,9 @@
 
   
      
-    	<li><a href="/tags.html#android-ref">android <span>2</span></a></li>
+    	<li><a href="/tags.html#android-ref">android <span>1</span></a></li>
      
-    	<li><a href="/tags.html#google-ref">google <span>2</span></a></li>
+    	<li><a href="/tags.html#google-ref">google <span>1</span></a></li>
      
     	<li><a href="/tags.html#aws-ref">aws <span>2</span></a></li>
      
