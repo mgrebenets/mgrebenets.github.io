@@ -5,10 +5,26 @@
         <description>NSBogan - Maksym Grebenets</description>
         <link>http://mgrebenets.github.io</link>
         <link>http://mgrebenets.github.io</link>
-        <lastBuildDate>2014-06-05T18:02:28+10:00</lastBuildDate>
-        <pubDate>2014-06-05T18:02:28+10:00</pubDate>
+        <lastBuildDate>2014-06-05T18:50:27+10:00</lastBuildDate>
+        <pubDate>2014-06-05T18:50:27+10:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>Shark 2 for iOS/OSX</title>
+                <description>
+&lt;p&gt;SHARK provides libraries for the design of adaptive systems, including methods for linear and nonlinear optimization (e.g., evolutionary and gradient-based algorithms), kernel-based algorithms and neural networks, and other machine learning techniques.&lt;/p&gt;
+
+&lt;p&gt;This script is created to build framework for Shark version 2.3.4.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;To read the full article please &lt;a href=&quot;http://mgrebenets.github.io/shark2-iosx/&quot;&gt;follow the link&lt;/a&gt;.&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/references/2014/06/05/shark-2-for-ios</link>
+                <guid>http://mgrebenets.github.io/references/2014/06/05/shark-2-for-ios</guid>
+                <pubDate>2014-06-05T00:00:00+10:00</pubDate>
+        </item>
 
         <item>
                 <title>Install Atlassian CLI with RPM</title>
