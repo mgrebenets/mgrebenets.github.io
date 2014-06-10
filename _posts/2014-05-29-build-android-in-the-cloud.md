@@ -81,9 +81,9 @@ Now grep all the lines that contain package names which you need.
 {% highlight bash %}
 FILTER=${TMP_DIR}/filter.txt
 # grep the build tools
-cat ${SDK_LIST} | grep "Android SDK Build-tools" > ${FILTER}
+grep "Android SDK Build-tools" ${SDK_LIST} > ${FILTER}
 # grep the support repository and library
-cat ${SDK_LIST} | grep "Android Support" >> ${FILTER}
+grep "Android Support" ${SDK_LIST} >> ${FILTER}
 {% endhighlight %}
 
 Here comes a small update, if you plan to run an Android emulator on this machine, you will need to install ABI image. It might be either ARM or x86 image, the lines below will add both.
@@ -174,9 +174,9 @@ android list sdk > ${SDK_LIST}
 
 FILTER=${TMP_DIR}/filter.txt
 # grep the build tools
-cat ${SDK_LIST} | grep "Android SDK Build-tools" > ${FILTER}
+grep "Android SDK Build-tools" ${SDK_LIST} > ${FILTER}
 # grep the support repository and library
-cat ${SDK_LIST} | grep "Android Support" >> ${FILTER}
+grep "Android Support" ${SDK_LIST} >> ${FILTER}
 # grep ABI image to be able to create AVDs and run emulator
 grep "ABI" ${SDK_LIST} >> ${FILTER}
 # grep x86 images and APIs, need it to run x86 emulator
