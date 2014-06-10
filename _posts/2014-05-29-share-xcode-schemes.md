@@ -175,3 +175,6 @@ xcproj.save
 
 Right, this is one of those cases where actual meaningful code is very small (just 4 lines), the rest is options parsing and error checking, but then it's worth it in the end.
 
+### P.S.
+[Related thread](http://stackoverflow.com/questions/14368938/xcodebuild-says-does-not-contain-scheme) on StackOverflow.
+
