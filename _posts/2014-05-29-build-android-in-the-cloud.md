@@ -64,23 +64,35 @@ echo "y" | android update sdk --filter tool,platform,platform-tool --no-ui
 
 Note that there's no `build-tool` or `android-support` in the filter. That's because those are not "default" filters. You have to create custom filter for them.
 
-### Build-tools, Android Support Repository and Library
+### Build-tools, Android Support Repository and Library, etc.
 
 Next let's get the full list of SDK packages and use it to create a custom filter.
 
 {% highlight bash %}
-SDK_LIST=sdk-list.txt
+# Temp dir
+TMP_DIR=$(mktemp -dt "XXXXXXXX")
+
+SDK_LIST=${TMP_DIR}/sdk-list.txt
 android list sdk > ${SDK_LIST}
 {% endhighlight %}
 
 Now grep all the lines that contain package names which you need.
 
 {% highlight bash %}
-FILTER=filter.txt
+FILTER=${TMP_DIR}/filter.txt
 # grep the build tools
 cat ${SDK_LIST} | grep "Android SDK Build-tools" > ${FILTER}
 # grep the support repository and library
 cat ${SDK_LIST} | grep "Android Support" >> ${FILTER}
+{% endhighlight %}
+
+Here comes a small update, if you plan to run an Android emulator on this machine, you will need to install ABI image. It might be either ARM or x86 image, the lines below will add both.
+
+{% highlight bash %}
+# grep ABI image to be able to create AVDs and run emulator
+grep "ABI" ${SDK_LIST} >> ${FILTER}
+# grep x86 images and APIs, need it to run x86 emulator
+grep "x86" ${SDK_LIST} >> ${FILTER}
 {% endhighlight %}
 
 Other than `tool`, `platform` or `platform-tool` filters, `--filter` option for `android update sdk` also understands package identifiers. Package identifier is a number listed on the left of the package name.
@@ -148,20 +160,27 @@ sudo yum install glibc.i686, zlib.i686, libstdc++.so.6 libz.so.1
 # Update Android SDK
 # Tools, Platforms, Platform Tools and Build tools
 
+# Temp dir
+TMP_DIR=$(mktemp -dt "XXXXXXXX")
+
 # --- Step 1 ---
 # update all "default" tools and platorm
 echo "y" | android update sdk --filter tool,platform,platform-tool --no-ui
 
 # --- Step 2 ---
 # capture all the tools in a text file to speed things up
-SDK_LIST=sdk-list.txt
+SDK_LIST=${TMP_DIR}/sdk-list.txt
 android list sdk > ${SDK_LIST}
 
-FILTER=filter.txt
+FILTER=${TMP_DIR}/filter.txt
 # grep the build tools
 cat ${SDK_LIST} | grep "Android SDK Build-tools" > ${FILTER}
 # grep the support repository and library
 cat ${SDK_LIST} | grep "Android Support" >> ${FILTER}
+# grep ABI image to be able to create AVDs and run emulator
+grep "ABI" ${SDK_LIST} >> ${FILTER}
+# grep x86 images and APIs, need it to run x86 emulator
+grep "x86" ${SDK_LIST} >> ${FILTER}
 
 # if there's nothing to install, stop the task
 ! [[ -s ${FILTER} ]] && echo "Blank filter - Nothing to install" && exit 0
