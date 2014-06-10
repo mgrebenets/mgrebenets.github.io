@@ -156,9 +156,167 @@
 <div class="row">
   <div class="span8">
     
-<p><em>Coming Soon…</em></p>
+<p>So you are facing one of these Xcode errors where it tells you that there’s no such scheme? This post could help to explain why Xcode does it and how to solve this problem.</p>
 
 <!--more-->
+
+<h1 id="shared-vs-user-schemes">Shared vs User Schemes</h1>
+
+<p>While setting up build server for iOS app I have faced this issue multitude of times. Xcode schemes can be either shared or not. By default schemes are not shared and are owned by a user that creates them.</p>
+
+<p>Here’s how it looks in Xcode, note the last column with checkboxes.
+<img src="/assets/images/schemes-list.png" alt="Manage Schemes" /></p>
+
+<p>If you look inside <code>kartoteka-reloaded.xcodeproj</code> folder you will see how Xcode stores the schemes.
+Here’s how it looks when <code>kartoteka-reloaded.xcscheme</code> is not shared</p>
+
+<div class="highlight"><pre><code class="bash">kartoteka-reloaded.xcodeproj/
+├── project.pbxproj
+├── project.xcworkspace
+│   └── contents.xcworkspacedata
+├── xcshareddata
+│   └── xcschemes
+└── xcuserdata
+    └── grebenetsm.xcuserdatad
+        └── xcschemes
+            ├── kartoteka-reloaded.xcscheme
+            └── xcschememanagement.plist</code></pre></div>
+
+<p>Now let’s check the “Shared” checkbox and list directory contents again</p>
+
+<div class="highlight"><pre><code class="bash">kartoteka-reloaded.xcodeproj/
+├── project.pbxproj
+├── project.xcworkspace
+│   └── contents.xcworkspacedata
+├── xcshareddata
+│   └── xcschemes
+│       └── kartoteka-reloaded.xcscheme
+└── xcuserdata
+    └── grebenetsm.xcuserdatad
+        └── xcschemes
+            └── xcschememanagement.plist</code></pre></div>
+
+<p>Notice how the <code>kartoteka-reloaded.xcsheme</code> moved from user data folder to shared data folder. This is basically what makes scheme a shared one.</p>
+
+<p>The general practice for Xcode projects <code>.gitignore</code> file is to ignore user data</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># .gitignore</span>
+xcuserdata/
+*.xcuserdatad</code></pre></div>
+
+<p>So when you check out source code on a build box, there won’t be any user schemes inside <code>.xcodeproj</code> folder and <code>xcodebuild</code> won’t be able to see the schemes and will fail to build them.</p>
+
+<h1 id="solution">Solution</h1>
+
+<p>You can solve this problem either manually or automatically.</p>
+
+<p>Of course you can just talk to devs and ask them to share the scheme. Done!
+You can even do this change yourself and create pull request with changes.</p>
+
+<p>But this approach will not work in some cases. For example, if you want to run UI automation tests with Calabash, you know that the steps are</p>
+
+<ul>
+  <li>Duplicate existing Xcode target and name new test target with <code>-cal</code> suffix</li>
+  <li>Add Calabash framework to test target</li>
+  <li>Build <code>-cal</code> test target and run tests</li>
+</ul>
+
+<p>The first step is done with <code>calabash-ios setup</code> command. When new target is created a scheme is created for it as well. This is the default setting for all Xcode projects and in this post we’ll assume that’s the way you have it configured as well.</p>
+
+<p>Now the tricky part, it doesn’t matter if original scheme was shared, the new <code>-cal</code> scheme will not be shared. That means you won’t be able to build it from command line.</p>
+
+<p>This time this all happens on a build box as part of a build plan, you can’t push anything back to the repository, you have to find a way to make this new scheme shared right now.</p>
+
+<p>The answer to your problems comes from Ruby world. In particular the <a href="https://rubygems.org/gems/xcodeproj">xcodeproj</a> Ruby gem. This is an incredibly handy library to work with Xcode projects and workspaces. You can do pretty much anything you need, create and modify targets and schemes, add new files to targets, modify build settings and other properties, and, of course, share schemes. By the way, <code>xcodeproj</code> is used by <a href="https://github.com/CocoaPods/Xcodeproj">CocoaPods</a> and that says a lot.</p>
+
+<p>Go ahead and install the gem</p>
+
+<div class="highlight"><pre><code class="bash"><span class="o">[</span>sudo<span class="o">]</span> gem install xcodeproj</code></pre></div>
+
+<p>Now create a simple Ruby file, name it whatever you want</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#!/usr/bin/env ruby</span>
+<span class="nb">require</span> <span class="s1">&#39;xcodeproj&#39;</span>
+<span class="n">xcproj</span> <span class="o">=</span> <span class="no">Xcodeproj</span><span class="o">::</span><span class="no">Project</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;MyProject.xcodeproj&quot;</span><span class="p">)</span>
+<span class="n">xcproj</span><span class="o">.</span><span class="n">recreate_user_schemes</span>
+<span class="n">xcproj</span><span class="o">.</span><span class="n">save</span></code></pre></div>
+
+<p>This is it! Put your Xcode project name in there, then run and the scheme will be shared.</p>
+
+<h1 id="summary">Summary</h1>
+
+<p>Surely the Ruby script can be improved, you’d want to pass Xcode project name as an argument or even look it up automatically.</p>
+
+<p>As usual, in Summary I just provide file listing with a solution ready to copy-paste. Here’s more advanced Ruby script for your use.</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="c1">#!/usr/bin/env ruby</span>
+
+<span class="nb">require</span> <span class="s1">&#39;optparse&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;ostruct&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;xcodeproj&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;colorize&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;fileutils&#39;</span>
+
+<span class="c1"># Option parser</span>
+<span class="k">class</span> <span class="nc">OptionParser</span>
+
+    <span class="c1"># Parse options</span>
+    <span class="c1"># @param [Array&lt;String&gt;] args command line args</span>
+    <span class="c1"># @return [OpenStruct] parsed options</span>
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="no">OpenStruct</span><span class="o">.</span><span class="n">new</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="kp">nil</span>
+
+        <span class="n">opt_parser</span> <span class="o">=</span> <span class="no">OptionParser</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">opts</span><span class="o">|</span>
+
+            <span class="n">opts</span><span class="o">.</span><span class="n">banner</span> <span class="o">=</span> <span class="s2">&quot;Usage: </span><span class="si">#{</span><span class="no">File</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="vg">$0</span><span class="p">)</span><span class="si">}</span><span class="s2"> [options]&quot;</span>
+
+            <span class="n">opts</span><span class="o">.</span><span class="n">separator</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s1">&#39;-p [PROJECT]&#39;</span><span class="p">,</span> <span class="s1">&#39;--project [PROJECT]&#39;</span><span class="p">,</span> <span class="s2">&quot;Xcode project path. Automatically look up if not provided.&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">project</span><span class="o">|</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
+            <span class="k">end</span>
+
+            <span class="n">opts</span><span class="o">.</span><span class="n">separator</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">opts</span><span class="o">.</span><span class="n">separator</span><span class="p">(</span><span class="s2">&quot;Help:&quot;</span><span class="p">)</span>
+            <span class="n">opts</span><span class="o">.</span><span class="n">on_tail</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="s1">&#39;Display this help&#39;</span><span class="p">)</span> <span class="k">do</span>
+                <span class="nb">puts</span> <span class="n">opts</span>
+                <span class="nb">exit</span>
+            <span class="k">end</span>
+
+        <span class="k">end</span>
+
+        <span class="n">opt_parser</span><span class="o">.</span><span class="n">parse!</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">options</span>
+    <span class="k">end</span> <span class="c1"># parse()</span>
+<span class="k">end</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="no">OptionParser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="no">ARGV</span><span class="p">)</span>
+
+<span class="c1"># Lookup for Xcode project other than Pods</span>
+<span class="c1"># @return [String] name of Xcode project or nil if not found</span>
+<span class="k">def</span> <span class="nf">lookup_project</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Looking for Xcode project...&quot;</span>
+    <span class="c1"># list all .xcodeproj files except Pods</span>
+    <span class="n">projects_list</span> <span class="o">=</span> <span class="no">Dir</span><span class="o">.</span><span class="n">entries</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">select</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">end_with?</span> <span class="s2">&quot;.xcodeproj&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">f</span> <span class="o">!=</span> <span class="s2">&quot;Pods.xcodeproj&quot;</span><span class="p">)</span> <span class="p">}</span>
+    <span class="n">projects_list</span><span class="o">.</span><span class="n">empty?</span> <span class="p">?</span> <span class="kp">nil</span> <span class="p">:</span> <span class="n">projects_list</span><span class="o">.</span><span class="n">first</span>
+<span class="k">end</span>
+
+<span class="c1"># lookup if not specificed</span>
+<span class="n">options</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">lookup_project</span> <span class="k">if</span> <span class="o">!</span><span class="n">options</span><span class="o">.</span><span class="n">project</span>
+<span class="k">if</span> <span class="o">!</span><span class="n">options</span><span class="o">.</span><span class="n">project</span> <span class="k">then</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Error&quot;</span><span class="o">.</span><span class="n">red</span><span class="o">.</span><span class="n">underline</span> <span class="o">+</span> <span class="s2">&quot;: No Xcode projects found in the working folder&quot;</span>
+    <span class="nb">exit</span> <span class="mi">1</span>
+<span class="k">end</span>
+
+<span class="nb">puts</span> <span class="s2">&quot;Using project path: &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">options</span><span class="o">.</span><span class="n">project</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">green</span>
+
+<span class="n">xcproj</span> <span class="o">=</span> <span class="no">Xcodeproj</span><span class="o">::</span><span class="no">Project</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">project</span><span class="p">)</span>
+<span class="n">xcproj</span><span class="o">.</span><span class="n">recreate_user_schemes</span>
+<span class="n">xcproj</span><span class="o">.</span><span class="n">save</span></code></pre></div>
+
+<p>Right, this is one of those cases where actual meaningful code is very small (just 4 lines), the rest is options parsing and error checking, but then it’s worth it in the end.</p>
+
 
     <hr>
     <div class="pagination btn-group">
@@ -177,7 +335,7 @@
   <div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_developer = 1;
-    var disqus_shortname = 'NSBogan'; // required: replace example with your forum shortname
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
     
     /* * * DON'T EDIT BELOW THIS LINE * * */
     (function() {

@@ -4,7 +4,7 @@
  <title>NSBogan</title>
  <link href="http://mgrebenets.github.io/" rel="self"/>
  <link href="http://mgrebenets.github.io"/>
- <updated>2014-06-06T08:37:01+10:00</updated>
+ <updated>2014-06-10T23:55:05+10:00</updated>
  <id>http://mgrebenets.github.io</id>
  <author>
    <name>Maksym Grebenets</name>
@@ -508,9 +508,167 @@ brew upgrade news-atlassian-cli
    <updated>2014-05-29T00:00:00+10:00</updated>
    <id>http://mgrebenets.github.io/xcode/2014/05/29/share-xcode-schemes</id>
    <content type="html">
-&lt;p&gt;&lt;em&gt;Coming Soon…&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;So you are facing one of these Xcode errors where it tells you that there’s no such scheme? This post could help to explain why Xcode does it and how to solve this problem.&lt;/p&gt;
 
 &lt;!--more--&gt;
+
+&lt;h1 id=&quot;shared-vs-user-schemes&quot;&gt;Shared vs User Schemes&lt;/h1&gt;
+
+&lt;p&gt;While setting up build server for iOS app I have faced this issue multitude of times. Xcode schemes can be either shared or not. By default schemes are not shared and are owned by a user that creates them.&lt;/p&gt;
+
+&lt;p&gt;Here’s how it looks in Xcode, note the last column with checkboxes.
+&lt;img src=&quot;/assets/images/schemes-list.png&quot; alt=&quot;Manage Schemes&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you look inside &lt;code&gt;kartoteka-reloaded.xcodeproj&lt;/code&gt; folder you will see how Xcode stores the schemes.
+Here’s how it looks when &lt;code&gt;kartoteka-reloaded.xcscheme&lt;/code&gt; is not shared&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;kartoteka-reloaded.xcodeproj/
+├── project.pbxproj
+├── project.xcworkspace
+│   └── contents.xcworkspacedata
+├── xcshareddata
+│   └── xcschemes
+└── xcuserdata
+    └── grebenetsm.xcuserdatad
+        └── xcschemes
+            ├── kartoteka-reloaded.xcscheme
+            └── xcschememanagement.plist&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now let’s check the “Shared” checkbox and list directory contents again&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;kartoteka-reloaded.xcodeproj/
+├── project.pbxproj
+├── project.xcworkspace
+│   └── contents.xcworkspacedata
+├── xcshareddata
+│   └── xcschemes
+│       └── kartoteka-reloaded.xcscheme
+└── xcuserdata
+    └── grebenetsm.xcuserdatad
+        └── xcschemes
+            └── xcschememanagement.plist&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Notice how the &lt;code&gt;kartoteka-reloaded.xcsheme&lt;/code&gt; moved from user data folder to shared data folder. This is basically what makes scheme a shared one.&lt;/p&gt;
+
+&lt;p&gt;The general practice for Xcode projects &lt;code&gt;.gitignore&lt;/code&gt; file is to ignore user data&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# .gitignore&lt;/span&gt;
+xcuserdata/
+*.xcuserdatad&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So when you check out source code on a build box, there won’t be any user schemes inside &lt;code&gt;.xcodeproj&lt;/code&gt; folder and &lt;code&gt;xcodebuild&lt;/code&gt; won’t be able to see the schemes and will fail to build them.&lt;/p&gt;
+
+&lt;h1 id=&quot;solution&quot;&gt;Solution&lt;/h1&gt;
+
+&lt;p&gt;You can solve this problem either manually or automatically.&lt;/p&gt;
+
+&lt;p&gt;Of course you can just talk to devs and ask them to share the scheme. Done!
+You can even do this change yourself and create pull request with changes.&lt;/p&gt;
+
+&lt;p&gt;But this approach will not work in some cases. For example, if you want to run UI automation tests with Calabash, you know that the steps are&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Duplicate existing Xcode target and name new test target with &lt;code&gt;-cal&lt;/code&gt; suffix&lt;/li&gt;
+  &lt;li&gt;Add Calabash framework to test target&lt;/li&gt;
+  &lt;li&gt;Build &lt;code&gt;-cal&lt;/code&gt; test target and run tests&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The first step is done with &lt;code&gt;calabash-ios setup&lt;/code&gt; command. When new target is created a scheme is created for it as well. This is the default setting for all Xcode projects and in this post we’ll assume that’s the way you have it configured as well.&lt;/p&gt;
+
+&lt;p&gt;Now the tricky part, it doesn’t matter if original scheme was shared, the new &lt;code&gt;-cal&lt;/code&gt; scheme will not be shared. That means you won’t be able to build it from command line.&lt;/p&gt;
+
+&lt;p&gt;This time this all happens on a build box as part of a build plan, you can’t push anything back to the repository, you have to find a way to make this new scheme shared right now.&lt;/p&gt;
+
+&lt;p&gt;The answer to your problems comes from Ruby world. In particular the &lt;a href=&quot;https://rubygems.org/gems/xcodeproj&quot;&gt;xcodeproj&lt;/a&gt; Ruby gem. This is an incredibly handy library to work with Xcode projects and workspaces. You can do pretty much anything you need, create and modify targets and schemes, add new files to targets, modify build settings and other properties, and, of course, share schemes. By the way, &lt;code&gt;xcodeproj&lt;/code&gt; is used by &lt;a href=&quot;https://github.com/CocoaPods/Xcodeproj&quot;&gt;CocoaPods&lt;/a&gt; and that says a lot.&lt;/p&gt;
+
+&lt;p&gt;Go ahead and install the gem&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;sudo&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; gem install xcodeproj&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now create a simple Ruby file, name it whatever you want&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;xcodeproj&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Xcodeproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Project&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;MyProject.xcodeproj&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recreate_user_schemes&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;save&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is it! Put your Xcode project name in there, then run and the scheme will be shared.&lt;/p&gt;
+
+&lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;Surely the Ruby script can be improved, you’d want to pass Xcode project name as an argument or even look it up automatically.&lt;/p&gt;
+
+&lt;p&gt;As usual, in Summary I just provide file listing with a solution ready to copy-paste. Here’s more advanced Ruby script for your use.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;optparse&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;ostruct&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;rubygems&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;xcodeproj&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;colorize&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;fileutils&amp;#39;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Option parser&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;OptionParser&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Parse options&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @param [Array&amp;lt;String&amp;gt;] args command line args&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# @return [OpenStruct] parsed options&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;options&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;OpenStruct&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;opt_parser&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;OptionParser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+
+            &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;banner&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Usage: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;basename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;vg&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; [options]&amp;quot;&lt;/span&gt;
+
+            &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;separator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;-p [PROJECT]&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;--project [PROJECT]&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Xcode project path. Automatically look up if not provided.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;project&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+            &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;separator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;separator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;Help:&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;on_tail&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;-h&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;--help&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;Display this help&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+                &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;opts&lt;/span&gt;
+                &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;opt_parser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# parse()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;options&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;OptionParser&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;ARGV&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Lookup for Xcode project other than Pods&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# @return [String] name of Xcode project or nil if not found&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;lookup_project&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Looking for Xcode project...&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# list all .xcodeproj files except Pods&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;projects_list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;entries&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;end_with?&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;.xcodeproj&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Pods.xcodeproj&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;projects_list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;empty?&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;projects_list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# lookup if not specificed&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lookup_project&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Error&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;red&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;underline&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;: No Xcode projects found in the working folder&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Using project path: &amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;green&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Xcodeproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Project&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recreate_user_schemes&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;save&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Right, this is one of those cases where actual meaningful code is very small (just 4 lines), the rest is options parsing and error checking, but then it’s worth it in the end.&lt;/p&gt;
+
 </content>
  </entry>
  
@@ -581,20 +739,30 @@ mv android-sdk-linux /usr/local/opt/android-sdk&lt;/code&gt;&lt;/pre&gt;&lt;/div
 
 &lt;p&gt;Note that there’s no &lt;code&gt;build-tool&lt;/code&gt; or &lt;code&gt;android-support&lt;/code&gt; in the filter. That’s because those are not “default” filters. You have to create custom filter for them.&lt;/p&gt;
 
-&lt;h3 id=&quot;build-tools-android-support-repository-and-library&quot;&gt;Build-tools, Android Support Repository and Library&lt;/h3&gt;
+&lt;h3 id=&quot;build-tools-android-support-repository-and-library-etc&quot;&gt;Build-tools, Android Support Repository and Library, etc.&lt;/h3&gt;
 
 &lt;p&gt;Next let’s get the full list of SDK packages and use it to create a custom filter.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sdk-list.txt
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Temp dir&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;TMP_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;mktemp -dt &lt;span class=&quot;s2&quot;&gt;&amp;quot;XXXXXXXX&amp;quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TMP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/sdk-list.txt
 android list sdk &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Now grep all the lines that contain package names which you need.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;filter.txt
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TMP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/filter.txt
 &lt;span class=&quot;c&quot;&gt;# grep the build tools&lt;/span&gt;
 cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android SDK Build-tools&amp;quot;&lt;/span&gt; &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# grep the support repository and library&lt;/span&gt;
 cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Support&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here comes a small update, if you plan to run an Android emulator on this machine, you will need to install ABI image. It might be either ARM or x86 image, the lines below will add both.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# grep ABI image to be able to create AVDs and run emulator&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;ABI&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# grep x86 images and APIs, need it to run x86 emulator&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Other than &lt;code&gt;tool&lt;/code&gt;, &lt;code&gt;platform&lt;/code&gt; or &lt;code&gt;platform-tool&lt;/code&gt; filters, &lt;code&gt;--filter&lt;/code&gt; option for &lt;code&gt;android update sdk&lt;/code&gt; also understands package identifiers. Package identifier is a number listed on the left of the package name.&lt;/p&gt;
 
@@ -650,20 +818,27 @@ sudo yum install glibc.i686, zlib.i686, libstdc++.so.6 libz.so.1&lt;/code&gt;&lt
 &lt;span class=&quot;c&quot;&gt;# Update Android SDK&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# Tools, Platforms, Platform Tools and Build tools&lt;/span&gt;
 
+&lt;span class=&quot;c&quot;&gt;# Temp dir&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;TMP_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;mktemp -dt &lt;span class=&quot;s2&quot;&gt;&amp;quot;XXXXXXXX&amp;quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+
 &lt;span class=&quot;c&quot;&gt;# --- Step 1 ---&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# update all &amp;quot;default&amp;quot; tools and platorm&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;y&amp;quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; android update sdk --filter tool,platform,platform-tool --no-ui
 
 &lt;span class=&quot;c&quot;&gt;# --- Step 2 ---&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# capture all the tools in a text file to speed things up&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;sdk-list.txt
+&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TMP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/sdk-list.txt
 android list sdk &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 
-&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;filter.txt
+&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TMP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/filter.txt
 &lt;span class=&quot;c&quot;&gt;# grep the build tools&lt;/span&gt;
 cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android SDK Build-tools&amp;quot;&lt;/span&gt; &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# grep the support repository and library&lt;/span&gt;
 cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Support&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# grep ABI image to be able to create AVDs and run emulator&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;ABI&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# grep x86 images and APIs, need it to run x86 emulator&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 
 &lt;span class=&quot;c&quot;&gt;# if there&amp;#39;s nothing to install, stop the task&lt;/span&gt;
 ! &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; -s &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Blank filter - Nothing to install&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;0
