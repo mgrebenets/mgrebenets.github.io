@@ -88,11 +88,15 @@ grep "Android Support" ${SDK_LIST} >> ${FILTER}
 
 Here comes a small update, if you plan to run an Android emulator on this machine, you will need to install ABI image. It might be either ARM or x86 image, the lines below will add both.
 
+If your app uses add-ons like Maps, you will need to install Google APIs too.
+
 {% highlight bash %}
 # grep ABI image to be able to create AVDs and run emulator
-grep "ABI" ${SDK_LIST} >> ${FILTER}
+grep "ARM EABI" ${SDK_LIST} >> ${FILTER}
 # grep x86 images and APIs, need it to run x86 emulator
-grep "x86" ${SDK_LIST} >> ${FILTER}
+grep "Intel x86 Atom System Image" ${SDK_LIST} >> ${FILTER}
+# grep the APIs, this is required if your app uses libraries like maps
+grep "Google APIs" ${SDK_LIST} >> ${FILTER}
 {% endhighlight %}
 
 Other than `tool`, `platform` or `platform-tool` filters, `--filter` option for `android update sdk` also understands package identifiers. Package identifier is a number listed on the left of the package name.
@@ -178,9 +182,12 @@ grep "Android SDK Build-tools" ${SDK_LIST} > ${FILTER}
 # grep the support repository and library
 grep "Android Support" ${SDK_LIST} >> ${FILTER}
 # grep ABI image to be able to create AVDs and run emulator
-grep "ABI" ${SDK_LIST} >> ${FILTER}
+grep "ARM EABI" ${SDK_LIST} >> ${FILTER}
 # grep x86 images and APIs, need it to run x86 emulator
-grep "x86" ${SDK_LIST} >> ${FILTER}
+grep "Intel x86 Atom System Image" ${SDK_LIST} >> ${FILTER}
+# grep the APIs, this is required if your app uses libraries like maps
+grep "Google APIs" ${SDK_LIST} >> ${FILTER}
+
 
 # if there's nothing to install, stop the task
 ! [[ -s ${FILTER} ]] && echo "Blank filter - Nothing to install" && exit 0
