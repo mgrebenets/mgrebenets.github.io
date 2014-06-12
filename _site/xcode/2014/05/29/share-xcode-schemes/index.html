@@ -236,12 +236,17 @@ You can even do this change yourself and create pull request with changes.</p>
 <p>Now create a simple Ruby file, name it whatever you want</p>
 
 <div class="highlight"><pre><code class="ruby"><span class="c1">#!/usr/bin/env ruby</span>
+<span class="c1"># share_schemes.rb</span>
+
 <span class="nb">require</span> <span class="s1">&#39;xcodeproj&#39;</span>
 <span class="n">xcproj</span> <span class="o">=</span> <span class="no">Xcodeproj</span><span class="o">::</span><span class="no">Project</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;MyProject.xcodeproj&quot;</span><span class="p">)</span>
 <span class="n">xcproj</span><span class="o">.</span><span class="n">recreate_user_schemes</span>
 <span class="n">xcproj</span><span class="o">.</span><span class="n">save</span></code></pre></div>
 
 <p>This is it! Put your Xcode project name in there, then run and the scheme will be shared.</p>
+
+<div class="highlight"><pre><code class="bash">chmod +x share_schemes.rb
+./share_schemes.rb</code></pre></div>
 
 <h1 id="summary">Summary</h1>
 
@@ -250,6 +255,7 @@ You can even do this change yourself and create pull request with changes.</p>
 <p>As usual, in Summary I just provide file listing with a solution ready to copy-paste. Here’s more advanced Ruby script for your use.</p>
 
 <div class="highlight"><pre><code class="ruby"><span class="c1">#!/usr/bin/env ruby</span>
+<span class="c1"># share_schemes.rb</span>
 
 <span class="nb">require</span> <span class="s1">&#39;optparse&#39;</span>
 <span class="nb">require</span> <span class="s1">&#39;ostruct&#39;</span>
@@ -316,6 +322,14 @@ You can even do this change yourself and create pull request with changes.</p>
 <span class="n">xcproj</span><span class="o">.</span><span class="n">save</span></code></pre></div>
 
 <p>Right, this is one of those cases where actual meaningful code is very small (just 4 lines), the rest is options parsing and error checking, but then it’s worth it in the end.</p>
+
+<p>Finally run it</p>
+
+<div class="highlight"><pre><code class="bash">chmod +x share_schemes.rb
+./share_schemes.rb -p <span class="s2">&quot;MyProject.xcodeproj&quot;</span></code></pre></div>
+
+<h3 id="ps">P.S.</h3>
+<p><a href="http://stackoverflow.com/questions/14368938/xcodebuild-says-does-not-contain-scheme">Related thread</a> on StackOverflow.</p>
 
 
     <hr>

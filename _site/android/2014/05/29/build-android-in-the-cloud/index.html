@@ -219,16 +219,20 @@ android list sdk &gt; <span class="k">${</span><span class="nv">SDK_LIST</span><
 
 <div class="highlight"><pre><code class="bash"><span class="nv">FILTER</span><span class="o">=</span><span class="k">${</span><span class="nv">TMP_DIR</span><span class="k">}</span>/filter.txt
 <span class="c"># grep the build tools</span>
-cat <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> <span class="p">|</span> grep <span class="s2">&quot;Android SDK Build-tools&quot;</span> &gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+grep <span class="s2">&quot;Android SDK Build-tools&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
 <span class="c"># grep the support repository and library</span>
-cat <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> <span class="p">|</span> grep <span class="s2">&quot;Android Support&quot;</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span></code></pre></div>
+grep <span class="s2">&quot;Android Support&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span></code></pre></div>
 
 <p>Here comes a small update, if you plan to run an Android emulator on this machine, you will need to install ABI image. It might be either ARM or x86 image, the lines below will add both.</p>
 
+<p>If your app uses add-ons like Maps, you will need to install Google APIs too.</p>
+
 <div class="highlight"><pre><code class="bash"><span class="c"># grep ABI image to be able to create AVDs and run emulator</span>
-grep <span class="s2">&quot;ABI&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+grep <span class="s2">&quot;ARM EABI&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
 <span class="c"># grep x86 images and APIs, need it to run x86 emulator</span>
-grep <span class="s2">&quot;x86&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span></code></pre></div>
+grep <span class="s2">&quot;Intel x86 Atom System Image&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+<span class="c"># grep the APIs, this is required if your app uses libraries like maps</span>
+grep <span class="s2">&quot;Google APIs&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span></code></pre></div>
 
 <p>Other than <code>tool</code>, <code>platform</code> or <code>platform-tool</code> filters, <code>--filter</code> option for <code>android update sdk</code> also understands package identifiers. Package identifier is a number listed on the left of the package name.</p>
 
@@ -298,13 +302,16 @@ android list sdk &gt; <span class="k">${</span><span class="nv">SDK_LIST</span><
 
 <span class="nv">FILTER</span><span class="o">=</span><span class="k">${</span><span class="nv">TMP_DIR</span><span class="k">}</span>/filter.txt
 <span class="c"># grep the build tools</span>
-cat <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> <span class="p">|</span> grep <span class="s2">&quot;Android SDK Build-tools&quot;</span> &gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+grep <span class="s2">&quot;Android SDK Build-tools&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
 <span class="c"># grep the support repository and library</span>
-cat <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> <span class="p">|</span> grep <span class="s2">&quot;Android Support&quot;</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+grep <span class="s2">&quot;Android Support&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
 <span class="c"># grep ABI image to be able to create AVDs and run emulator</span>
-grep <span class="s2">&quot;ABI&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+grep <span class="s2">&quot;ARM EABI&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
 <span class="c"># grep x86 images and APIs, need it to run x86 emulator</span>
-grep <span class="s2">&quot;x86&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+grep <span class="s2">&quot;Intel x86 Atom System Image&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+<span class="c"># grep the APIs, this is required if your app uses libraries like maps</span>
+grep <span class="s2">&quot;Google APIs&quot;</span> <span class="k">${</span><span class="nv">SDK_LIST</span><span class="k">}</span> &gt;&gt; <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span>
+
 
 <span class="c"># if there&#39;s nothing to install, stop the task</span>
 ! <span class="o">[[</span> -s <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;Blank filter - Nothing to install&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">exit </span>0

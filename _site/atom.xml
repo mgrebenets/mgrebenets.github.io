@@ -4,7 +4,7 @@
  <title>NSBogan</title>
  <link href="http://mgrebenets.github.io/" rel="self"/>
  <link href="http://mgrebenets.github.io"/>
- <updated>2014-06-10T23:55:05+10:00</updated>
+ <updated>2014-06-12T12:22:20+10:00</updated>
  <id>http://mgrebenets.github.io</id>
  <author>
    <name>Maksym Grebenets</name>
@@ -588,12 +588,17 @@ You can even do this change yourself and create pull request with changes.&lt;/p
 &lt;p&gt;Now create a simple Ruby file, name it whatever you want&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# share_schemes.rb&lt;/span&gt;
+
 &lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;xcodeproj&amp;#39;&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Xcodeproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Project&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;MyProject.xcodeproj&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recreate_user_schemes&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;save&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;This is it! Put your Xcode project name in there, then run and the scheme will be shared.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;chmod +x share_schemes.rb
+./share_schemes.rb&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
 
@@ -602,6 +607,7 @@ You can even do this change yourself and create pull request with changes.&lt;/p
 &lt;p&gt;As usual, in Summary I just provide file listing with a solution ready to copy-paste. Here’s more advanced Ruby script for your use.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env ruby&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# share_schemes.rb&lt;/span&gt;
 
 &lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;optparse&amp;#39;&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;ostruct&amp;#39;&lt;/span&gt;
@@ -668,6 +674,14 @@ You can even do this change yourself and create pull request with changes.&lt;/p
 &lt;span class=&quot;n&quot;&gt;xcproj&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;save&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Right, this is one of those cases where actual meaningful code is very small (just 4 lines), the rest is options parsing and error checking, but then it’s worth it in the end.&lt;/p&gt;
+
+&lt;p&gt;Finally run it&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;chmod +x share_schemes.rb
+./share_schemes.rb -p &lt;span class=&quot;s2&quot;&gt;&amp;quot;MyProject.xcodeproj&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;ps&quot;&gt;P.S.&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;http://stackoverflow.com/questions/14368938/xcodebuild-says-does-not-contain-scheme&quot;&gt;Related thread&lt;/a&gt; on StackOverflow.&lt;/p&gt;
 
 </content>
  </entry>
@@ -753,16 +767,20 @@ android list sdk &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;spa
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TMP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/filter.txt
 &lt;span class=&quot;c&quot;&gt;# grep the build tools&lt;/span&gt;
-cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android SDK Build-tools&amp;quot;&lt;/span&gt; &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android SDK Build-tools&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# grep the support repository and library&lt;/span&gt;
-cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Support&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Support&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Here comes a small update, if you plan to run an Android emulator on this machine, you will need to install ABI image. It might be either ARM or x86 image, the lines below will add both.&lt;/p&gt;
 
+&lt;p&gt;If your app uses add-ons like Maps, you will need to install Google APIs too.&lt;/p&gt;
+
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# grep ABI image to be able to create AVDs and run emulator&lt;/span&gt;
-grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;ABI&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;ARM EABI&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# grep x86 images and APIs, need it to run x86 emulator&lt;/span&gt;
-grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Intel x86 Atom System Image&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# grep the APIs, this is required if your app uses libraries like maps&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Google APIs&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Other than &lt;code&gt;tool&lt;/code&gt;, &lt;code&gt;platform&lt;/code&gt; or &lt;code&gt;platform-tool&lt;/code&gt; filters, &lt;code&gt;--filter&lt;/code&gt; option for &lt;code&gt;android update sdk&lt;/code&gt; also understands package identifiers. Package identifier is a number listed on the left of the package name.&lt;/p&gt;
 
@@ -832,13 +850,16 @@ android list sdk &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;spa
 
 &lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TMP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/filter.txt
 &lt;span class=&quot;c&quot;&gt;# grep the build tools&lt;/span&gt;
-cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android SDK Build-tools&amp;quot;&lt;/span&gt; &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android SDK Build-tools&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# grep the support repository and library&lt;/span&gt;
-cat &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Support&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Android Support&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# grep ABI image to be able to create AVDs and run emulator&lt;/span&gt;
-grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;ABI&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;ARM EABI&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# grep x86 images and APIs, need it to run x86 emulator&lt;/span&gt;
-grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Intel x86 Atom System Image&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# grep the APIs, this is required if your app uses libraries like maps&lt;/span&gt;
+grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;Google APIs&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;SDK_LIST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &amp;gt;&amp;gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+
 
 &lt;span class=&quot;c&quot;&gt;# if there&amp;#39;s nothing to install, stop the task&lt;/span&gt;
 ! &lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; -s &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Blank filter - Nothing to install&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;0
@@ -890,7 +911,7 @@ grep &lt;span class=&quot;s2&quot;&gt;&amp;quot;x86&amp;quot;&lt;/span&gt; &lt;s
 
 &lt;p&gt;The purpose of this post is introduce you to Atlassian CLI Plugin if you didn’t know about it yet. The plugin is &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation&quot;&gt;very&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use&quot;&gt;well&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/How+to&quot;&gt;documented&lt;/a&gt; and comes with tons of &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Examples&quot;&gt;examples&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;The thing that I didn’t like about it is installation process. It’s an straightforward “download, move, update &lt;code&gt;PATH&lt;/code&gt;” process. There’s nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.&lt;/p&gt;
+&lt;p&gt;The thing that I didn’t like about it is installation process. It’s a straightforward “download, move, update &lt;code&gt;PATH&lt;/code&gt;” process. There’s nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.&lt;/p&gt;
 
 &lt;p&gt;So I follow up this post with 2 more&lt;/p&gt;
 

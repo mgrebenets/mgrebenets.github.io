@@ -90,6 +90,8 @@ Go ahead and install the gem
 Now create a simple Ruby file, name it whatever you want
 {% highlight ruby %}
 #!/usr/bin/env ruby
+# share_schemes.rb
+
 require 'xcodeproj'
 xcproj = Xcodeproj::Project.open("MyProject.xcodeproj")
 xcproj.recreate_user_schemes
@@ -97,6 +99,11 @@ xcproj.save
 {% endhighlight %}
 
 This is it! Put your Xcode project name in there, then run and the scheme will be shared.
+
+{% highlight bash %}
+chmod +x share_schemes.rb
+./share_schemes.rb
+{% endhighlight %}
 
 # Summary
 
@@ -106,6 +113,7 @@ As usual, in Summary I just provide file listing with a solution ready to copy-p
 
 {% highlight ruby %}
 #!/usr/bin/env ruby
+# share_schemes.rb
 
 require 'optparse'
 require 'ostruct'
@@ -174,6 +182,14 @@ xcproj.save
 {% endhighlight %}
 
 Right, this is one of those cases where actual meaningful code is very small (just 4 lines), the rest is options parsing and error checking, but then it's worth it in the end.
+
+Finally run it
+
+{% highlight bash %}
+chmod +x share_schemes.rb
+./share_schemes.rb -p "MyProject.xcodeproj"
+{% endhighlight %}
+
 
 ### P.S.
 [Related thread](http://stackoverflow.com/questions/14368938/xcodebuild-says-does-not-contain-scheme) on StackOverflow.
