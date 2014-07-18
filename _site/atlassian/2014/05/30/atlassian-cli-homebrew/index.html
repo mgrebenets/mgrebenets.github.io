@@ -169,7 +169,7 @@
 <p><a href="http://brew.sh/">Homebrew</a> (aka “brew”) is a missing package manager for OS X.
 After you install it, you need to update your <code>PATH</code>. By default <code>/usr/local/bin</code> is not in the system path, so modify your <code>~/.bash_profile</code> before you continue.</p>
 
-<div class="highlight"><pre><code class="bash"><span class="c"># ~/.bash_profile</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># ~/.bash_profile</span>
 <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span>/usr/local/bin:<span class="nv">$PATH</span></code></pre></div>
 
 <h2 id="why-brew">Why Brew?</h2>
@@ -184,11 +184,11 @@ After you install it, you need to update your <code>PATH</code>. By default <cod
 
 <p>Let’s say our company is called News, so create new Ruby file</p>
 
-<div class="highlight"><pre><code class="bash">touch news-atlassian-cli.rb</code></pre></div>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">touch news-atlassian-cli.rb</code></pre></div>
 
 <p>With contents like this</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s2">&quot;formula&quot;</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s2">&quot;formula&quot;</span>
 
 <span class="k">class</span> <span class="nc">NewsAtlassianCli</span> <span class="o">&lt;</span> <span class="no">Formula</span>
     <span class="n">version</span> <span class="s2">&quot;3.9.0&quot;</span>
@@ -217,7 +217,7 @@ After you install it, you need to update your <code>PATH</code>. By default <cod
   <li><code>sha1</code> obviously is SHA-1 calculated for file downloaded from <code>url</code>.</li>
 </ul>
 
-<div class="highlight"><pre><code class="bash"><span class="c"># calculate SHA-1</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># calculate SHA-1</span>
 wget https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/390
 openssl sha1 atlassian-cli-3.9.0-distribution.zip
 <span class="c"># SHA1(atlassian-cli-3.9.0-distribution.zip)= c18174f5dee921f69fedd663bd4a9e330565a7d3</span></code></pre></div>
@@ -229,7 +229,7 @@ openssl sha1 atlassian-cli-3.9.0-distribution.zip
 
 <p>Now let’s take advantage of the fact that Homebrew formula is just a Ruby class and add few more custom lines to use later.</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="n">version</span> <span class="s2">&quot;3.9.0&quot;</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">version</span> <span class="s2">&quot;3.9.0&quot;</span>
 <span class="k">def</span> <span class="nf">release</span><span class="p">()</span> <span class="s2">&quot;1&quot;</span> <span class="k">end</span>
 <span class="k">def</span> <span class="nf">java_version</span><span class="p">()</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;JAVA_VERSION&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;1.6&quot;</span> <span class="k">end</span></code></pre></div>
 
@@ -252,7 +252,7 @@ openssl sha1 atlassian-cli-3.9.0-distribution.zip
 <h4 id="cleanup">Cleanup</h4>
 <p>So let’s cleanup. Since we are installing on OSX, we don’t need all the Windows stuff.</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="c1"># Delete Windows batch scripts</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Delete Windows batch scripts</span>
 <span class="n">rm</span> <span class="no">Dir</span><span class="o">[</span><span class="s2">&quot;*.bat&quot;</span><span class="o">]</span></code></pre></div>
 
 <p>As an improvement, this could be a good place to remove examples.</p>
@@ -273,7 +273,7 @@ openssl sha1 atlassian-cli-3.9.0-distribution.zip
 <p>The order doesn’t really matter.
 Patching is required because each shell script is a wrapper around JAR file and contains relative path to that JAR. So if you move the shell script, you have to update the relative path as well.</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="c1"># patch before moving to bin</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># patch before moving to bin</span>
 <span class="no">Dir</span><span class="o">[</span><span class="s1">&#39;*.sh&#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
     <span class="c1"># patch by updating path to lib folder</span>
     <span class="sx">%x[ sed -i -e &#39;s,/lib,/../lib,g&#39; </span><span class="si">#{</span><span class="n">f</span><span class="si">}</span><span class="sx"> ]</span>
@@ -284,7 +284,7 @@ Patching is required because each shell script is a wrapper around JAR file and 
 <p>Here we replace relative path to <code>lib</code> with <code>../lib</code>.
 We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utility and <code>java_version</code> method. This is to be sure Java version is as we expect it.</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="c1"># move to bin and rename</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># move to bin and rename</span>
 <span class="no">Dir</span><span class="o">.</span><span class="n">mkdir</span> <span class="s2">&quot;bin&quot;</span>
 <span class="no">Dir</span><span class="o">[</span><span class="s1">&#39;*.sh&#39;</span><span class="o">].</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">mv</span> <span class="n">f</span><span class="p">,</span> <span class="s2">&quot;bin/</span><span class="si">#{</span><span class="n">f</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s1">&#39;.sh&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">}</span>
 <span class="c1"># all.sh, really? how about atlassian-all?</span>
@@ -296,7 +296,7 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p>We can finally install everything to prefix (<code>/usr/local</code>), that’s where <code>prefix</code> variable is used</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="n">prefix</span><span class="o">.</span><span class="n">install_metafiles</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">prefix</span><span class="o">.</span><span class="n">install_metafiles</span>
 <span class="n">prefix</span><span class="o">.</span><span class="n">install</span> <span class="no">Dir</span><span class="o">[</span><span class="s1">&#39;*&#39;</span><span class="o">]</span></code></pre></div>
 
 <h2 id="customize">Customize</h2>
@@ -307,7 +307,7 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p>The <code>atlassian.sh</code> (which we renamed to <code>atlassian</code> and moved to <code>bin</code>) is there for customization. Have a look inside that file</p>
 
-<div class="highlight"><pre><code class="bash"><span class="c"># - - - - - - - - - - - - - - - - - - - - START CUSTOMIZE FOR YOUR INSTALLATION !!!</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># - - - - - - - - - - - - - - - - - - - - START CUSTOMIZE FOR YOUR INSTALLATION !!!</span>
 <span class="nv">user</span><span class="o">=</span><span class="s1">&#39;automation&#39;</span>
 <span class="nv">password</span><span class="o">=</span><span class="s1">&#39;automation&#39;</span>
 <span class="nv">settings</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
@@ -317,42 +317,42 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p>And there’s another block of code like this, which is used to customize Atlassian products server urls.</p>
 
-<div class="highlight"><pre><code class="bash"><span class="c"># - - - - - - - - - - - - - - - - - - - - START CUSTOMIZE FOR YOUR INSTALLATION !!!</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># - - - - - - - - - - - - - - - - - - - - START CUSTOMIZE FOR YOUR INSTALLATION !!!</span>
 <span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;confluence&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;confluence-cli-3.9.0.jar --server https://confluence.example.com --user $user --password $password&quot;</span>
+    <span class="nv">string</span><span class="o">=</span><span class="s2">&quot;confluence-cli-3.9.0.jar --server https://confluence.example.com --user $user --password $password&quot;</span>
 <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;jira&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;jira-cli-3.9.0.jar --server https://jira.example.com --user $user --password $password&quot;</span>
+    <span class="nv">string</span><span class="o">=</span><span class="s2">&quot;jira-cli-3.9.0.jar --server https://jira.example.com --user $user --password $password&quot;</span>
 <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;fisheye&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;fisheye-cli-3.9.0.jar --server https://fisheye.example.com --user $user --password $password&quot;</span>
+    <span class="nv">string</span><span class="o">=</span><span class="s2">&quot;fisheye-cli-3.9.0.jar --server https://fisheye.example.com --user $user --password $password&quot;</span>
 <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;crucible&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;crucible-cli-3.9.0.jar --server https://crucible.example.com --user $user --password $password&quot;</span>
+    <span class="nv">string</span><span class="o">=</span><span class="s2">&quot;crucible-cli-3.9.0.jar --server https://crucible.example.com --user $user --password $password&quot;</span>
 <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;bamboo&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;bamboo-cli-3.9.0.jar --server https://bamboo.example.com --user $user --password $password&quot;</span>
+    <span class="nv">string</span><span class="o">=</span><span class="s2">&quot;bamboo-cli-3.9.0.jar --server https://bamboo.example.com --user $user --password $password&quot;</span>
 <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;stash&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;stash-cli-3.9.0.jar --server https://stash.example.com --user $user --password $password&quot;</span>
+    <span class="nv">string</span><span class="o">=</span><span class="s2">&quot;stash-cli-3.9.0.jar --server https://stash.example.com --user $user --password $password&quot;</span>
 <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Missing application parameter. Specify an application like confluence, jira, or similar.&quot;</span>
+    <span class="nb">echo</span> <span class="s2">&quot;Missing application parameter. Specify an application like confluence, jira, or similar.&quot;</span>
     <span class="nb">echo</span> <span class="s2">&quot;$0 &lt;application name&gt; &lt;application specific parameters&gt;&quot;</span>
     <span class="nb">exit</span> -99
 <span class="k">else</span>
-<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Application $application not found in $0&quot;</span>
+    <span class="nb">echo</span> <span class="s2">&quot;Application $application not found in $0&quot;</span>
     <span class="nb">exit</span> -99
 <span class="k">fi</span>
 <span class="c"># - - - - - - - - - - - - - - - - - - - - - END CUSTOMIZE FOR YOUR INSTALLATION !!!</span></code></pre></div>
 
 <p>You will need to replace all the <code>https://***.example.com</code> with your company urls. If you have multiple instances of same product in your organization, you can add another <code>elif</code> block for that. For example you are in the middle of migration from Confluence server <code>https://confluence.example.com</code> to a new instance <code>https://confluence.ni.example.com</code>, for a while you want to be able to use both, so add another block like this</p>
 
-<div class="highlight"><pre><code class="bash"><span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;confluence&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;confluence-cli-3.9.0.jar --server https://confluence.example.com --user $user --password $password&quot;</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;confluence&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nv">string</span><span class="o">=</span><span class="s2">&quot;confluence-cli-3.9.0.jar --server https://confluence.example.com --user $user --password $password&quot;</span>
 <span class="k">elif</span> <span class="o">[</span> <span class="s2">&quot;$application&quot;</span> <span class="o">=</span> <span class="s2">&quot;confluence.ni&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-<span class="k">    </span><span class="nv">string</span><span class="o">=</span><span class="s2">&quot;jira-cli-3.9.0.jar --server https://confluence.ni.example.com --user $user --password $password&quot;</span>
+    <span class="nv">string</span><span class="o">=</span><span class="s2">&quot;jira-cli-3.9.0.jar --server https://confluence.ni.example.com --user $user --password $password&quot;</span>
 <span class="c"># ***</span></code></pre></div>
 
 <p>In this example there won’t be multiple instances for same product, but it would be possible to customize scripts to handle that case as well.</p>
 
 <p>So let’s write some Ruby again. For the company called News we will create a nested class <code>NewsEnv</code> that will contain all the company specific environment settings.</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="c1"># nested news environment class</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># nested news environment class</span>
 <span class="k">class</span> <span class="nc">NewsEnv</span>
     <span class="c1"># Patch the shell script above</span>
     <span class="c1"># @param [String] filename name of shell script to patch</span>
@@ -418,7 +418,7 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p>You have to add one more line to <code>install</code> method in the formula</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="no">NewsEnv</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;atlassian.sh&quot;</span><span class="p">)</span></code></pre></div>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">NewsEnv</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;atlassian.sh&quot;</span><span class="p">)</span></code></pre></div>
 
 <p>Make sure to put this line <strong>before</strong> <code>atlassian.sh</code> is moved and renamed.</p>
 
@@ -444,7 +444,7 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p><code>brew tap</code> clones the repository from GitHub and puts it into the taps directory. This is how you can do it directly</p>
 
-<div class="highlight"><pre><code class="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>news-atlassian-cli
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>news-atlassian-cli
 <span class="c"># find out what&#39;s the tap directory</span>
 <span class="nv">TAP_DIR</span><span class="o">=</span><span class="s2">&quot;$(brew --repository)/Library/Taps/${TAP_NAME}&quot;</span>
 <span class="c"># clone the formula repository to tap directory</span>
@@ -456,7 +456,7 @@ brew tap --repair</code></pre></div>
 
 <p>Now you can install, this part is simple</p>
 
-<div class="highlight"><pre><code class="bash"><span class="c"># no username/password customization</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># no username/password customization</span>
 brew install news-atlassian-cli
 <span class="c"># set username/password for service account</span>
 <span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew install news-app-tools</code></pre></div>
@@ -465,7 +465,7 @@ brew install news-atlassian-cli
 
 <p>To upgrade you need to update brew repositories, including the taps, then upgrade the specific package.</p>
 
-<div class="highlight"><pre><code class="bash"><span class="c"># update brew</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># update brew</span>
 brew update
 <span class="c"># upgrade news atlassian cli</span>
 brew upgrade news-atlassian-cli
@@ -478,7 +478,7 @@ brew upgrade news-atlassian-cli
   <li>Create formula Ruby file and put it into a repository</li>
 </ul>
 
-<div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s1">&#39;formula&#39;</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;formula&#39;</span>
 
 <span class="c1"># Homebrew formula to install atlassian CLI tools</span>
 <span class="k">class</span> <span class="nc">NewsAtlassianCli</span> <span class="o">&lt;</span> <span class="no">Formula</span>
@@ -589,7 +589,7 @@ brew upgrade news-atlassian-cli
   <li>Create a Homebrew tap, install and upgrade</li>
 </ul>
 
-<div class="highlight"><pre><code class="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>news-atlassian-cli
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>news-atlassian-cli
 <span class="c"># find out what&#39;s the tap directory</span>
 <span class="nv">TAP_DIR</span><span class="o">=</span><span class="s2">&quot;$(brew --repository)/Library/Taps/${TAP_NAME}&quot;</span>
 <span class="c"># clone the formula repository to tap directory</span>

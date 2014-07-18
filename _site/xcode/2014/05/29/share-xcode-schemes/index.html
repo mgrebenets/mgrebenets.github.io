@@ -170,7 +170,7 @@
 <p>If you look inside <code>kartoteka-reloaded.xcodeproj</code> folder you will see how Xcode stores the schemes.
 Here’s how it looks when <code>kartoteka-reloaded.xcscheme</code> is not shared</p>
 
-<div class="highlight"><pre><code class="bash">kartoteka-reloaded.xcodeproj/
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">kartoteka-reloaded.xcodeproj/
 ├── project.pbxproj
 ├── project.xcworkspace
 │   └── contents.xcworkspacedata
@@ -184,7 +184,7 @@ Here’s how it looks when <code>kartoteka-reloaded.xcscheme</code> is not share
 
 <p>Now let’s check the “Shared” checkbox and list directory contents again</p>
 
-<div class="highlight"><pre><code class="bash">kartoteka-reloaded.xcodeproj/
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">kartoteka-reloaded.xcodeproj/
 ├── project.pbxproj
 ├── project.xcworkspace
 │   └── contents.xcworkspacedata
@@ -200,7 +200,7 @@ Here’s how it looks when <code>kartoteka-reloaded.xcscheme</code> is not share
 
 <p>The general practice for Xcode projects <code>.gitignore</code> file is to ignore user data</p>
 
-<div class="highlight"><pre><code class="bash"><span class="c"># .gitignore</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># .gitignore</span>
 xcuserdata/
 *.xcuserdatad</code></pre></div>
 
@@ -231,11 +231,11 @@ You can even do this change yourself and create pull request with changes.</p>
 
 <p>Go ahead and install the gem</p>
 
-<div class="highlight"><pre><code class="bash"><span class="o">[</span>sudo<span class="o">]</span> gem install xcodeproj</code></pre></div>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>sudo<span class="o">]</span> gem install xcodeproj</code></pre></div>
 
 <p>Now create a simple Ruby file, name it whatever you want</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="c1">#!/usr/bin/env ruby</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1">#!/usr/bin/env ruby</span>
 <span class="c1"># share_schemes.rb</span>
 
 <span class="nb">require</span> <span class="s1">&#39;xcodeproj&#39;</span>
@@ -245,7 +245,7 @@ You can even do this change yourself and create pull request with changes.</p>
 
 <p>This is it! Put your Xcode project name in there, then run and the scheme will be shared.</p>
 
-<div class="highlight"><pre><code class="bash">chmod +x share_schemes.rb
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">chmod +x share_schemes.rb
 ./share_schemes.rb</code></pre></div>
 
 <h1 id="summary">Summary</h1>
@@ -254,7 +254,7 @@ You can even do this change yourself and create pull request with changes.</p>
 
 <p>As usual, in Summary I just provide file listing with a solution ready to copy-paste. Here’s more advanced Ruby script for your use.</p>
 
-<div class="highlight"><pre><code class="ruby"><span class="c1">#!/usr/bin/env ruby</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1">#!/usr/bin/env ruby</span>
 <span class="c1"># share_schemes.rb</span>
 
 <span class="nb">require</span> <span class="s1">&#39;optparse&#39;</span>
@@ -325,7 +325,7 @@ You can even do this change yourself and create pull request with changes.</p>
 
 <p>Finally run it</p>
 
-<div class="highlight"><pre><code class="bash">chmod +x share_schemes.rb
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">chmod +x share_schemes.rb
 ./share_schemes.rb -p <span class="s2">&quot;MyProject.xcodeproj&quot;</span></code></pre></div>
 
 <h3 id="ps">P.S.</h3>
