@@ -85,6 +85,7 @@ android update sdk --no-ui --all --filter $FILTER
 
 This example installs Android SDK Tools, Platform tools, Build tools versions 20.0.0 and 19.0.1, as well as SDK Platform 19 and 20. Customize the list to your needs using proper identifiers.
 
+### Answering the Prompts
 But it's not done yet. When installing or updated, you will have to accept license prompts. Each package can have it's won license requiring you to answer a prompt with "y".
 
 You'd probably think of `yes` command line utility designed for this particular task. However it will not work. `yes` outputs "y" to stdout too often with no options to put delays in between. Android SDK update tool expects not just "y", but a "y" followed by return key, in other words, it expects "y\n" string as a whole. I don't know the exact mechanics of `yes` command, but if you try something like this
@@ -102,6 +103,19 @@ FILTER=tool,platform,android-20,build-tools-20.0.0,android-19,android-19.0.1
     --filter ${FILTER}
 {% endhighlight %}
 
+### Project Specific SDK Update
+If you have various Android project, each with it's own requirements for Android packages, it would be reasonable to add Android SDK update task to the project's build configuration. We are using Gradle, so here's an example of Gradle task
+
+{% highlight bash %}
+task updateSDK(type: Exec) {
+    ext.filter = "tool,platform-tool,android-20,build-tools-20.0.0,android-19,build-tools-19.1.0,build-tools-19.0.1,extra-android-support,extra-android-m2repository,extra-google-m2repository,extra-google-google_play_services,extra-google-google_play_services_froyo"
+    commandLine "sh", "-c", "( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) \
+    | android update sdk --no-ui --all \
+    --filter ${filter}"
+}
+{% endhighlight %}
+
+### Caveats
 The last and very annoying bit, is that this script seems to update packages even if they are already installed. At the moment I have no clue what's causing this behavior and what's the best workaround. When it comes to running this script on one of the Bamboo agents in the cloud it doesn't really matter, but when the script runs on one and only Mac build agent we have - this really slows down each build.
 
 
