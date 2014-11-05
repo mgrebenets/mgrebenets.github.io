@@ -105,6 +105,17 @@ chmod +x share_schemes.rb
 ./share_schemes.rb
 {% endhighlight %}
 
+# Caveats
+It wouldn't be right without problems, right?
+There's a number of situations where shaing a scheme via Ruby script will not work as expected.
+
+If your Xcode project already has a Shared scheme, then you will end up having one scheme from user's data directory and another one form `xcshareddata`. Xcode IDE will pick up both and that's the reason why you see same scheme twice with project name in parentheses.
+![Manage Schemes]({{ site.url }}/assets/images/duplicated-schemes-list.png)
+
+That's not very bad and doesn't normally cause any problems.
+
+The real trouble begins if you didn't have any shared schemes and the scheme that you want to recreate and share is linked to a test target. That's the default configuration for unit tests. So the problem is that `xcodeproj` doesn't [recreate dependencies to test target](https://github.com/CocoaPods/Xcodeproj/issues/139). If you run a `xcodebuild test` action you'll be surprised to see it failing. Unfortunately there isn't an easy work-around for this problem, so you'd better share thos schemes manually and commit changes to source control system.
+
 # Summary
 
 Surely the Ruby script can be improved, you'd want to pass Xcode project name as an argument or even look it up automatically.
