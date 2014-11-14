@@ -35,10 +35,10 @@ Well, Homebrew does all that and then much more. After initial installation upgr
 ### Create Formula
 You could use `brew create <link>` command, but that will create formula in `/usr/loca/Library/Formula`. Instead let's create it manually.
 
-Let's say our company is called News, so create new Ruby file
+Let's say our company is called i4nApps (I know, it's a wierd name...), so create new Ruby file
 
 {% highlight bash %}
-touch news-atlassian-cli.rb
+touch i4napps-atlassian-cli.rb
 {% endhighlight %}
 
 With contents like this
@@ -46,7 +46,7 @@ With contents like this
 
 require "formula"
 
-class NewsAtlassianCli < Formula
+class I4nAppsAtlassianCli < Formula
     version "3.9.0"
     homepage "https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli"
     url "https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/#{version.to_s.delete('.')}"
@@ -69,7 +69,7 @@ These are the basics of brewing.
 - Your custom formula class needs to subclass `Formula` class.
 - `version` in our case is "3.9.0", that's the latest Atlassian CLI Client version at the moment of writing this post.
 - `homepage` points to [Atlassian Marketplace page](https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli).
-- `url` is used to download source code. Note a bit of tweaking at the end of the link `#{version.to_s.delete('.')}`, originally it was "390".
+- `url` is used to download source code. Note a bit of tweaking at the end of the link `#{version.to_s.delete('.')}`, that's to remove dots.
 - `sha1` obviously is SHA-1 calculated for file downloaded from `url`.
 
 {% highlight bash %}
@@ -79,7 +79,7 @@ openssl sha1 atlassian-cli-3.9.0-distribution.zip
 # SHA1(atlassian-cli-3.9.0-distribution.zip)= c18174f5dee921f69fedd663bd4a9e330565a7d3
 {% endhighlight %}
 
-- `install` method is where you do all the installation magic once the source is downloaded in unzipped.
+- `install` method is where you do all the installation magic once the source is downloaded and unzipped.
 - `test` is used to test formula after installation. Normally you just execute main program installed by the formula, in our case it can be `jira`.
 
 Now let's take advantage of the fact that Homebrew formula is just a Ruby class and add few more custom lines to use later.
@@ -214,11 +214,11 @@ elif [ "$application" = "confluence.ni" ]; then
 
 In this example there won't be multiple instances for same product, but it would be possible to customize scripts to handle that case as well.
 
-So let's write some Ruby again. For the company called News we will create a nested class `NewsEnv` that will contain all the company specific environment settings.
+So let's write some Ruby again. For the company called i4nApps we will create a nested class `I4nAppsEnv` that will contain all the company specific environment settings.
 
 {% highlight ruby %}
-# nested news environment class
-class NewsEnv
+# nested environment class
+class I4nAppsEnv
     # Patch the shell script above
     # @param [String] filename name of shell script to patch
     def patch(filename)
@@ -240,12 +240,12 @@ class NewsEnv
 
     # Atlassian Product servers
     @@servers = {
-        :jira => "http://dashboard.news.com.au",
-        :bamboo => "http://bamboo.ni.news.com.au",
-        :stash => "http://stash.news.com.au",
-        :confluence => "http://wiki.news.com.au",
-        :fisheye => "http://fisheye.news.com.au",  # example
-        :crucible => "https://crucible.example.com",    # example
+        :jira => "http://jira.i4napps.com.au",
+        :bamboo => "http://bamboo.i4napps.com.au",
+        :stash => "http://stash.i4napps.com.au",
+        :confluence => "http://wiki.i4napps.com.au",
+        :fisheye => "http://fisheye.i4napps.com.au",
+        :crucible => "https://crucible.i4napps.com",
     }
 
     # Get server url for product
@@ -259,19 +259,19 @@ class NewsEnv
     # @note Optionally use ATLASSAIN_USERNAME environment variable when installing
     # @return [String] username
     def username
-        ENV["NEWS_USERNAME"]
+        ENV["ATLAS_USERNAME"]
     end
 
     # Username for Atlassian servers
     # @note Optionally use ATLASSAIN_PASSWORD environment variable when installing
     # @return [String] password
     def password
-        ENV["NEWS_PASSWORD"]
+        ENV["ATLAS_PASSWORD"]
     end
 end
 {% endhighlight %}
 
-`username` and `password` methods pick up values from `NEWS_USERNAME` and `NEWS_PASSWORD` environment variables. Set those when running `brew install` or `brew upgrade`.
+`username` and `password` methods pick up values from `ATLAS_USERNAME` and `ATLAS_PASSWORD` environment variables. Set those when running `brew install` or `brew upgrade`.
 
 Next the `server` method returns server url for each product type.
 
@@ -283,7 +283,7 @@ Finally `patch` method patches the shell script the way we want it.
 You have to add one more line to `install` method in the formula
 
 {% highlight ruby %}
-NewsEnv.new.patch("atlassian.sh")
+I4nAppsEnv.new.patch("atlassian.sh")
 {% endhighlight %}
 
 Make sure to put this line **before** `atlassian.sh` is moved and renamed.
@@ -294,7 +294,7 @@ Make sure to put this line **before** `atlassian.sh` is moved and renamed.
 
 We are done with the formula. It's time now to push it to a repository. Whatever is you favorite SCM - use it. In this example we will use Git repository hosted with Stash. For example
 
-    ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git
+    ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git
 
 ## <a name="tap-install"/>Tap, Install and Upgrade
 
@@ -308,11 +308,11 @@ But there's a trade off as well. Since we didn't name the tap repository properl
 `brew tap` clones the repository from GitHub and puts it into the taps directory. This is how you can do it directly
 
 {% highlight bash %}
-TAP_NAME=news-atlassian-cli
+TAP_NAME=i4napps-atlassian-cli
 # find out what's the tap directory
 TAP_DIR="$(brew --repository)/Library/Taps/${TAP_NAME}"
 # clone the formula repository to tap directory
-git clone --quiet ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git ${TAP_DIR}
+git clone --quiet ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git ${TAP_DIR}
 # tell brew to repair the taps, that will make brew to pick up newly added tap
 brew tap --repair
 {% endhighlight %}
@@ -323,9 +323,9 @@ Now you can install, this part is simple
 
 {% highlight bash %}
 # no username/password customization
-brew install news-atlassian-cli
+brew install i4napps-atlassian-cli
 # set username/password for service account
-NEWS_USERNAME=news NEWS_PASSWORD=password brew install news-app-tools
+ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew install i4napps-app-tools
 {% endhighlight %}
 
 ### Upgrade
@@ -335,10 +335,10 @@ To upgrade you need to update brew repositories, including the taps, then upgrad
 {% highlight bash %}
 # update brew
 brew update
-# upgrade news atlassian cli
-brew upgrade news-atlassian-cli
+# upgrade i4napps atlassian cli
+brew upgrade i4napps-atlassian-cli
 # customized upgrade
-NEWS_USERNAME=news NEWS_PASSWORD=password brew upgrade news-atlassian-cli
+ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew upgrade i4napps-atlassian-cli
 {% endhighlight %}
 
 # <a name="tldr"/> Summary
@@ -349,7 +349,7 @@ NEWS_USERNAME=news NEWS_PASSWORD=password brew upgrade news-atlassian-cli
 require 'formula'
 
 # Homebrew formula to install atlassian CLI tools
-class NewsAtlassianCli < Formula
+class I4nAppsAtlassianCli < Formula
 
     version "3.9.0"
     def release() "1" end   # custom release field
@@ -359,8 +359,8 @@ class NewsAtlassianCli < Formula
     url "https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/#{version.to_s.delete('.')}"
     sha1 'c18174f5dee921f69fedd663bd4a9e330565a7d3'
 
-    # nested news environment class
-    class NewsEnv
+    # nested i4nApps environment class
+    class I4nAppsEnv
         # Patch the shell script above
         # @param [String] filename name of shell script to patch
         def patch(filename)
@@ -381,12 +381,12 @@ class NewsAtlassianCli < Formula
 
         # Atlassian Product servers
         @@servers = {
-            :jira => "http://dashboard.news.com.au",
-            :bamboo => "http://bamboo.ni.news.com.au",
-            :stash => "http://stash.news.com.au",
-            :confluence => "http://wiki.news.com.au",
-            :fisheye => "http://fisheye.news.com.au/",  # example
-            :crucible => "https://crucible.example.com",    # example
+            :jira => "http://jira.i4napps.com.au",
+            :bamboo => "http://bamboo.i4napps.com.au",
+            :stash => "http://stash.i4napps.com.au",
+            :confluence => "http://wiki.i4napps.com.au",
+            :fisheye => "http://fisheye.i4napps.com.au",
+            :crucible => "https://crucible.i4napps.com",
         }
 
         # Get server url for product
@@ -400,14 +400,14 @@ class NewsAtlassianCli < Formula
         # @note Optionally use ATLASSAIN_USERNAME environment variable when installing
         # @return [String] username
         def username
-            ENV["NEWS_USERNAME"]
+            ENV["ATLAS_USERNAME"]
         end
 
         # Username for Atlassian servers
         # @note Optionally use ATLASSAIN_PASSWORD environment variable when installing
         # @return [String] password
         def password
-            ENV["NEWS_PASSWORD"]
+            ENV["ATLAS_PASSWORD"]
         end
     end
 
@@ -434,7 +434,7 @@ class NewsAtlassianCli < Formula
         # customize bin/atlassian (renamed from atlassian.sh) with username, password and server urls
         # !!!: must patch before install command
         puts "Customizing product endpoints, username and password...."
-        NewsEnv.new.patch("atlassian.sh")
+        I4nAppsEnv.new.patch("atlassian.sh")
 
         # move all shell executables to bin, that's the way homebrew understands it
         # also drop the .sh part
@@ -457,23 +457,23 @@ end
 - Create a Homebrew tap, install and upgrade
 
 {% highlight bash %}
-TAP_NAME=news-atlassian-cli
+TAP_NAME=i4napps-atlassian-cli
 # find out what's the tap directory
 TAP_DIR="$(brew --repository)/Library/Taps/${TAP_NAME}"
 # clone the formula repository to tap directory
-git clone --quiet ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git ${TAP_DIR}
+git clone --quiet ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git ${TAP_DIR}
 # tell brew to repair the taps, that will make brew to pick up newly added tap
 brew tap --repair
 
 # install
-brew install news-atlassian-cli
+brew install i4napps-atlassian-cli
 # or customized install
-NEWS_USERNAME=news NEWS_PASSWORD=password brew install news-atlassian-cli
+ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew install i4napps-atlassian-cli
 
 # update
 brew update
 # then upgrade
-brew upgrade news-atlassian-cli
+brew upgrade i4napps-atlassian-cli
 # or customized upgrade
-NEWS_USERNAME=news NEWS_PASSWORD=password brew upgrade news-atlassian-cli
+ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew upgrade i4napps-atlassian-cli
 {% endhighlight %}
