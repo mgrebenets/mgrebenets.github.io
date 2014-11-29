@@ -19,11 +19,11 @@ Atlassian CLI Client is available on [Atlassian Marketplace](https://marketplace
 
 This is where the confusion between Atlassian CLI _Plugin_ and Atlassian CLI _Client_ needs to be cleared up.
 
-_Plugin_ is **not free** and should be purchased for Atlassian products, e.g. there's CLI plugin for JIRA, Bamboo, Stash.
+_Plugin_ is **not free** and should be purchased for Atlassian products, e.g. there's CLI plugin for JIRA, Bamboo, Stash. This basically a UI for command line tools.
 
-_Client_ can be freely downloaded and installed. You can find a few outdated Homebrew formulas on GitHub that automate client installation. So you might easily assume that it's free, but it's not.
+_Client_ (command line tools) can be freely downloaded and installed. You can find a few outdated Homebrew formulas on GitHub that automate client installation. So you might easily assume that it's free, but it's not!
 
-> You must purchase a license for any of the Atlassian CLI Plugins in order to use the Client.
+> You must purchase a license at lease for one of the Atlassian CLI Plugins in order to use the Client.
 
 The purpose of this post is introduce you to Atlassian CLI Plugin if you didn't know about it yet. The plugin is [very](https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation) [well](https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use) [documented](https://bobswift.atlassian.net/wiki/display/ACLI/How+to) and comes with tons of [examples](https://bobswift.atlassian.net/wiki/display/ACLI/Examples).
 

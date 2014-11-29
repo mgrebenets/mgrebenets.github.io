@@ -34,7 +34,7 @@ kartoteka-reloaded.xcodeproj/
             └── xcschememanagement.plist
 {% endhighlight %}
 
-Now let's check the "Shared" checkbox and list directory contents again
+Now let's tick the "Shared" checkbox then list directory contents again
 {% highlight bash %}
 kartoteka-reloaded.xcodeproj/
 ├── project.pbxproj
@@ -68,7 +68,7 @@ You can solve this problem either manually or automatically.
 Of course you can just talk to devs and ask them to share the scheme. Done!
 You can even do this change yourself and create pull request with changes.
 
-But this approach will not work in some cases. For example, if you want to run UI automation tests with Calabash, you know that the steps are
+But this approach will not work in some cases. For example, if you want to run UI automation tests with Calabash, the steps are
 
 - Duplicate existing Xcode target and name new test target with `-cal` suffix
 - Add Calabash framework to test target
@@ -78,7 +78,7 @@ The first step is done with `calabash-ios setup` command. When new target is cre
 
 Now the tricky part, it doesn't matter if original scheme was shared, the new `-cal` scheme will not be shared. That means you won't be able to build it from command line.
 
-This time this all happens on a build box as part of a build plan, you can't push anything back to the repository, you have to find a way to make this new scheme shared right now.
+Since it all happens on a build box as part of a build plan, you can't push anything back to the repository, you have to find a way to make this new scheme shared right now.
 
 The answer to your problems comes from Ruby world. In particular the [xcodeproj](https://rubygems.org/gems/xcodeproj) Ruby gem. This is an incredibly handy library to work with Xcode projects and workspaces. You can do pretty much anything you need, create and modify targets and schemes, add new files to targets, modify build settings and other properties, and, of course, share schemes. By the way, `xcodeproj` is used by [CocoaPods](https://github.com/CocoaPods/Xcodeproj) and that says a lot.
 
@@ -106,15 +106,15 @@ chmod +x share_schemes.rb
 {% endhighlight %}
 
 # Caveats
-It wouldn't be right without problems, right?
+It sounds to good to be true, right?
 There's a number of situations where shaing a scheme via Ruby script will not work as expected.
 
-If your Xcode project already has a Shared scheme, then you will end up having one scheme from user's data directory and another one form `xcshareddata`. Xcode IDE will pick up both and that's the reason why you see same scheme twice with project name in parentheses.
+If your Xcode project already has a shared scheme, then you will end up having one scheme from user's data directory and another one form `xcshareddata`. Xcode IDE will pick up both and that's the reason why you see same scheme twice with project name in parentheses.
 ![Manage Schemes]({{ site.url }}/assets/images/duplicated-schemes-list.png)
 
-That's not very bad and doesn't normally cause any problems.
+That's not very bad and doesn't normally cause any problems. Until that moment of time when you modify one scheme and forget about another. The best way to avoid this problem is to share schemes from day 1, Xcode will not create user schemes then.
 
-The real trouble begins if you didn't have any shared schemes and the scheme that you want to recreate and share is linked to a test target. That's the default configuration for unit tests. So the problem is that `xcodeproj` doesn't [recreate dependencies to test target](https://github.com/CocoaPods/Xcodeproj/issues/139). If you run a `xcodebuild test` action you'll be surprised to see it failing. Unfortunately there isn't an easy work-around for this problem, so you'd better share thos schemes manually and commit changes to source control system.
+The real trouble begins if you didn't have any shared schemes and the scheme that you want to recreate and share is linked to a test target. That's the default configuration for unit tests. So the problem is that `xcodeproj` [doesn't recreate dependencies to test target](https://github.com/CocoaPods/Xcodeproj/issues/139). If you run a `xcodebuild test` action you'll be surprised to see it failing. Unfortunately there isn't an easy workaround for this problem, so you'd better share those schemes manually and commit changes to source control system.
 
 # Summary
 

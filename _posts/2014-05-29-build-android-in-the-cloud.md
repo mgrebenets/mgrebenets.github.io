@@ -52,7 +52,7 @@ You noticed that adding Android Build Tools to the path is optional. That's beca
 
 This is where you update Android SDK, install all the tools and APIs, including Build Tools and Android Support Repository and Library. Remember, this Linux instance is running in the AWS Cloud meaning it's headless (no GUI) and you only can work with the shell.
 
-If you happened to read older version of this article, you'd remember seeing a lot of shell scripts using `grep` and the rest.
+If you happened to read older version of this article, you'd remember seeing a lot of shell scripts using `grep`.
 
 This is a revised version, with much simpler and cleaner code.
 
@@ -62,7 +62,7 @@ The command that does the job is `android update sdk`. You need to use `--filter
 android list sdk --all --extended
 {% endhighlight %}
 
-`--extended` flag is used to display extended information about each package, including and human readable identifier. `--all` is needed to include extra packages, like build tools, by defaults they won't be listed. Here's an example output.
+`--extended` flag is used to display extended information about each package, including a human readable identifier. `--all` is needed to include extra packages, like build tools, by defaults they won't be listed. Here's an example output.
 
 {% highlight bash %}
 ----------
@@ -83,10 +83,10 @@ FILTER=tool,platform,android-20,build-tools-20.0.0,android-19,android-19.0.1
 android update sdk --no-ui --all --filter $FILTER
 {% endhighlight %}
 
-This example installs Android SDK Tools, Platform tools, Build tools versions 20.0.0 and 19.0.1, as well as SDK Platform 19 and 20. Customize the list to your needs using proper identifiers.
+This example installs _Android SDK Tools_, _Platform tools_, _Build tools_ versions _20.0.0_ and _19.0.1_, as well as _SDK Platform 19_ and _20_. Customize the list to your needs using proper identifiers.
 
 ### Answering the Prompts
-But it's not done yet. When installing or updated, you will have to accept license prompts. Each package can have it's won license requiring you to answer a prompt with "y".
+But it's not done yet. When installing or updating, you will have to accept license prompts. Each package can have it's own license requiring you to answer a prompt with "y".
 
 You'd probably think of `yes` command line utility designed for this particular task. However it will not work. `yes` outputs "y" to stdout too often with no options to put delays in between. Android SDK update tool expects not just "y", but a "y" followed by return key, in other words, it expects "y\n" string as a whole. I don't know the exact mechanics of `yes` command, but if you try something like this
 {% highlight bash %}
@@ -104,7 +104,7 @@ FILTER=tool,platform,android-20,build-tools-20.0.0,android-19,android-19.0.1
 {% endhighlight %}
 
 ### Project Specific SDK Update
-If you have various Android project, each with it's own requirements for Android packages, it would be reasonable to add Android SDK update task to the project's build configuration. We are using Gradle, so here's an example of Gradle task
+If you have various Android project, each with it's own requirements for Android packages, it would be reasonable to add Android SDK update task to the project's build configuration. In this example I will use Gradle, so here's an example of Gradle task
 
 {% highlight bash %}
 task updateSDK(type: Exec) {
@@ -116,7 +116,7 @@ task updateSDK(type: Exec) {
 {% endhighlight %}
 
 ### Caveats
-The last and very annoying bit, is that this script seems to update packages even if they are already installed. At the moment I have no clue what's causing this behavior and what's the best workaround. When it comes to running this script on one of the Bamboo agents in the cloud it doesn't really matter, but when the script runs on one and only Mac build agent we have - this really slows down each build.
+The last and very annoying bit, is that this script seems to update packages even if they are already installed. At the moment I have no clue what's causing this behavior and what's the best workaround. When it comes to running this script on one of the Bamboo agents in the cloud it doesn't really matter, but when the script runs on one and only Mac build agent you have - this really slows down each build.
 
 
 # Install 32-bit Libraries
