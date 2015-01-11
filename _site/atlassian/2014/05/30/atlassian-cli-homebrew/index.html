@@ -182,15 +182,15 @@ After you install it, you need to update your <code>PATH</code>. By default <cod
 <h3 id="create-formula">Create Formula</h3>
 <p>You could use <code>brew create &lt;link&gt;</code> command, but that will create formula in <code>/usr/loca/Library/Formula</code>. Instead let’s create it manually.</p>
 
-<p>Let’s say our company is called News, so create new Ruby file</p>
+<p>Let’s say our company is called i4nApps (I know, it’s a wierd name…), so create new Ruby file</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">touch news-atlassian-cli.rb</code></pre></div>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">touch i4napps-atlassian-cli.rb</code></pre></div>
 
 <p>With contents like this</p>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s2">&quot;formula&quot;</span>
 
-<span class="k">class</span> <span class="nc">NewsAtlassianCli</span> <span class="o">&lt;</span> <span class="no">Formula</span>
+<span class="k">class</span> <span class="nc">I4nAppsAtlassianCli</span> <span class="o">&lt;</span> <span class="no">Formula</span>
     <span class="n">version</span> <span class="s2">&quot;3.9.0&quot;</span>
     <span class="n">homepage</span> <span class="s2">&quot;https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli&quot;</span>
     <span class="n">url</span> <span class="s2">&quot;https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/</span><span class="si">#{</span><span class="n">version</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -213,7 +213,7 @@ After you install it, you need to update your <code>PATH</code>. By default <cod
   <li>Your custom formula class needs to subclass <code>Formula</code> class.</li>
   <li><code>version</code> in our case is “3.9.0”, that’s the latest Atlassian CLI Client version at the moment of writing this post.</li>
   <li><code>homepage</code> points to <a href="https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli">Atlassian Marketplace page</a>.</li>
-  <li><code>url</code> is used to download source code. Note a bit of tweaking at the end of the link <code>#{version.to_s.delete('.')}</code>, originally it was “390”.</li>
+  <li><code>url</code> is used to download source code. Note a bit of tweaking at the end of the link <code>#{version.to_s.delete('.')}</code>, that’s to remove dots.</li>
   <li><code>sha1</code> obviously is SHA-1 calculated for file downloaded from <code>url</code>.</li>
 </ul>
 
@@ -223,7 +223,7 @@ openssl sha1 atlassian-cli-3.9.0-distribution.zip
 <span class="c"># SHA1(atlassian-cli-3.9.0-distribution.zip)= c18174f5dee921f69fedd663bd4a9e330565a7d3</span></code></pre></div>
 
 <ul>
-  <li><code>install</code> method is where you do all the installation magic once the source is downloaded in unzipped.</li>
+  <li><code>install</code> method is where you do all the installation magic once the source is downloaded and unzipped.</li>
   <li><code>test</code> is used to test formula after installation. Normally you just execute main program installed by the formula, in our case it can be <code>jira</code>.</li>
 </ul>
 
@@ -350,10 +350,10 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p>In this example there won’t be multiple instances for same product, but it would be possible to customize scripts to handle that case as well.</p>
 
-<p>So let’s write some Ruby again. For the company called News we will create a nested class <code>NewsEnv</code> that will contain all the company specific environment settings.</p>
+<p>So let’s write some Ruby again. For the company called i4nApps we will create a nested class <code>I4nAppsEnv</code> that will contain all the company specific environment settings.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># nested news environment class</span>
-<span class="k">class</span> <span class="nc">NewsEnv</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># nested environment class</span>
+<span class="k">class</span> <span class="nc">I4nAppsEnv</span>
     <span class="c1"># Patch the shell script above</span>
     <span class="c1"># @param [String] filename name of shell script to patch</span>
     <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -375,12 +375,12 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
     <span class="c1"># Atlassian Product servers</span>
     <span class="vc">@@servers</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="ss">:jira</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://dashboard.news.com.au&quot;</span><span class="p">,</span>
-        <span class="ss">:bamboo</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://bamboo.ni.news.com.au&quot;</span><span class="p">,</span>
-        <span class="ss">:stash</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://stash.news.com.au&quot;</span><span class="p">,</span>
-        <span class="ss">:confluence</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://wiki.news.com.au&quot;</span><span class="p">,</span>
-        <span class="ss">:fisheye</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://fisheye.news.com.au&quot;</span><span class="p">,</span>  <span class="c1"># example</span>
-        <span class="ss">:crucible</span> <span class="o">=&gt;</span> <span class="s2">&quot;https://crucible.example.com&quot;</span><span class="p">,</span>    <span class="c1"># example</span>
+        <span class="ss">:jira</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://jira.i4napps.com.au&quot;</span><span class="p">,</span>
+        <span class="ss">:bamboo</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://bamboo.i4napps.com.au&quot;</span><span class="p">,</span>
+        <span class="ss">:stash</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://stash.i4napps.com.au&quot;</span><span class="p">,</span>
+        <span class="ss">:confluence</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://wiki.i4napps.com.au&quot;</span><span class="p">,</span>
+        <span class="ss">:fisheye</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://fisheye.i4napps.com.au&quot;</span><span class="p">,</span>
+        <span class="ss">:crucible</span> <span class="o">=&gt;</span> <span class="s2">&quot;https://crucible.i4napps.com&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="c1"># Get server url for product</span>
@@ -394,18 +394,18 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
     <span class="c1"># @note Optionally use ATLASSAIN_USERNAME environment variable when installing</span>
     <span class="c1"># @return [String] username</span>
     <span class="k">def</span> <span class="nf">username</span>
-        <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;NEWS_USERNAME&quot;</span><span class="o">]</span>
+        <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;ATLAS_USERNAME&quot;</span><span class="o">]</span>
     <span class="k">end</span>
 
     <span class="c1"># Username for Atlassian servers</span>
     <span class="c1"># @note Optionally use ATLASSAIN_PASSWORD environment variable when installing</span>
     <span class="c1"># @return [String] password</span>
     <span class="k">def</span> <span class="nf">password</span>
-        <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;NEWS_PASSWORD&quot;</span><span class="o">]</span>
+        <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;ATLAS_PASSWORD&quot;</span><span class="o">]</span>
     <span class="k">end</span>
 <span class="k">end</span></code></pre></div>
 
-<p><code>username</code> and <code>password</code> methods pick up values from <code>NEWS_USERNAME</code> and <code>NEWS_PASSWORD</code> environment variables. Set those when running <code>brew install</code> or <code>brew upgrade</code>.</p>
+<p><code>username</code> and <code>password</code> methods pick up values from <code>ATLAS_USERNAME</code> and <code>ATLAS_PASSWORD</code> environment variables. Set those when running <code>brew install</code> or <code>brew upgrade</code>.</p>
 
 <p>Next the <code>server</code> method returns server url for each product type.</p>
 
@@ -418,7 +418,7 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p>You have to add one more line to <code>install</code> method in the formula</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">NewsEnv</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;atlassian.sh&quot;</span><span class="p">)</span></code></pre></div>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">I4nAppsEnv</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;atlassian.sh&quot;</span><span class="p">)</span></code></pre></div>
 
 <p>Make sure to put this line <strong>before</strong> <code>atlassian.sh</code> is moved and renamed.</p>
 
@@ -430,7 +430,7 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p>We are done with the formula. It’s time now to push it to a repository. Whatever is you favorite SCM - use it. In this example we will use Git repository hosted with Stash. For example</p>
 
-<pre><code>ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git
+<pre><code>ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git
 </code></pre>
 
 <h2 id="a-nametap-installtap-install-and-upgrade"><a name="tap-install"></a>Tap, Install and Upgrade</h2>
@@ -444,11 +444,11 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 
 <p><code>brew tap</code> clones the repository from GitHub and puts it into the taps directory. This is how you can do it directly</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>news-atlassian-cli
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>i4napps-atlassian-cli
 <span class="c"># find out what&#39;s the tap directory</span>
 <span class="nv">TAP_DIR</span><span class="o">=</span><span class="s2">&quot;$(brew --repository)/Library/Taps/${TAP_NAME}&quot;</span>
 <span class="c"># clone the formula repository to tap directory</span>
-git clone --quiet ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git <span class="k">${</span><span class="nv">TAP_DIR</span><span class="k">}</span>
+git clone --quiet ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git <span class="k">${</span><span class="nv">TAP_DIR</span><span class="k">}</span>
 <span class="c"># tell brew to repair the taps, that will make brew to pick up newly added tap</span>
 brew tap --repair</code></pre></div>
 
@@ -457,9 +457,9 @@ brew tap --repair</code></pre></div>
 <p>Now you can install, this part is simple</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># no username/password customization</span>
-brew install news-atlassian-cli
+brew install i4napps-atlassian-cli
 <span class="c"># set username/password for service account</span>
-<span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew install news-app-tools</code></pre></div>
+<span class="nv">ATLAS_USERNAME</span><span class="o">=</span>i4niac <span class="nv">ATLAS_PASSWORD</span><span class="o">=</span>password brew install i4napps-app-tools</code></pre></div>
 
 <h3 id="upgrade">Upgrade</h3>
 
@@ -467,10 +467,10 @@ brew install news-atlassian-cli
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># update brew</span>
 brew update
-<span class="c"># upgrade news atlassian cli</span>
-brew upgrade news-atlassian-cli
+<span class="c"># upgrade i4napps atlassian cli</span>
+brew upgrade i4napps-atlassian-cli
 <span class="c"># customized upgrade</span>
-<span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew upgrade news-atlassian-cli</code></pre></div>
+<span class="nv">ATLAS_USERNAME</span><span class="o">=</span>i4niac <span class="nv">ATLAS_PASSWORD</span><span class="o">=</span>password brew upgrade i4napps-atlassian-cli</code></pre></div>
 
 <h1 id="a-nametldr-summary"><a name="tldr"></a> Summary</h1>
 
@@ -481,7 +481,7 @@ brew upgrade news-atlassian-cli
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;formula&#39;</span>
 
 <span class="c1"># Homebrew formula to install atlassian CLI tools</span>
-<span class="k">class</span> <span class="nc">NewsAtlassianCli</span> <span class="o">&lt;</span> <span class="no">Formula</span>
+<span class="k">class</span> <span class="nc">I4nAppsAtlassianCli</span> <span class="o">&lt;</span> <span class="no">Formula</span>
 
     <span class="n">version</span> <span class="s2">&quot;3.9.0&quot;</span>
     <span class="k">def</span> <span class="nf">release</span><span class="p">()</span> <span class="s2">&quot;1&quot;</span> <span class="k">end</span>   <span class="c1"># custom release field</span>
@@ -491,8 +491,8 @@ brew upgrade news-atlassian-cli
     <span class="n">url</span> <span class="s2">&quot;https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/</span><span class="si">#{</span><span class="n">version</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">sha1</span> <span class="s1">&#39;c18174f5dee921f69fedd663bd4a9e330565a7d3&#39;</span>
 
-    <span class="c1"># nested news environment class</span>
-    <span class="k">class</span> <span class="nc">NewsEnv</span>
+    <span class="c1"># nested i4nApps environment class</span>
+    <span class="k">class</span> <span class="nc">I4nAppsEnv</span>
         <span class="c1"># Patch the shell script above</span>
         <span class="c1"># @param [String] filename name of shell script to patch</span>
         <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
@@ -513,12 +513,12 @@ brew upgrade news-atlassian-cli
 
         <span class="c1"># Atlassian Product servers</span>
         <span class="vc">@@servers</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="ss">:jira</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://dashboard.news.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:bamboo</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://bamboo.ni.news.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:stash</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://stash.news.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:confluence</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://wiki.news.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:fisheye</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://fisheye.news.com.au/&quot;</span><span class="p">,</span>  <span class="c1"># example</span>
-            <span class="ss">:crucible</span> <span class="o">=&gt;</span> <span class="s2">&quot;https://crucible.example.com&quot;</span><span class="p">,</span>    <span class="c1"># example</span>
+            <span class="ss">:jira</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://jira.i4napps.com.au&quot;</span><span class="p">,</span>
+            <span class="ss">:bamboo</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://bamboo.i4napps.com.au&quot;</span><span class="p">,</span>
+            <span class="ss">:stash</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://stash.i4napps.com.au&quot;</span><span class="p">,</span>
+            <span class="ss">:confluence</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://wiki.i4napps.com.au&quot;</span><span class="p">,</span>
+            <span class="ss">:fisheye</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://fisheye.i4napps.com.au&quot;</span><span class="p">,</span>
+            <span class="ss">:crucible</span> <span class="o">=&gt;</span> <span class="s2">&quot;https://crucible.i4napps.com&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="c1"># Get server url for product</span>
@@ -532,14 +532,14 @@ brew upgrade news-atlassian-cli
         <span class="c1"># @note Optionally use ATLASSAIN_USERNAME environment variable when installing</span>
         <span class="c1"># @return [String] username</span>
         <span class="k">def</span> <span class="nf">username</span>
-            <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;NEWS_USERNAME&quot;</span><span class="o">]</span>
+            <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;ATLAS_USERNAME&quot;</span><span class="o">]</span>
         <span class="k">end</span>
 
         <span class="c1"># Username for Atlassian servers</span>
         <span class="c1"># @note Optionally use ATLASSAIN_PASSWORD environment variable when installing</span>
         <span class="c1"># @return [String] password</span>
         <span class="k">def</span> <span class="nf">password</span>
-            <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;NEWS_PASSWORD&quot;</span><span class="o">]</span>
+            <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;ATLAS_PASSWORD&quot;</span><span class="o">]</span>
         <span class="k">end</span>
     <span class="k">end</span>
 
@@ -566,7 +566,7 @@ brew upgrade news-atlassian-cli
         <span class="c1"># customize bin/atlassian (renamed from atlassian.sh) with username, password and server urls</span>
         <span class="c1"># !!!: must patch before install command</span>
         <span class="nb">puts</span> <span class="s2">&quot;Customizing product endpoints, username and password....&quot;</span>
-        <span class="no">NewsEnv</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;atlassian.sh&quot;</span><span class="p">)</span>
+        <span class="no">I4nAppsEnv</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;atlassian.sh&quot;</span><span class="p">)</span>
 
         <span class="c1"># move all shell executables to bin, that&#39;s the way homebrew understands it</span>
         <span class="c1"># also drop the .sh part</span>
@@ -589,25 +589,25 @@ brew upgrade news-atlassian-cli
   <li>Create a Homebrew tap, install and upgrade</li>
 </ul>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>news-atlassian-cli
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>i4napps-atlassian-cli
 <span class="c"># find out what&#39;s the tap directory</span>
 <span class="nv">TAP_DIR</span><span class="o">=</span><span class="s2">&quot;$(brew --repository)/Library/Taps/${TAP_NAME}&quot;</span>
 <span class="c"># clone the formula repository to tap directory</span>
-git clone --quiet ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git <span class="k">${</span><span class="nv">TAP_DIR</span><span class="k">}</span>
+git clone --quiet ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git <span class="k">${</span><span class="nv">TAP_DIR</span><span class="k">}</span>
 <span class="c"># tell brew to repair the taps, that will make brew to pick up newly added tap</span>
 brew tap --repair
 
 <span class="c"># install</span>
-brew install news-atlassian-cli
+brew install i4napps-atlassian-cli
 <span class="c"># or customized install</span>
-<span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew install news-atlassian-cli
+<span class="nv">ATLAS_USERNAME</span><span class="o">=</span>i4niac <span class="nv">ATLAS_PASSWORD</span><span class="o">=</span>password brew install i4napps-atlassian-cli
 
 <span class="c"># update</span>
 brew update
 <span class="c"># then upgrade</span>
-brew upgrade news-atlassian-cli
+brew upgrade i4napps-atlassian-cli
 <span class="c"># or customized upgrade</span>
-<span class="nv">NEWS_USERNAME</span><span class="o">=</span>news <span class="nv">NEWS_PASSWORD</span><span class="o">=</span>password brew upgrade news-atlassian-cli</code></pre></div>
+<span class="nv">ATLAS_USERNAME</span><span class="o">=</span>i4niac <span class="nv">ATLAS_PASSWORD</span><span class="o">=</span>password brew upgrade i4napps-atlassian-cli</code></pre></div>
 
 
     <hr>
@@ -696,7 +696,7 @@ brew upgrade news-atlassian-cli
 
     <footer>
       <div class="container">
-        <p>&copy; 2014 Maksym Grebenets
+        <p>&copy; 2015 Maksym Grebenets
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
         </p>

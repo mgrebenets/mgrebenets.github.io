@@ -182,7 +182,7 @@ Here’s how it looks when <code>kartoteka-reloaded.xcscheme</code> is not share
             ├── kartoteka-reloaded.xcscheme
             └── xcschememanagement.plist</code></pre></div>
 
-<p>Now let’s check the “Shared” checkbox and list directory contents again</p>
+<p>Now let’s tick the “Shared” checkbox then list directory contents again</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">kartoteka-reloaded.xcodeproj/
 ├── project.pbxproj
@@ -213,7 +213,7 @@ xcuserdata/
 <p>Of course you can just talk to devs and ask them to share the scheme. Done!
 You can even do this change yourself and create pull request with changes.</p>
 
-<p>But this approach will not work in some cases. For example, if you want to run UI automation tests with Calabash, you know that the steps are</p>
+<p>But this approach will not work in some cases. For example, if you want to run UI automation tests with Calabash, the steps are</p>
 
 <ul>
   <li>Duplicate existing Xcode target and name new test target with <code>-cal</code> suffix</li>
@@ -225,7 +225,7 @@ You can even do this change yourself and create pull request with changes.</p>
 
 <p>Now the tricky part, it doesn’t matter if original scheme was shared, the new <code>-cal</code> scheme will not be shared. That means you won’t be able to build it from command line.</p>
 
-<p>This time this all happens on a build box as part of a build plan, you can’t push anything back to the repository, you have to find a way to make this new scheme shared right now.</p>
+<p>Since it all happens on a build box as part of a build plan, you can’t push anything back to the repository, you have to find a way to make this new scheme shared right now.</p>
 
 <p>The answer to your problems comes from Ruby world. In particular the <a href="https://rubygems.org/gems/xcodeproj">xcodeproj</a> Ruby gem. This is an incredibly handy library to work with Xcode projects and workspaces. You can do pretty much anything you need, create and modify targets and schemes, add new files to targets, modify build settings and other properties, and, of course, share schemes. By the way, <code>xcodeproj</code> is used by <a href="https://github.com/CocoaPods/Xcodeproj">CocoaPods</a> and that says a lot.</p>
 
@@ -247,6 +247,17 @@ You can even do this change yourself and create pull request with changes.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">chmod +x share_schemes.rb
 ./share_schemes.rb</code></pre></div>
+
+<h1 id="caveats">Caveats</h1>
+<p>It sounds to good to be true, right?
+There’s a number of situations where shaing a scheme via Ruby script will not work as expected.</p>
+
+<p>If your Xcode project already has a shared scheme, then you will end up having one scheme from user’s data directory and another one form <code>xcshareddata</code>. Xcode IDE will pick up both and that’s the reason why you see same scheme twice with project name in parentheses.
+<img src="/assets/images/duplicated-schemes-list.png" alt="Manage Schemes" /></p>
+
+<p>That’s not very bad and doesn’t normally cause any problems. Until that moment of time when you modify one scheme and forget about another. The best way to avoid this problem is to share schemes from day 1, Xcode will not create user schemes then.</p>
+
+<p>The real trouble begins if you didn’t have any shared schemes and the scheme that you want to recreate and share is linked to a test target. That’s the default configuration for unit tests. So the problem is that <code>xcodeproj</code> <a href="https://github.com/CocoaPods/Xcodeproj/issues/139">doesn’t recreate dependencies to test target</a>. If you run a <code>xcodebuild test</code> action you’ll be surprised to see it failing. Unfortunately there isn’t an easy workaround for this problem, so you’d better share those schemes manually and commit changes to source control system.</p>
 
 <h1 id="summary">Summary</h1>
 
@@ -424,7 +435,7 @@ You can even do this change yourself and create pull request with changes.</p>
 
     <footer>
       <div class="container">
-        <p>&copy; 2014 Maksym Grebenets
+        <p>&copy; 2015 Maksym Grebenets
           with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
           and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
         </p>

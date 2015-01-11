@@ -5,8 +5,8 @@
         <description>NSBogan - Maksym Grebenets</description>
         <link>http://mgrebenets.github.io</link>
         <link>http://mgrebenets.github.io</link>
-        <lastBuildDate>2014-07-18T11:52:27+10:00</lastBuildDate>
-        <pubDate>2014-07-18T11:52:27+10:00</pubDate>
+        <lastBuildDate>2015-01-12T09:41:22+11:00</lastBuildDate>
+        <pubDate>2015-01-12T09:41:22+11:00</pubDate>
         <ttl>1800</ttl>
 
 
@@ -67,15 +67,15 @@ After you install it, you need to update your &lt;code&gt;PATH&lt;/code&gt;. By 
 &lt;h3 id=&quot;create-formula&quot;&gt;Create Formula&lt;/h3&gt;
 &lt;p&gt;You could use &lt;code&gt;brew create &amp;lt;link&amp;gt;&lt;/code&gt; command, but that will create formula in &lt;code&gt;/usr/loca/Library/Formula&lt;/code&gt;. Instead let’s create it manually.&lt;/p&gt;
 
-&lt;p&gt;Let’s say our company is called News, so create new Ruby file&lt;/p&gt;
+&lt;p&gt;Let’s say our company is called i4nApps (I know, it’s a wierd name…), so create new Ruby file&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;touch news-atlassian-cli.rb&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;touch i4napps-atlassian-cli.rb&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;With contents like this&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;formula&amp;quot;&lt;/span&gt;
 
-&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NewsAtlassianCli&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Formula&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;I4nAppsAtlassianCli&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Formula&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;3.9.0&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;homepage&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;.&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
@@ -98,7 +98,7 @@ After you install it, you need to update your &lt;code&gt;PATH&lt;/code&gt;. By 
   &lt;li&gt;Your custom formula class needs to subclass &lt;code&gt;Formula&lt;/code&gt; class.&lt;/li&gt;
   &lt;li&gt;&lt;code&gt;version&lt;/code&gt; in our case is “3.9.0”, that’s the latest Atlassian CLI Client version at the moment of writing this post.&lt;/li&gt;
   &lt;li&gt;&lt;code&gt;homepage&lt;/code&gt; points to &lt;a href=&quot;https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli&quot;&gt;Atlassian Marketplace page&lt;/a&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;code&gt;url&lt;/code&gt; is used to download source code. Note a bit of tweaking at the end of the link &lt;code&gt;#{version.to_s.delete(&#39;.&#39;)}&lt;/code&gt;, originally it was “390”.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;url&lt;/code&gt; is used to download source code. Note a bit of tweaking at the end of the link &lt;code&gt;#{version.to_s.delete(&#39;.&#39;)}&lt;/code&gt;, that’s to remove dots.&lt;/li&gt;
   &lt;li&gt;&lt;code&gt;sha1&lt;/code&gt; obviously is SHA-1 calculated for file downloaded from &lt;code&gt;url&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -108,7 +108,7 @@ openssl sha1 atlassian-cli-3.9.0-distribution.zip
 &lt;span class=&quot;c&quot;&gt;# SHA1(atlassian-cli-3.9.0-distribution.zip)= c18174f5dee921f69fedd663bd4a9e330565a7d3&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;code&gt;install&lt;/code&gt; method is where you do all the installation magic once the source is downloaded in unzipped.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;install&lt;/code&gt; method is where you do all the installation magic once the source is downloaded and unzipped.&lt;/li&gt;
   &lt;li&gt;&lt;code&gt;test&lt;/code&gt; is used to test formula after installation. Normally you just execute main program installed by the formula, in our case it can be &lt;code&gt;jira&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -235,10 +235,10 @@ We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&
 
 &lt;p&gt;In this example there won’t be multiple instances for same product, but it would be possible to customize scripts to handle that case as well.&lt;/p&gt;
 
-&lt;p&gt;So let’s write some Ruby again. For the company called News we will create a nested class &lt;code&gt;NewsEnv&lt;/code&gt; that will contain all the company specific environment settings.&lt;/p&gt;
+&lt;p&gt;So let’s write some Ruby again. For the company called i4nApps we will create a nested class &lt;code&gt;I4nAppsEnv&lt;/code&gt; that will contain all the company specific environment settings.&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# nested news environment class&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NewsEnv&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# nested environment class&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;I4nAppsEnv&lt;/span&gt;
     &lt;span class=&quot;c1&quot;&gt;# Patch the shell script above&lt;/span&gt;
     &lt;span class=&quot;c1&quot;&gt;# @param [String] filename name of shell script to patch&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -260,12 +260,12 @@ We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&
 
     &lt;span class=&quot;c1&quot;&gt;# Atlassian Product servers&lt;/span&gt;
     &lt;span class=&quot;vc&quot;&gt;@@servers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;ss&quot;&gt;:jira&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://dashboard.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;ss&quot;&gt;:bamboo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://bamboo.ni.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;ss&quot;&gt;:stash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://stash.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;ss&quot;&gt;:confluence&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://wiki.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;ss&quot;&gt;:fisheye&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://fisheye.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# example&lt;/span&gt;
-        &lt;span class=&quot;ss&quot;&gt;:crucible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://crucible.example.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# example&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:jira&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://jira.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:bamboo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://bamboo.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:stash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://stash.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:confluence&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://wiki.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:fisheye&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://fisheye.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;ss&quot;&gt;:crucible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://crucible.i4napps.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
     &lt;span class=&quot;c1&quot;&gt;# Get server url for product&lt;/span&gt;
@@ -279,18 +279,18 @@ We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&
     &lt;span class=&quot;c1&quot;&gt;# @note Optionally use ATLASSAIN_USERNAME environment variable when installing&lt;/span&gt;
     &lt;span class=&quot;c1&quot;&gt;# @return [String] username&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;username&lt;/span&gt;
-        &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NEWS_USERNAME&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;ATLAS_USERNAME&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
     &lt;span class=&quot;c1&quot;&gt;# Username for Atlassian servers&lt;/span&gt;
     &lt;span class=&quot;c1&quot;&gt;# @note Optionally use ATLASSAIN_PASSWORD environment variable when installing&lt;/span&gt;
     &lt;span class=&quot;c1&quot;&gt;# @return [String] password&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;password&lt;/span&gt;
-        &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NEWS_PASSWORD&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;ATLAS_PASSWORD&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code&gt;username&lt;/code&gt; and &lt;code&gt;password&lt;/code&gt; methods pick up values from &lt;code&gt;NEWS_USERNAME&lt;/code&gt; and &lt;code&gt;NEWS_PASSWORD&lt;/code&gt; environment variables. Set those when running &lt;code&gt;brew install&lt;/code&gt; or &lt;code&gt;brew upgrade&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;username&lt;/code&gt; and &lt;code&gt;password&lt;/code&gt; methods pick up values from &lt;code&gt;ATLAS_USERNAME&lt;/code&gt; and &lt;code&gt;ATLAS_PASSWORD&lt;/code&gt; environment variables. Set those when running &lt;code&gt;brew install&lt;/code&gt; or &lt;code&gt;brew upgrade&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;Next the &lt;code&gt;server&lt;/code&gt; method returns server url for each product type.&lt;/p&gt;
 
@@ -303,7 +303,7 @@ We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&
 
 &lt;p&gt;You have to add one more line to &lt;code&gt;install&lt;/code&gt; method in the formula&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;no&quot;&gt;NewsEnv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;atlassian.sh&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;no&quot;&gt;I4nAppsEnv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;atlassian.sh&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;Make sure to put this line &lt;strong&gt;before&lt;/strong&gt; &lt;code&gt;atlassian.sh&lt;/code&gt; is moved and renamed.&lt;/p&gt;
 
@@ -315,7 +315,7 @@ We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&
 
 &lt;p&gt;We are done with the formula. It’s time now to push it to a repository. Whatever is you favorite SCM - use it. In this example we will use Git repository hosted with Stash. For example&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git
+&lt;pre&gt;&lt;code&gt;ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&quot;a-nametap-installtap-install-and-upgrade&quot;&gt;&lt;a name=&quot;tap-install&quot;&gt;&lt;/a&gt;Tap, Install and Upgrade&lt;/h2&gt;
@@ -329,11 +329,11 @@ We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&
 
 &lt;p&gt;&lt;code&gt;brew tap&lt;/code&gt; clones the repository from GitHub and puts it into the taps directory. This is how you can do it directly&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;TAP_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news-atlassian-cli
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;TAP_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;i4napps-atlassian-cli
 &lt;span class=&quot;c&quot;&gt;# find out what&amp;#39;s the tap directory&lt;/span&gt;
 &lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;$(brew --repository)/Library/Taps/${TAP_NAME}&amp;quot;&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# clone the formula repository to tap directory&lt;/span&gt;
-git clone --quiet ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+git clone --quiet ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# tell brew to repair the taps, that will make brew to pick up newly added tap&lt;/span&gt;
 brew tap --repair&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
@@ -342,9 +342,9 @@ brew tap --repair&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Now you can install, this part is simple&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# no username/password customization&lt;/span&gt;
-brew install news-atlassian-cli
+brew install i4napps-atlassian-cli
 &lt;span class=&quot;c&quot;&gt;# set username/password for service account&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;NEWS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news &lt;span class=&quot;nv&quot;&gt;NEWS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew install news-app-tools&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;nv&quot;&gt;ATLAS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;i4niac &lt;span class=&quot;nv&quot;&gt;ATLAS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew install i4napps-app-tools&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;upgrade&quot;&gt;Upgrade&lt;/h3&gt;
 
@@ -352,10 +352,10 @@ brew install news-atlassian-cli
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# update brew&lt;/span&gt;
 brew update
-&lt;span class=&quot;c&quot;&gt;# upgrade news atlassian cli&lt;/span&gt;
-brew upgrade news-atlassian-cli
+&lt;span class=&quot;c&quot;&gt;# upgrade i4napps atlassian cli&lt;/span&gt;
+brew upgrade i4napps-atlassian-cli
 &lt;span class=&quot;c&quot;&gt;# customized upgrade&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;NEWS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news &lt;span class=&quot;nv&quot;&gt;NEWS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew upgrade news-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;nv&quot;&gt;ATLAS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;i4niac &lt;span class=&quot;nv&quot;&gt;ATLAS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew upgrade i4napps-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h1 id=&quot;a-nametldr-summary&quot;&gt;&lt;a name=&quot;tldr&quot;&gt;&lt;/a&gt; Summary&lt;/h1&gt;
 
@@ -366,7 +366,7 @@ brew upgrade news-atlassian-cli
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;formula&amp;#39;&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;# Homebrew formula to install atlassian CLI tools&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NewsAtlassianCli&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Formula&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;I4nAppsAtlassianCli&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Formula&lt;/span&gt;
 
     &lt;span class=&quot;n&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;3.9.0&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;release&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;1&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# custom release field&lt;/span&gt;
@@ -376,8 +376,8 @@ brew upgrade news-atlassian-cli
     &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to_s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;.&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;sha1&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;c18174f5dee921f69fedd663bd4a9e330565a7d3&amp;#39;&lt;/span&gt;
 
-    &lt;span class=&quot;c1&quot;&gt;# nested news environment class&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;NewsEnv&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# nested i4nApps environment class&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;I4nAppsEnv&lt;/span&gt;
         &lt;span class=&quot;c1&quot;&gt;# Patch the shell script above&lt;/span&gt;
         &lt;span class=&quot;c1&quot;&gt;# @param [String] filename name of shell script to patch&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -398,12 +398,12 @@ brew upgrade news-atlassian-cli
 
         &lt;span class=&quot;c1&quot;&gt;# Atlassian Product servers&lt;/span&gt;
         &lt;span class=&quot;vc&quot;&gt;@@servers&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;ss&quot;&gt;:jira&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://dashboard.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;ss&quot;&gt;:bamboo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://bamboo.ni.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;ss&quot;&gt;:stash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://stash.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;ss&quot;&gt;:confluence&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://wiki.news.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;ss&quot;&gt;:fisheye&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://fisheye.news.com.au/&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# example&lt;/span&gt;
-            &lt;span class=&quot;ss&quot;&gt;:crucible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://crucible.example.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;    &lt;span class=&quot;c1&quot;&gt;# example&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:jira&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://jira.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:bamboo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://bamboo.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:stash&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://stash.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:confluence&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://wiki.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:fisheye&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://fisheye.i4napps.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;ss&quot;&gt;:crucible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://crucible.i4napps.com&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
         &lt;span class=&quot;c1&quot;&gt;# Get server url for product&lt;/span&gt;
@@ -417,14 +417,14 @@ brew upgrade news-atlassian-cli
         &lt;span class=&quot;c1&quot;&gt;# @note Optionally use ATLASSAIN_USERNAME environment variable when installing&lt;/span&gt;
         &lt;span class=&quot;c1&quot;&gt;# @return [String] username&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;username&lt;/span&gt;
-            &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NEWS_USERNAME&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+            &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;ATLAS_USERNAME&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
         &lt;span class=&quot;c1&quot;&gt;# Username for Atlassian servers&lt;/span&gt;
         &lt;span class=&quot;c1&quot;&gt;# @note Optionally use ATLASSAIN_PASSWORD environment variable when installing&lt;/span&gt;
         &lt;span class=&quot;c1&quot;&gt;# @return [String] password&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;password&lt;/span&gt;
-            &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NEWS_PASSWORD&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+            &lt;span class=&quot;no&quot;&gt;ENV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;ATLAS_PASSWORD&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
@@ -451,7 +451,7 @@ brew upgrade news-atlassian-cli
         &lt;span class=&quot;c1&quot;&gt;# customize bin/atlassian (renamed from atlassian.sh) with username, password and server urls&lt;/span&gt;
         &lt;span class=&quot;c1&quot;&gt;# !!!: must patch before install command&lt;/span&gt;
         &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Customizing product endpoints, username and password....&amp;quot;&lt;/span&gt;
-        &lt;span class=&quot;no&quot;&gt;NewsEnv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;atlassian.sh&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;I4nAppsEnv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;patch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;atlassian.sh&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
         &lt;span class=&quot;c1&quot;&gt;# move all shell executables to bin, that&amp;#39;s the way homebrew understands it&lt;/span&gt;
         &lt;span class=&quot;c1&quot;&gt;# also drop the .sh part&lt;/span&gt;
@@ -474,25 +474,25 @@ brew upgrade news-atlassian-cli
   &lt;li&gt;Create a Homebrew tap, install and upgrade&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;TAP_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news-atlassian-cli
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;TAP_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;i4napps-atlassian-cli
 &lt;span class=&quot;c&quot;&gt;# find out what&amp;#39;s the tap directory&lt;/span&gt;
 &lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;$(brew --repository)/Library/Taps/${TAP_NAME}&amp;quot;&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# clone the formula repository to tap directory&lt;/span&gt;
-git clone --quiet ssh://git@stash.news.com.au/mobile/news-atlassian-cli.git &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+git clone --quiet ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TAP_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;# tell brew to repair the taps, that will make brew to pick up newly added tap&lt;/span&gt;
 brew tap --repair
 
 &lt;span class=&quot;c&quot;&gt;# install&lt;/span&gt;
-brew install news-atlassian-cli
+brew install i4napps-atlassian-cli
 &lt;span class=&quot;c&quot;&gt;# or customized install&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;NEWS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news &lt;span class=&quot;nv&quot;&gt;NEWS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew install news-atlassian-cli
+&lt;span class=&quot;nv&quot;&gt;ATLAS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;i4niac &lt;span class=&quot;nv&quot;&gt;ATLAS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew install i4napps-atlassian-cli
 
 &lt;span class=&quot;c&quot;&gt;# update&lt;/span&gt;
 brew update
 &lt;span class=&quot;c&quot;&gt;# then upgrade&lt;/span&gt;
-brew upgrade news-atlassian-cli
+brew upgrade i4napps-atlassian-cli
 &lt;span class=&quot;c&quot;&gt;# or customized upgrade&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;NEWS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;news &lt;span class=&quot;nv&quot;&gt;NEWS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew upgrade news-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;span class=&quot;nv&quot;&gt;ATLAS_USERNAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;i4niac &lt;span class=&quot;nv&quot;&gt;ATLAS_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;password brew upgrade i4napps-atlassian-cli&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 </description>
                 <link>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-homebrew</link>
@@ -529,7 +529,7 @@ Here’s how it looks when &lt;code&gt;kartoteka-reloaded.xcscheme&lt;/code&gt; 
             ├── kartoteka-reloaded.xcscheme
             └── xcschememanagement.plist&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;Now let’s check the “Shared” checkbox and list directory contents again&lt;/p&gt;
+&lt;p&gt;Now let’s tick the “Shared” checkbox then list directory contents again&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;kartoteka-reloaded.xcodeproj/
 ├── project.pbxproj
@@ -560,7 +560,7 @@ xcuserdata/
 &lt;p&gt;Of course you can just talk to devs and ask them to share the scheme. Done!
 You can even do this change yourself and create pull request with changes.&lt;/p&gt;
 
-&lt;p&gt;But this approach will not work in some cases. For example, if you want to run UI automation tests with Calabash, you know that the steps are&lt;/p&gt;
+&lt;p&gt;But this approach will not work in some cases. For example, if you want to run UI automation tests with Calabash, the steps are&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Duplicate existing Xcode target and name new test target with &lt;code&gt;-cal&lt;/code&gt; suffix&lt;/li&gt;
@@ -572,7 +572,7 @@ You can even do this change yourself and create pull request with changes.&lt;/p
 
 &lt;p&gt;Now the tricky part, it doesn’t matter if original scheme was shared, the new &lt;code&gt;-cal&lt;/code&gt; scheme will not be shared. That means you won’t be able to build it from command line.&lt;/p&gt;
 
-&lt;p&gt;This time this all happens on a build box as part of a build plan, you can’t push anything back to the repository, you have to find a way to make this new scheme shared right now.&lt;/p&gt;
+&lt;p&gt;Since it all happens on a build box as part of a build plan, you can’t push anything back to the repository, you have to find a way to make this new scheme shared right now.&lt;/p&gt;
 
 &lt;p&gt;The answer to your problems comes from Ruby world. In particular the &lt;a href=&quot;https://rubygems.org/gems/xcodeproj&quot;&gt;xcodeproj&lt;/a&gt; Ruby gem. This is an incredibly handy library to work with Xcode projects and workspaces. You can do pretty much anything you need, create and modify targets and schemes, add new files to targets, modify build settings and other properties, and, of course, share schemes. By the way, &lt;code&gt;xcodeproj&lt;/code&gt; is used by &lt;a href=&quot;https://github.com/CocoaPods/Xcodeproj&quot;&gt;CocoaPods&lt;/a&gt; and that says a lot.&lt;/p&gt;
 
@@ -594,6 +594,17 @@ You can even do this change yourself and create pull request with changes.&lt;/p
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;chmod +x share_schemes.rb
 ./share_schemes.rb&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;caveats&quot;&gt;Caveats&lt;/h1&gt;
+&lt;p&gt;It sounds to good to be true, right?
+There’s a number of situations where shaing a scheme via Ruby script will not work as expected.&lt;/p&gt;
+
+&lt;p&gt;If your Xcode project already has a shared scheme, then you will end up having one scheme from user’s data directory and another one form &lt;code&gt;xcshareddata&lt;/code&gt;. Xcode IDE will pick up both and that’s the reason why you see same scheme twice with project name in parentheses.
+&lt;img src=&quot;/assets/images/duplicated-schemes-list.png&quot; alt=&quot;Manage Schemes&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;That’s not very bad and doesn’t normally cause any problems. Until that moment of time when you modify one scheme and forget about another. The best way to avoid this problem is to share schemes from day 1, Xcode will not create user schemes then.&lt;/p&gt;
+
+&lt;p&gt;The real trouble begins if you didn’t have any shared schemes and the scheme that you want to recreate and share is linked to a test target. That’s the default configuration for unit tests. So the problem is that &lt;code&gt;xcodeproj&lt;/code&gt; &lt;a href=&quot;https://github.com/CocoaPods/Xcodeproj/issues/139&quot;&gt;doesn’t recreate dependencies to test target&lt;/a&gt;. If you run a &lt;code&gt;xcodebuild test&lt;/code&gt; action you’ll be surprised to see it failing. Unfortunately there isn’t an easy workaround for this problem, so you’d better share those schemes manually and commit changes to source control system.&lt;/p&gt;
 
 &lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
 
@@ -738,7 +749,7 @@ mv android-sdk-linux /usr/local/opt/android-sdk&lt;/code&gt;&lt;/pre&gt;&lt;/div
 
 &lt;p&gt;This is where you update Android SDK, install all the tools and APIs, including Build Tools and Android Support Repository and Library. Remember, this Linux instance is running in the AWS Cloud meaning it’s headless (no GUI) and you only can work with the shell.&lt;/p&gt;
 
-&lt;p&gt;If you happened to read older version of this article, you’d remember seeing a lot of shell scripts using &lt;code&gt;grep&lt;/code&gt; and the rest.&lt;/p&gt;
+&lt;p&gt;If you happened to read older version of this article, you’d remember seeing a lot of shell scripts using &lt;code&gt;grep&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;This is a revised version, with much simpler and cleaner code.&lt;/p&gt;
 
@@ -746,7 +757,7 @@ mv android-sdk-linux /usr/local/opt/android-sdk&lt;/code&gt;&lt;/pre&gt;&lt;/div
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;android list sdk --all --extended&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code&gt;--extended&lt;/code&gt; flag is used to display extended information about each package, including and human readable identifier. &lt;code&gt;--all&lt;/code&gt; is needed to include extra packages, like build tools, by defaults they won’t be listed. Here’s an example output.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;--extended&lt;/code&gt; flag is used to display extended information about each package, including a human readable identifier. &lt;code&gt;--all&lt;/code&gt; is needed to include extra packages, like build tools, by defaults they won’t be listed. Here’s an example output.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;----------
 id: &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt; or &lt;span class=&quot;s2&quot;&gt;&amp;quot;build-tools-20.0.0&amp;quot;&lt;/span&gt;
@@ -763,10 +774,10 @@ id: &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt; or &lt;span class=&quot;s2&qu
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;tool,platform,android-20,build-tools-20.0.0,android-19,android-19.0.1
 android update sdk --no-ui --all --filter &lt;span class=&quot;nv&quot;&gt;$FILTER&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;This example installs Android SDK Tools, Platform tools, Build tools versions 20.0.0 and 19.0.1, as well as SDK Platform 19 and 20. Customize the list to your needs using proper identifiers.&lt;/p&gt;
+&lt;p&gt;This example installs &lt;em&gt;Android SDK Tools&lt;/em&gt;, &lt;em&gt;Platform tools&lt;/em&gt;, &lt;em&gt;Build tools&lt;/em&gt; versions &lt;em&gt;20.0.0&lt;/em&gt; and &lt;em&gt;19.0.1&lt;/em&gt;, as well as &lt;em&gt;SDK Platform 19&lt;/em&gt; and &lt;em&gt;20&lt;/em&gt;. Customize the list to your needs using proper identifiers.&lt;/p&gt;
 
 &lt;h3 id=&quot;answering-the-prompts&quot;&gt;Answering the Prompts&lt;/h3&gt;
-&lt;p&gt;But it’s not done yet. When installing or updated, you will have to accept license prompts. Each package can have it’s won license requiring you to answer a prompt with “y”.&lt;/p&gt;
+&lt;p&gt;But it’s not done yet. When installing or updating, you will have to accept license prompts. Each package can have it’s own license requiring you to answer a prompt with “y”.&lt;/p&gt;
 
 &lt;p&gt;You’d probably think of &lt;code&gt;yes&lt;/code&gt; command line utility designed for this particular task. However it will not work. &lt;code&gt;yes&lt;/code&gt; outputs “y” to stdout too often with no options to put delays in between. Android SDK update tool expects not just “y”, but a “y” followed by return key, in other words, it expects “y\n” string as a whole. I don’t know the exact mechanics of &lt;code&gt;yes&lt;/code&gt; command, but if you try something like this&lt;/p&gt;
 
@@ -783,7 +794,7 @@ yes &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; android update sdk --no-ui --
     --filter &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;FILTER&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;project-specific-sdk-update&quot;&gt;Project Specific SDK Update&lt;/h3&gt;
-&lt;p&gt;If you have various Android project, each with it’s own requirements for Android packages, it would be reasonable to add Android SDK update task to the project’s build configuration. We are using Gradle, so here’s an example of Gradle task&lt;/p&gt;
+&lt;p&gt;If you have various Android project, each with it’s own requirements for Android packages, it would be reasonable to add Android SDK update task to the project’s build configuration. In this example I will use Gradle, so here’s an example of Gradle task&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;task updateSDK&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;: Exec&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     ext.filter &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;tool,platform-tool,android-20,build-tools-20.0.0,android-19,build-tools-19.1.0,build-tools-19.0.1,extra-android-support,extra-android-m2repository,extra-google-m2repository,extra-google-google_play_services,extra-google-google_play_services_froyo&amp;quot;&lt;/span&gt;
@@ -793,7 +804,7 @@ yes &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; android update sdk --no-ui --
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;caveats&quot;&gt;Caveats&lt;/h3&gt;
-&lt;p&gt;The last and very annoying bit, is that this script seems to update packages even if they are already installed. At the moment I have no clue what’s causing this behavior and what’s the best workaround. When it comes to running this script on one of the Bamboo agents in the cloud it doesn’t really matter, but when the script runs on one and only Mac build agent we have - this really slows down each build.&lt;/p&gt;
+&lt;p&gt;The last and very annoying bit, is that this script seems to update packages even if they are already installed. At the moment I have no clue what’s causing this behavior and what’s the best workaround. When it comes to running this script on one of the Bamboo agents in the cloud it doesn’t really matter, but when the script runs on one and only Mac build agent you have - this really slows down each build.&lt;/p&gt;
 
 &lt;h1 id=&quot;install-32-bit-libraries&quot;&gt;Install 32-bit Libraries&lt;/h1&gt;
 &lt;p&gt;Before you try to build anything, you have to do one more thing.&lt;/p&gt;
@@ -838,12 +849,12 @@ sudo yum install glibc.i686, zlib.i686, libstdc++.so.6 libz.so.1&lt;/code&gt;&lt
 
 &lt;p&gt;This is where the confusion between Atlassian CLI &lt;em&gt;Plugin&lt;/em&gt; and Atlassian CLI &lt;em&gt;Client&lt;/em&gt; needs to be cleared up.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Plugin&lt;/em&gt; is &lt;strong&gt;not free&lt;/strong&gt; and should be purchased for Atlassian products, e.g. there’s CLI plugin for JIRA, Bamboo, Stash.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Plugin&lt;/em&gt; is &lt;strong&gt;not free&lt;/strong&gt; and should be purchased for Atlassian products, e.g. there’s CLI plugin for JIRA, Bamboo, Stash. This basically a UI for command line tools.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Client&lt;/em&gt; can be freely downloaded and installed. You can find a few outdated Homebrew formulas on GitHub that automate client installation. So you might easily assume that it’s free, but it’s not.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Client&lt;/em&gt; (command line tools) can be freely downloaded and installed. You can find a few outdated Homebrew formulas on GitHub that automate client installation. So you might easily assume that it’s free, but it’s not!&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;You must purchase a license for any of the Atlassian CLI Plugins in order to use the Client.&lt;/p&gt;
+  &lt;p&gt;You must purchase a license at lease for one of the Atlassian CLI Plugins in order to use the Client.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;The purpose of this post is introduce you to Atlassian CLI Plugin if you didn’t know about it yet. The plugin is &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation&quot;&gt;very&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use&quot;&gt;well&lt;/a&gt; &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/How+to&quot;&gt;documented&lt;/a&gt; and comes with tons of &lt;a href=&quot;https://bobswift.atlassian.net/wiki/display/ACLI/Examples&quot;&gt;examples&lt;/a&gt;.&lt;/p&gt;
