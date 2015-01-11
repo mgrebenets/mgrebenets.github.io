@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Build Android in the Cloud"
-description: ""
+description: "Build an Android app on AWS cloud instance"
 category: Android
 tags: [android, google, aws, amazon, linux, 32-bit, gradle]
 ---
@@ -62,7 +62,7 @@ The command that does the job is `android update sdk`. You need to use `--filter
 android list sdk --all --extended
 {% endhighlight %}
 
-`--extended` flag is used to display extended information about each package, including a human readable identifier. `--all` is needed to include extra packages, like build tools, by defaults they won't be listed. Here's an example output.
+`--extended` flag is used to display extended information about each package, including a human readable identifier. `--all` is needed to include extra packages, like build tools, by default they won't be listed. Here's an example output.
 
 {% highlight bash %}
 ----------
@@ -104,7 +104,7 @@ FILTER=tool,platform,android-20,build-tools-20.0.0,android-19,android-19.0.1
 {% endhighlight %}
 
 ### Project Specific SDK Update
-If you have various Android project, each with it's own requirements for Android packages, it would be reasonable to add Android SDK update task to the project's build configuration. In this example I will use Gradle, so here's an example of Gradle task
+If you have various Android projects, each with it's own requirements for Android packages, it would be reasonable to add Android SDK update task to the project's build configuration. In this example I will use Gradle, so here's an example of Gradle task
 
 {% highlight bash %}
 task updateSDK(type: Exec) {

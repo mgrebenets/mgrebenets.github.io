@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Share Xcode Schemes"
-description: ""
+description: "Share Xcode Schemes for Build Server"
 category: Xcode
 tags: [apple, ios, xcode, osx, xcodeproj, ruby, shell, resign]
 ---
@@ -49,7 +49,7 @@ kartoteka-reloaded.xcodeproj/
             └── xcschememanagement.plist
 {% endhighlight %}
 
-Notice how the `kartoteka-reloaded.xcsheme` moved from user data folder to shared data folder. This is basically what makes scheme a shared one.
+Notice how the `kartoteka-reloaded.xcscheme` moved from user data folder to shared data folder. This is basically what makes scheme a shared one.
 
 The general practice for Xcode projects `.gitignore` file is to ignore user data
 

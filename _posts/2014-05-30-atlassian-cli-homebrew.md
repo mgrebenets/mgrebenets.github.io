@@ -2,7 +2,7 @@
 layout: post
 title: "Install Atlassian CLI with Homebrew"
 description: "Brew Atlassian CLI"
-category: atlassian
+category: Atlassian
 tags: [atlassian, cli, osx, mac, apple]
 ---
 {% include JB/setup %}
@@ -173,7 +173,7 @@ settings=''
 # - - - - - - - - - - - - - - - - - - - - - END CUSTOMIZE FOR YOUR INSTALLATION !!!
 {% endhighlight %}
 
-This is where you can customize your Atlassian products username and password, as well as additional JVM settings. That's usual practice for organizations, you have a special user account (service account) than can access all the range of products with single username and password.
+This is where you can customize your Atlassian products username and password, as well as additional JVM settings. That's usual practice for organizations, you have a special user account (service account) than can access the whole range of products with single username and password.
 
 And there's another block of code like this, which is used to customize Atlassian products server urls.
 

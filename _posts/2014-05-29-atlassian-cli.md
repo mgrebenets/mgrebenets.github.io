@@ -23,9 +23,9 @@ _Plugin_ is **not free** and should be purchased for Atlassian products, e.g. th
 
 _Client_ (command line tools) can be freely downloaded and installed. You can find a few outdated Homebrew formulas on GitHub that automate client installation. So you might easily assume that it's free, but it's not!
 
-> You must purchase a license at lease for one of the Atlassian CLI Plugins in order to use the Client.
+> You must purchase a license at least for one of the Atlassian CLI Plugins in order to use the Client.
 
-The purpose of this post is introduce you to Atlassian CLI Plugin if you didn't know about it yet. The plugin is [very](https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation) [well](https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use) [documented](https://bobswift.atlassian.net/wiki/display/ACLI/How+to) and comes with tons of [examples](https://bobswift.atlassian.net/wiki/display/ACLI/Examples).
+The purpose of this post is to introduce you to Atlassian CLI Plugin if you dont't know about it yet. The plugin is [very](https://bobswift.atlassian.net/wiki/display/ACLI/Atlassian+CLI+General+Documentation) [well](https://bobswift.atlassian.net/wiki/display/ACLI/Installation+and+Use) [documented](https://bobswift.atlassian.net/wiki/display/ACLI/How+to) and comes with tons of [examples](https://bobswift.atlassian.net/wiki/display/ACLI/Examples).
 
 The thing that I didn't like about it is installation process. It's a straightforward "download, move, update `PATH`" process. There's nothing bad in the process itself, but when you need to roll out CLI tools on a dozen of build agents, you start looking for a better way.
 
