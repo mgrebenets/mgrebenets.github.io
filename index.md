@@ -24,4 +24,7 @@ You might find something useful in this blog.
   {% endfor %}
 </ul>
 
-Email: [mgrebenets@gmail.com](mailto:mgrebenets@gmail.com)
+- Email: [mgrebenets@gmail.com](mailto:mgrebenets@gmail.com)
+- GitHub: [mgrebenets](https://github.com/mgrebenets)
+- Bitbucket: [i4niac](https://bitbucket.org/i4niac)
+- LinkedIn: [Maksym Grebenets](http://au.linked.com/in/mgrebenets)

@@ -14,7 +14,7 @@ excerpt_separator: <!--more-->
 # so be sure to set them if your theme uses them.
 #
 title : NSBogan
-tagline: mobile ios android automation calabash cucumber
+tagline: mobile ios android xcode automation calabash cucumber
 author :
   name : Maksym Grebenets
   email : mgrebenets@gmail.com
