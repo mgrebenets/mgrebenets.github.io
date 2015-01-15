@@ -120,7 +120,7 @@ The real trouble begins if you didn't have any shared schemes and the scheme tha
 
 Surely the Ruby script can be improved, you'd want to pass Xcode project name as an argument or even look it up automatically.
 
-As usual, in Summary I just provide file listing with a solution ready to copy-paste. Here's more advanced Ruby script for your use.
+As usual, in Summary I just provide file listing with a solution ready to copy-paste. Here's more advanced Ruby script for your use. You can just get the file directly if you'd like, [share-schemes.rb](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/share-schemes.rb)
 
 {% highlight ruby %}
 #!/usr/bin/env ruby
