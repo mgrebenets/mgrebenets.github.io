@@ -194,6 +194,7 @@ done
 
 ### Clean
 No comments on this one.
+
 {% highlight bash %}
 %clean
 rm -rf %{buildroot}
@@ -201,6 +202,7 @@ rm -rf %{buildroot}
 
 ### Changelog
 Add some change log and you are done with the spec.
+
 {% highlight bash %}
 * Feb 18 2014 - Maksym Grebenets <mgrebenets@gmail.com> %{version}-%{release}
 - Upgrade to 3.9.0
@@ -234,7 +236,6 @@ SRC_DIR=src
 DIST_DIR=dist
 # RPM file name
 RPM_FILE=${PACKAGE}-${VERSION}-${RELEASE}.${ARCH}.rpm
-
 {% endhighlight %}
 
 Now define step by step what needs to be done using Makefile targets (aka recepies).
