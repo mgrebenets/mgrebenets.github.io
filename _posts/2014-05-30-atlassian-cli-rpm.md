@@ -14,7 +14,7 @@ This post describes how to create an RPM package for Atlassian CLI to install it
 <!--more-->
 
 ## Why Bother?
-Same question as one would as for using [Homebrew on OSX]({% post_url 2014-0530-atlassian-cli-homebrew%}). And same answer again - Automation.
+Same question as one would as for using [Homebrew on OSX]({% post_url 2014-05-30-atlassian-cli-homebrew%}). And same answer again - Automation.
 
 Let's assume you already use Atlassian CLI Client for number of build tasks, like automatically updating JIRA tickets, Confluence pages, Stash pull requests, etc.
 
@@ -82,7 +82,7 @@ I myself just found out about it recently and didn't try it yet. So in this arti
 Then there's `_tmppath` varible. You will notice later that it's not passed to RPM script directly anywhere, instead, it's picked up from a special `.rpmmacros` file. You'll see how it's used later on.
 
 ### Install
-Now it's time to define install command. It's again very similar to Homebrew's install. So I will give here brief description of the steps with the code and for more details you can always get back to [Homebrew post]({% post_url 2014-0530-atlassian-cli-homebrew%}).
+Now it's time to define install command. It's again very similar to Homebrew's install. So I will give here brief description of the steps with the code and for more details you can always get back to [Homebrew post]({% post_url 2014-05-30-atlassian-cli-homebrew%}).
 
 #### Prepare and Setup
 Since we don't use `%setup` macro, we have to some of the work here.

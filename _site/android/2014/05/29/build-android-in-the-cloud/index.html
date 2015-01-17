@@ -9,7 +9,7 @@
       
       NSBogan
     </title>
-    <meta name="description" content="">
+    <meta name="description" content="Build an Android app on AWS cloud instance">
     <meta name="author" content="Maksym Grebenets">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- HTML5 shim, for IE6-8 support of HTML elements -->
@@ -203,7 +203,7 @@ mv android-sdk-linux /usr/local/opt/android-sdk</code></pre></div>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">android list sdk --all --extended</code></pre></div>
 
-<p><code>--extended</code> flag is used to display extended information about each package, including a human readable identifier. <code>--all</code> is needed to include extra packages, like build tools, by defaults they won’t be listed. Here’s an example output.</p>
+<p><code>--extended</code> flag is used to display extended information about each package, including a human readable identifier. <code>--all</code> is needed to include extra packages, like build tools, by default they won’t be listed. Here’s an example output.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">----------
 id: <span class="m">3</span> or <span class="s2">&quot;build-tools-20.0.0&quot;</span>
@@ -240,7 +240,7 @@ yes <span class="p">|</span> android update sdk --no-ui --all --filter <span cla
     --filter <span class="k">${</span><span class="nv">FILTER</span><span class="k">}</span></code></pre></div>
 
 <h3 id="project-specific-sdk-update">Project Specific SDK Update</h3>
-<p>If you have various Android project, each with it’s own requirements for Android packages, it would be reasonable to add Android SDK update task to the project’s build configuration. In this example I will use Gradle, so here’s an example of Gradle task</p>
+<p>If you have various Android projects, each with it’s own requirements for Android packages, it would be reasonable to add Android SDK update task to the project’s build configuration. In this example I will use Gradle, so here’s an example of Gradle task</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">task updateSDK<span class="o">(</span><span class="nb">type</span>: Exec<span class="o">)</span> <span class="o">{</span>
     ext.filter <span class="o">=</span> <span class="s2">&quot;tool,platform-tool,android-20,build-tools-20.0.0,android-19,build-tools-19.1.0,build-tools-19.0.1,extra-android-support,extra-android-m2repository,extra-google-m2repository,extra-google-google_play_services,extra-google-google_play_services_froyo&quot;</span>
@@ -282,7 +282,7 @@ sudo yum install glibc.i686, zlib.i686, libstdc++.so.6 libz.so.1</code></pre></d
       
         <a class="btn" href="/archive.html">Archive</a>
       
-        <a class="btn next" href="/ios/2014/05/29/resign-appstore-to-enterprise" title="Resign AppStore to Enterprise">Next &rarr;</a>
+        <a class="btn next" href="/xcode/2014/05/29/share-xcode-schemes" title="Share Xcode Schemes">Next &rarr;</a>
       
     </div>
     <hr>

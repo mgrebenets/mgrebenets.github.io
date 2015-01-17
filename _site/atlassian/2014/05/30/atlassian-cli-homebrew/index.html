@@ -313,7 +313,7 @@ We also set <code>JAVA_HOME</code> here using <code>java_home</code> OS X utilit
 <span class="nv">settings</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
 <span class="c"># - - - - - - - - - - - - - - - - - - - - - END CUSTOMIZE FOR YOUR INSTALLATION !!!</span></code></pre></div>
 
-<p>This is where you can customize your Atlassian products username and password, as well as additional JVM settings. That’s usual practice for organizations, you have a special user account (service account) than can access all the range of products with single username and password.</p>
+<p>This is where you can customize your Atlassian products username and password, as well as additional JVM settings. That’s usual practice for organizations, you have a special user account (service account) than can access the whole range of products with single username and password.</p>
 
 <p>And there’s another block of code like this, which is used to customize Atlassian products server urls.</p>
 
@@ -475,118 +475,13 @@ brew upgrade i4napps-atlassian-cli
 <h1 id="a-nametldr-summary"><a name="tldr"></a> Summary</h1>
 
 <ul>
-  <li>Create formula Ruby file and put it into a repository</li>
-</ul>
-
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;formula&#39;</span>
-
-<span class="c1"># Homebrew formula to install atlassian CLI tools</span>
-<span class="k">class</span> <span class="nc">I4nAppsAtlassianCli</span> <span class="o">&lt;</span> <span class="no">Formula</span>
-
-    <span class="n">version</span> <span class="s2">&quot;3.9.0&quot;</span>
-    <span class="k">def</span> <span class="nf">release</span><span class="p">()</span> <span class="s2">&quot;1&quot;</span> <span class="k">end</span>   <span class="c1"># custom release field</span>
-    <span class="k">def</span> <span class="nf">java_version</span><span class="p">()</span> <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;JAVA_VERSION&quot;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;1.6&quot;</span> <span class="k">end</span>    <span class="c1"># java version to set JAVA_HOME</span>
-
-    <span class="n">homepage</span> <span class="s1">&#39;https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli&#39;</span>
-    <span class="n">url</span> <span class="s2">&quot;https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/</span><span class="si">#{</span><span class="n">version</span><span class="o">.</span><span class="n">to_s</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">sha1</span> <span class="s1">&#39;c18174f5dee921f69fedd663bd4a9e330565a7d3&#39;</span>
-
-    <span class="c1"># nested i4nApps environment class</span>
-    <span class="k">class</span> <span class="nc">I4nAppsEnv</span>
-        <span class="c1"># Patch the shell script above</span>
-        <span class="c1"># @param [String] filename name of shell script to patch</span>
-        <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-            <span class="c1"># username and password</span>
-            <span class="sx">%x[ sed -i -e </span><span class="se">\&quot;</span><span class="sx">s/\\(.*user=\\)&#39;.*&#39;/\\1&#39;</span><span class="si">#{</span><span class="n">username</span><span class="si">}</span><span class="sx">&#39;/g</span><span class="se">\&quot;</span><span class="sx"> </span><span class="si">#{</span><span class="n">filename</span><span class="si">}</span><span class="sx"> ]</span>
-            <span class="sx">%x[ sed -i -e </span><span class="se">\&quot;</span><span class="sx">s/\\(.*password=\\)&#39;.*&#39;/\\1&#39;</span><span class="si">#{</span><span class="n">password</span><span class="si">}</span><span class="sx">&#39;/g</span><span class="se">\&quot;</span><span class="sx"> </span><span class="si">#{</span><span class="n">filename</span><span class="si">}</span><span class="sx"> ]</span>
-            <span class="c1"># server urls for products, use internal knowledge that atlassian.sh has links like https://&lt;product&gt;.example.com</span>
-            <span class="n">products</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">product</span><span class="o">|</span>
-                <span class="sx">%x[ sed -i -e </span><span class="se">\&quot;</span><span class="sx">s,\\(.*\\)https://</span><span class="si">#{</span><span class="n">product</span><span class="o">.</span><span class="n">to_s</span><span class="si">}</span><span class="sx">.example.com\\(.*\\),\\1</span><span class="si">#{</span><span class="n">server</span><span class="p">(</span><span class="n">product</span><span class="p">)</span><span class="si">}</span><span class="sx">\\2,g</span><span class="se">\&quot;</span><span class="sx"> </span><span class="si">#{</span><span class="n">filename</span><span class="si">}</span><span class="sx"> ]</span>
-            <span class="k">end</span>
-        <span class="k">end</span>
-
-        <span class="c1"># Get list of products for enumeration</span>
-        <span class="c1"># @return [Array&lt;Symbol&gt;] array of product types</span>
-        <span class="k">def</span> <span class="nf">products</span>
-            <span class="o">[</span> <span class="ss">:jira</span><span class="p">,</span> <span class="ss">:bamboo</span><span class="p">,</span> <span class="ss">:stash</span><span class="p">,</span> <span class="ss">:confluence</span><span class="p">,</span> <span class="ss">:fisheye</span><span class="p">,</span> <span class="ss">:crucible</span> <span class="o">]</span>
-        <span class="k">end</span>
-
-        <span class="c1"># Atlassian Product servers</span>
-        <span class="vc">@@servers</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="ss">:jira</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://jira.i4napps.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:bamboo</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://bamboo.i4napps.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:stash</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://stash.i4napps.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:confluence</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://wiki.i4napps.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:fisheye</span> <span class="o">=&gt;</span> <span class="s2">&quot;http://fisheye.i4napps.com.au&quot;</span><span class="p">,</span>
-            <span class="ss">:crucible</span> <span class="o">=&gt;</span> <span class="s2">&quot;https://crucible.i4napps.com&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-
-        <span class="c1"># Get server url for product</span>
-        <span class="c1"># @param [Symbol] product +:jira+, +:bamboo+, +:stash+, +:confluence+, +:fisheye+, +:crucible+</span>
-        <span class="c1"># @return [String] server url</span>
-        <span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="n">product</span><span class="p">)</span>
-            <span class="vc">@@servers</span><span class="o">[</span><span class="n">product</span><span class="o">.</span><span class="n">to_sym</span><span class="o">]</span>
-        <span class="k">end</span>
-
-        <span class="c1"># Username for Atlassian servers</span>
-        <span class="c1"># @note Optionally use ATLASSAIN_USERNAME environment variable when installing</span>
-        <span class="c1"># @return [String] username</span>
-        <span class="k">def</span> <span class="nf">username</span>
-            <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;ATLAS_USERNAME&quot;</span><span class="o">]</span>
-        <span class="k">end</span>
-
-        <span class="c1"># Username for Atlassian servers</span>
-        <span class="c1"># @note Optionally use ATLASSAIN_PASSWORD environment variable when installing</span>
-        <span class="c1"># @return [String] password</span>
-        <span class="k">def</span> <span class="nf">password</span>
-            <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;ATLAS_PASSWORD&quot;</span><span class="o">]</span>
-        <span class="k">end</span>
-    <span class="k">end</span>
-
-    <span class="c1"># dependencies (if any)</span>
-
-    <span class="c1"># Install</span>
-    <span class="k">def</span> <span class="nf">install</span>
-
-        <span class="c1"># this is garbage</span>
-        <span class="nb">puts</span> <span class="s2">&quot;Cleaning up windows stuff...&quot;</span>
-        <span class="n">rm</span> <span class="no">Dir</span><span class="o">[</span><span class="s2">&quot;*.bat&quot;</span><span class="o">]</span>
-
-        <span class="c1"># TODO: consider removing examples and all the other stuff</span>
-
-        <span class="c1"># patch before moving to bin</span>
-        <span class="nb">puts</span> <span class="s2">&quot;Patching shell scripts and moving them to bin...&quot;</span>
-        <span class="no">Dir</span><span class="o">[</span><span class="s1">&#39;*.sh&#39;</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
-            <span class="c1"># patch by updating path to lib folder</span>
-            <span class="sx">%x[ sed -i -e &#39;s,/lib,/../lib,g&#39; </span><span class="si">#{</span><span class="n">f</span><span class="si">}</span><span class="sx"> ]</span>
-            <span class="c1"># patch by inserting and setting JAVA_HOME</span>
-            <span class="sx">%x[ awk &#39;NR==2 {print &quot;export JAVA_HOME=$(/usr/libexec/java_home -v </span><span class="si">#{</span><span class="n">java_version</span><span class="si">}</span><span class="sx">)&quot;} {print}&#39; </span><span class="si">#{</span><span class="n">f</span><span class="si">}</span><span class="sx"> &gt; </span><span class="si">#{</span><span class="n">f</span><span class="si">}</span><span class="sx">.bak &amp;&amp; mv </span><span class="si">#{</span><span class="n">f</span><span class="si">}</span><span class="sx">.bak </span><span class="si">#{</span><span class="n">f</span><span class="si">}</span><span class="sx"> ]</span>
-        <span class="k">end</span>
-
-        <span class="c1"># customize bin/atlassian (renamed from atlassian.sh) with username, password and server urls</span>
-        <span class="c1"># !!!: must patch before install command</span>
-        <span class="nb">puts</span> <span class="s2">&quot;Customizing product endpoints, username and password....&quot;</span>
-        <span class="no">I4nAppsEnv</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">&quot;atlassian.sh&quot;</span><span class="p">)</span>
-
-        <span class="c1"># move all shell executables to bin, that&#39;s the way homebrew understands it</span>
-        <span class="c1"># also drop the .sh part</span>
-        <span class="no">Dir</span><span class="o">.</span><span class="n">mkdir</span> <span class="s2">&quot;bin&quot;</span>
-        <span class="no">Dir</span><span class="o">[</span><span class="s1">&#39;*.sh&#39;</span><span class="o">].</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">mv</span> <span class="n">f</span><span class="p">,</span> <span class="s2">&quot;bin/</span><span class="si">#{</span><span class="n">f</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="s1">&#39;.sh&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">}</span>
-        <span class="c1"># all.sh, really? how about atlassian-all?</span>
-        <span class="n">mv</span> <span class="s2">&quot;bin/all&quot;</span><span class="p">,</span> <span class="s2">&quot;bin/atlassian-all&quot;</span>
-
-        <span class="n">prefix</span><span class="o">.</span><span class="n">install_metafiles</span>
-        <span class="n">prefix</span><span class="o">.</span><span class="n">install</span> <span class="no">Dir</span><span class="o">[</span><span class="s1">&#39;*&#39;</span><span class="o">]</span>
-    <span class="k">end</span>
-
-    <span class="nb">test</span> <span class="k">do</span>
-        <span class="nb">puts</span> <span class="s2">&quot;version: </span><span class="si">#{</span><span class="n">version</span><span class="si">}</span><span class="s2">-</span><span class="si">#{</span><span class="n">release</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="sx">%x[ jira ]</span>
-    <span class="k">end</span>
-<span class="k">end</span></code></pre></div>
-
-<ul>
-  <li>Create a Homebrew tap, install and upgrade</li>
+  <li>
+    <p>Create formula Ruby file and put it into a repository
+<a href="https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/i4napps-atlassian-cli.rb">i4napps-atlassian-cli.rb</a></p>
+  </li>
+  <li>
+    <p>Create a Homebrew tap, install and upgrade</p>
+  </li>
 </ul>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">TAP_NAME</span><span class="o">=</span>i4napps-atlassian-cli
@@ -653,7 +548,7 @@ brew upgrade i4napps-atlassian-cli
       <section>
         <h4>Category</h4>
         <span class="category">
-          atlassian
+          Atlassian
         </span>
       </section>
          
@@ -675,7 +570,7 @@ brew upgrade i4napps-atlassian-cli
      
     	<li><a href="/tags.html#mac-ref">mac <span>1</span></a></li>
      
-    	<li><a href="/tags.html#apple-ref">apple <span>4</span></a></li>
+    	<li><a href="/tags.html#apple-ref">apple <span>3</span></a></li>
     
   
 

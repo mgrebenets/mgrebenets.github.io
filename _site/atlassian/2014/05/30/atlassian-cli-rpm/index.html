@@ -156,9 +156,279 @@
 <div class="row">
   <div class="span8">
     
-<p><em>Coming Soon…</em></p>
+<p>Another follow up to <a href="/atlassian/2014/05/29/atlassian-cli">introduction to Atlassian CLI</a>.</p>
+
+<p>This post describes how to create an RPM package for Atlassian CLI to install it on <a href="http://en.wikipedia.org/wiki/Category:RPM-based_Linux_distributions">RMP-based Linux distributions</a>.</p>
 
 <!--more-->
+
+<h2 id="why-bother">Why Bother?</h2>
+<p>Same question as one would as for using <a href="/atlassian/2014/05/30/atlassian-cli-homebrew">Homebrew on OSX</a>. And same answer again - Automation.</p>
+
+<p>Let’s assume you already use Atlassian CLI Client for number of build tasks, like automatically updating JIRA tickets, Confluence pages, Stash pull requests, etc.</p>
+
+<p>Let’s further assume that your company has a proper CI environment, for example RPM-based Linux instances running in <a href="http://aws.amazon.com/">AWS cloud</a>. Each instance runs one build agent (slave, node or whatever you call it).</p>
+
+<p>One of the reasons going into the cloud is scalability, you can go from one to few dozens of identically cloned agents with literally one click of a mouse.</p>
+
+<p>Normal practice is to refresh those instances repeatedly, e.g. on a 2 weeks schedule, and <em>refresh</em> in this context means recreating them from scratch. This is when an updated OS image is used for new instances, you can put new updates and packages into this new image to make it available to all build tasks by default without additional installation. For example, you could not just have <a href="https://rvm.io/">RVM</a> installed, but also install few most used rubies for 2.0 and 2.1.</p>
+
+<p>Preparing new image has a funny name, that is <em>Baking</em> (remember <em>Brewing</em>?). What’s amusing, the whole baking process is done by the very same CI setup it will be applied to. Keeping an eye on the whole infrastructure is actually quite a challenge and you would most likely have DevOps or DevSupport team to look after it.</p>
+
+<p>In any case, to conclude this long passage, one of the reasons to have an RPM package for Atlassian CLI is to be able to bake it into your build agent.</p>
+
+<h2 id="create-rpm-spec">Create RPM Spec</h2>
+<p>Creating and RPM package is very similar to creating Homebrew tap, only in this case instead of Formula you need to create <a href="http://www.rpm.org/max-rpm/ch-rpm-inside.html">RPM Spec</a>.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">touch rpm.spec</code></pre></div>
+
+<p>Let’s put first lines into the spec</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">%define __spec_install_post %<span class="o">{</span>nil<span class="o">}</span>
+%define __os_install_post %<span class="o">{</span>nil<span class="o">}</span>
+%define debug_package %<span class="o">{</span>nil<span class="o">}</span>
+Summary: nsbogan-atlassian-cli
+Name: nsbogan-atlassian-cli
+Version: %<span class="o">{</span>version<span class="o">}</span>
+Release: %<span class="o">{</span>release<span class="o">}</span>
+License: Atlassian EULA Standard License
+Vendor: Bob Swift Software, LLC
+Packager: Maksym Grebenets &lt;mgrebenets@gmail.com&gt;
+Group: Application/Development
+Provides: %<span class="o">{</span>name<span class="o">}</span>
+Requires: java
+BuildRoot: %<span class="o">{</span>_tmppath<span class="o">}</span>/%<span class="o">{</span>name<span class="o">}</span>-%<span class="o">{</span>version<span class="o">}</span>-%<span class="o">{</span>release<span class="o">}</span>
+Source: %<span class="o">{</span>name<span class="o">}</span>-%<span class="o">{</span>version<span class="o">}</span>.tar.gz
+BuildArch: %<span class="o">{</span>arch<span class="o">}</span>
+
+%description
+Atlassian CLI tools by Bob Swift. See https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli</code></pre></div>
+
+<p>First three lines are a result of googling as well ans trial and error process. I’m not an experienced RPM package builder, so there are things that I will have to leave unexplained.</p>
+
+<p>Next lines are self descriptive. The <code>%{varname}</code> syntax is the way you can pass variables into RPM spec when using it with <code>rpmbuild</code>, for example</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">export </span><span class="nv">VERSION</span><span class="o">=</span>1.0
+<span class="nb">export </span><span class="nv">RELEASE</span><span class="o">=</span>1
+<span class="c"># set locale to C</span>
+<span class="nv">LC_ALL</span><span class="o">=</span>C rpmbuild --define <span class="s2">&quot;version ${VERSION}&quot;</span> --define <span class="s2">&quot;release ${RELEASE}&quot;</span> --define <span class="s2">&quot;arch noarch&quot;</span> -bb ~/path/to/rpm.spec</code></pre></div>
+
+<p>Some of the header attributes worth mentioning separately. For starters the <em>Source:</em> attribute should point to your source tarball. But it doesn’t have to be a local file, it can be a URL just like Homebrew’s <code>url</code> attribute. You can then download and unzip it with one call to <a href="http://www.rpm.org/max-rpm-snapshot/s1-rpm-inside-macros.html"><code>%setup</code> macro</a>.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">%prep
+%setup</code></pre></div>
+
+<p>I myself just found out about it recently and didn’t try it yet. So in this article I’ll do the job of setup macro with shell commands, but this is definetly where improvements should be made.</p>
+
+<p>Then there’s <code>_tmppath</code> varible. You will notice later that it’s not passed to RPM script directly anywhere, instead, it’s picked up from a special <code>.rpmmacros</code> file. You’ll see how it’s used later on.</p>
+
+<h3 id="install">Install</h3>
+<p>Now it’s time to define install command. It’s again very similar to Homebrew’s install. So I will give here brief description of the steps with the code and for more details you can always get back to <a href="/atlassian/2014/05/30/atlassian-cli-homebrew">Homebrew post</a>.</p>
+
+<h4 id="prepare-and-setup">Prepare and Setup</h4>
+<p>Since we don’t use <code>%setup</code> macro, we have to some of the work here.
+Remove old build directory, unzip the source tarball and cleanup Windows stuff right away.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">%install
+rm -rf %<span class="o">{</span>buildroot<span class="o">}</span>
+mkdir -p %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli
+tar -zxvf %<span class="o">{</span>_sourcedir<span class="o">}</span>/%<span class="o">{</span>name<span class="o">}</span>-%<span class="o">{</span>version<span class="o">}</span>.tar.gz -C %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli
+
+<span class="c"># cleanup windows bats</span>
+rm -f %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/*.bat</code></pre></div>
+
+<h4 id="patch-and-move">Patch and Move</h4>
+<p>Next is patching time and once patching is over move the files to a proper location (<code>bin</code> folder). I’ve explained why this is required in the post related to Homebrew formula, so have a peek there.</p>
+
+<p>When patching we’ll update all the <code>.sh</code> scripts and put new relative path to JAR files, we’ll also insert proper <code>JAVA_HOME</code> export in each.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># patch shell scripts, rename and move to bin</span>
+mkdir -p %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/bin
+<span class="c"># patch .sh files</span>
+<span class="k">for</span> file in %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/*.sh<span class="p">;</span> <span class="k">do</span>
+    <span class="c"># patch the path to lib before moving</span>
+    sed -i -e <span class="s1">&#39;s,/lib,/../lib,g&#39;</span> <span class="k">${</span><span class="nv">file</span><span class="k">}</span>
+    <span class="c"># inset JAVA_HOME export at 2nd line</span>
+    <span class="c"># use awk since couldn&#39;t figure out how to do it with sed &#39;2i\ construction&#39;</span>
+    awk <span class="s1">&#39;NR==2 {print &quot;[[ -d /usr/java ]] &amp;&amp; export JAVA_HOME=/usr/java/$(ls -1 /usr/java | grep %{java_version} | tail -n1)&quot;} {print}&#39;</span> <span class="k">${</span><span class="nv">file</span><span class="k">}</span> &gt; <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.bak <span class="o">&amp;&amp;</span> mv <span class="k">${</span><span class="nv">file</span><span class="k">}</span>.bak <span class="k">${</span><span class="nv">file</span><span class="k">}</span>
+<span class="k">done</span></code></pre></div>
+
+<p>Then it’s time to customize all the Atlassian product URLs as well as put a proper service account username and password if you plan to save keystrokes in the future.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># customize atlassian.sh with products username, password and urls</span>
+<span class="nv">filename</span><span class="o">=</span>%<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/atlassian.sh
+sed -i.bak -e <span class="s2">&quot;s/\(.*user=\)&#39;.*&#39;/\1&#39;%{username}&#39;/g&quot;</span> <span class="nv">$filename</span>
+sed -i.bak -e <span class="s2">&quot;s/\(.*password=\)&#39;.*&#39;/\1&#39;%{password}&#39;/g&quot;</span> <span class="nv">$filename</span>
+<span class="c"># product urls</span>
+sed -i.bak -e <span class="s2">&quot;s,\(.*\)https://jira.example.com\(.*\),\1http://jira.nsbogan.com.au\2,g&quot;</span> <span class="nv">$filename</span>
+sed -i.bak -e <span class="s2">&quot;s,\(.*\)https://bamboo.example.com\(.*\),\1http://bamboo.nsbogan.com.au\2,g&quot;</span> <span class="nv">$filename</span>
+sed -i.bak -e <span class="s2">&quot;s,\(.*\)https://stash.example.com\(.*\),\1http://stash.nsbogan.com.au\2,g&quot;</span> <span class="nv">$filename</span>
+sed -i.bak -e <span class="s2">&quot;s,\(.*\)https://confluence.example.com\(.*\),\1http://wiki.nsbogan.com.au\2,g&quot;</span> <span class="nv">$filename</span>
+sed -i.bak -e <span class="s2">&quot;s,\(.*\)https://fisheye.example.com\(.*\),\1https://fisheye.nsbogan.com.au\2,g&quot;</span> <span class="nv">$filename</span>
+sed -i.bak -e <span class="s2">&quot;s,\(.*\)https://crubicle.example.com\(.*\),\1https://crubicle.nsbogan.com.au\2,g&quot;</span> <span class="nv">$filename</span></code></pre></div>
+
+<p>Finally rename ambigous <code>all.sh</code> to <code>atlassian-all.sh</code> and move all <code>.sh</code> files to <code>bin</code> folder. I personally prefer to drop <code>.sh</code> part from the filename in the process.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># all.sh - rename to atlassian-all.sh before moving</span>
+mv %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/all.sh %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/atlassian-all.sh
+
+<span class="c"># move shell files</span>
+<span class="k">for</span> file in %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/*.sh<span class="p">;</span> <span class="k">do</span>
+    <span class="c"># move to bin with renaming</span>
+    <span class="nv">BASE</span><span class="o">=</span><span class="k">$(</span>basename <span class="k">${</span><span class="nv">file</span><span class="k">})</span>
+    <span class="nv">NEW_NAME</span><span class="o">=</span><span class="k">${</span><span class="nv">BASE</span><span class="p">%.sh</span><span class="k">}</span>
+    chmod +x <span class="k">${</span><span class="nv">file</span><span class="k">}</span>
+    <span class="c"># cat ${file} &gt; $HOME/tmp/$(basename ${file}).txt</span>
+
+    <span class="c"># backwards compatibility (payback for bad decisions)</span>
+    cp <span class="k">${</span><span class="nv">file</span><span class="k">}</span> %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/bin/atlas-<span class="k">${</span><span class="nv">NEW_NAME</span><span class="k">}</span>
+
+    mv <span class="k">${</span><span class="nv">file</span><span class="k">}</span> %<span class="o">{</span>buildroot<span class="o">}</span>/opt/nsbogan-atlassian-cli/bin/<span class="k">${</span><span class="nv">NEW_NAME</span><span class="k">}</span>
+<span class="k">done</span>
+
+<span class="c"># cleanup backup files</span>
+rm -rf *.bak</code></pre></div>
+
+<h3 id="files-and-symlinks">Files and Symlinks</h3>
+<p>Now it’s time to tell RPM spec which files are part of finall installation.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">%files
+/opt/nsbogan-atlassian-cli</code></pre></div>
+
+<p>In post-install stage we want to symlink all the shell scripts and JAR files to a corresponding directory in <code>/usr/local</code>. The reason behind that is because <code>/usr/local/bin</code> is already on our <code>PATH</code> (if not, then add it as described in Homebrew post).</p>
+
+<p>We also add info for post-uninstall process so it can remove all these symlinks for us.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">%post
+<span class="c"># link binaries to /usr/local/bin</span>
+<span class="k">for</span> file in /opt/nsbogan-atlassian-cli/bin/*<span class="p">;</span> <span class="k">do</span>
+    ln -fs <span class="k">${</span><span class="nv">file</span><span class="k">}</span> /usr/local/bin/<span class="k">$(</span>basename <span class="k">${</span><span class="nv">file</span><span class="k">})</span>
+<span class="k">done</span>
+
+<span class="c"># link libraries to /usr/local/bin</span>
+<span class="k">for</span> file in /opt/nsbogan-atlassian-cli/lib/*<span class="p">;</span> <span class="k">do</span>
+    ln -fs <span class="k">${</span><span class="nv">file</span><span class="k">}</span> /usr/local/lib/<span class="k">$(</span>basename <span class="k">${</span><span class="nv">file</span><span class="k">})</span>
+<span class="k">done</span>
+
+%postun
+<span class="c"># unlink binaries</span>
+<span class="k">for</span> file in /opt/nsbogan-atlassian-cli/bin/*<span class="p">;</span> <span class="k">do</span>
+    rm -f /usr/local/bin/<span class="k">$(</span>basename <span class="k">${</span><span class="nv">file</span><span class="k">})</span>
+<span class="k">done</span>
+
+<span class="c"># unlink libs</span>
+<span class="k">for</span> file in /opt/nsbogan-atlassian-cli/lib/*<span class="p">;</span> <span class="k">do</span>
+    rm -f /usr/local/lib/<span class="k">$(</span>basename <span class="k">${</span><span class="nv">file</span><span class="k">})</span>
+<span class="k">done</span></code></pre></div>
+
+<h3 id="clean">Clean</h3>
+<p>No comments on this one.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">%clean
+rm -rf %<span class="o">{</span>buildroot<span class="o">}</span></code></pre></div>
+
+<h3 id="changelog">Changelog</h3>
+<p>Add some change log and you are done with the spec.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">* Feb <span class="m">18</span> <span class="m">2014</span> - Maksym Grebenets &lt;mgrebenets@gmail.com&gt; %<span class="o">{</span>version<span class="o">}</span>-%<span class="o">{</span>release<span class="o">}</span>
+- Upgrade to 3.9.0</code></pre></div>
+
+<h2 id="build-rpm">Build RPM</h2>
+
+<p>It’s time to build an RPM based on the spec we have just came up with.
+In this example I’ll use Makefile which helps to present material in more simple and organized way than just shell scripts.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">touch Makefile</code></pre></div>
+
+<p>Define all the basic configuration, like version, release, Java version, etc.
+Note the use of <code>noarch</code> here for architecture. We are working with collection of JARs and shell scripts, there are no sources files that need any compilation at all, so we specify that we are not building for any particular architecture.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">PACKAGE</span> <span class="o">=</span> nsbogan-atlassian-cli
+<span class="nv">VERSION</span> <span class="o">=</span> 3.9.0
+<span class="nv">RELEASE</span> <span class="o">=</span> 1
+<span class="nv">ARCH</span> <span class="o">=</span> noarch
+<span class="nv">NSBOGAN_USERNAME</span> <span class="o">=</span> automation
+<span class="nv">NSBOGAN_PASSWORD</span> <span class="o">=</span> automation
+<span class="nv">JAVA_VERSION</span> <span class="o">=</span> 1.6
+<span class="nv">PACKAGE_URL</span> <span class="o">=</span> https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/<span class="k">$(</span>subst .,,<span class="k">${</span><span class="nv">VERSION</span><span class="k">})</span>
+
+<span class="c"># Source directory</span>
+<span class="nv">SRC_DIR</span><span class="o">=</span>src
+<span class="c"># Distribution directory where the source distributive is located</span>
+<span class="nv">DIST_DIR</span><span class="o">=</span>dist
+<span class="c"># RPM file name</span>
+<span class="nv">RPM_FILE</span><span class="o">=</span><span class="k">${</span><span class="nv">PACKAGE</span><span class="k">}</span>-<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span>-<span class="k">${</span><span class="nv">RELEASE</span><span class="k">}</span>.<span class="k">${</span><span class="nv">ARCH</span><span class="k">}</span>.rpm</code></pre></div>
+
+<p>Now define step by step what needs to be done using Makefile targets (aka recepies).</p>
+
+<p>Download the package if it doesn’t exist yet.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">download:
+    @echo <span class="s2">&quot;Downloading from $(PACKAGE_URL) ...&quot;</span>
+    @mkdir -p <span class="k">$(</span>SRC_DIR<span class="k">)</span>
+    @<span class="o">(</span><span class="k">if</span> <span class="o">[</span> ! -f <span class="k">$(</span>SRC_DIR<span class="k">)</span>/<span class="k">${</span><span class="nv">PACKAGE</span><span class="k">}</span>.zip <span class="o">]</span> <span class="p">;</span> <span class="k">then</span> curl -o <span class="k">$(</span>SRC_DIR<span class="k">)</span>/<span class="k">${</span><span class="nv">PACKAGE</span><span class="k">}</span>.zip --progress -fSL <span class="k">$(</span>PACKAGE_URL<span class="k">)</span> <span class="p">;</span> <span class="k">fi</span><span class="o">)</span></code></pre></div>
+
+<p>Then unzip. This place partially explains why I avoided <code>%setup</code> macro. Setup macro assumes source is a tarball and uses <code>tar</code> utility to unpack it. But with Atlassian CLI the source is just a <code>.zip</code> file, so setup macro generates commands that don’t work.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">unzip: download
+    @<span class="o">(</span><span class="nb">cd</span> <span class="k">$(</span>SRC_DIR<span class="k">)</span> <span class="o">&amp;&amp;</span> unzip -qox <span class="k">${</span><span class="nv">PACKAGE</span><span class="k">}</span>.zip<span class="o">)</span>
+    @<span class="o">(</span><span class="nb">cd</span> <span class="k">$(</span>SRC_DIR<span class="k">)</span> <span class="o">&amp;&amp;</span> ln -fFs atlassian-cli-<span class="o">[</span>0-9<span class="o">]</span>* <span class="k">${</span><span class="nv">PACKAGE</span><span class="k">}</span><span class="o">)</span></code></pre></div>
+
+<p>Once unzipped, we also link symbolically versioned folder to <code>${PACKAGE}</code> file. This makes it easier to write next steps.</p>
+
+<p>Now pack unzipped file into a tarball. This is all due to specifics of <code>rpmbuild</code>, it want’s tarball and we have to comply. Put the tarball into distributives directory.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">dist: unzip
+    @mkdir -p <span class="k">$(</span>DIST_DIR<span class="k">)</span>/
+    @<span class="o">(</span><span class="nb">cd</span> <span class="k">$(</span>SRC_DIR<span class="k">)</span>/<span class="k">${</span><span class="nv">PACKAGE</span><span class="k">}</span> <span class="o">&amp;&amp;</span> tar -czf ../../<span class="k">$(</span>DIST_DIR<span class="k">)</span>/<span class="k">${</span><span class="nv">PACKAGE</span><span class="k">}</span>-<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span>.tar.gz .<span class="o">)</span></code></pre></div>
+
+<p>Finally we can build RPM.</p>
+
+<p>Still we end up doing some additional work here. <code>rpmbuild</code> epxects a certain directory structure in it’s root build folder. Once again, we’re pretty much doing the <code>%setup</code> job here.</p>
+
+<ul>
+  <li>We will build an RPM in <code>~/rpmbuild</code> directory, so we create one with number of required subdirectories (all those names in caps and tmp).</li>
+  <li>Then move tarball to <code>SOURCES</code> directory</li>
+  <li>Copy our RPM spec to <code>SPECS</code></li>
+  <li>Then add <code>%_topdir</code> and <code>%_tmppath</code> to a special <code>~/.rpmmacros</code> file. <code>rpmbuild</code> will scan <code>~/.rpmmacros</code> and pass all picked up values to RPM spec when building it.</li>
+  <li>Finally call rpmbuild passing version, release and all the other vars.
+    <ul>
+      <li>The <a href="http://www.rpm.org/max-rpm-snapshot/ch-rpm-b-command.html"><code>-bb</code> option</a> tells <code>rpmbuild</code> which steps to execute.</li>
+    </ul>
+  </li>
+  <li>Once <code>rpmbuild</code> is done, copy RPM package to distributives directory.</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">rpm: dist
+    @echo <span class="s2">&quot;Making RPM...&quot;</span>
+    @mkdir -p ~/rpmbuild/<span class="o">{</span>RPMS,SRPMS,BUILD,SOURCES,SPECS,tmp<span class="o">}</span>
+    @cp -f <span class="k">$(</span>DIST_DIR<span class="k">)</span>/<span class="k">${</span><span class="nv">PACKAGE</span><span class="k">}</span>-<span class="k">${</span><span class="nv">VERSION</span><span class="k">}</span>.tar.gz ~/rpmbuild/SOURCES/
+    @cp -f rpm.spec ~/rpmbuild/SPECS/
+    @echo <span class="s2">&quot;%_topdir ${HOME}/rpmbuild&quot;</span> &gt; ~/.rpmmacros
+    @echo <span class="s2">&quot;%_tmppath %_topdir/tmp&quot;</span> &gt;&gt; ~/.rpmmacros
+    @<span class="o">(</span><span class="nv">LC_ALL</span><span class="o">=</span>C rpmbuild -v --define <span class="s2">&quot;version ${VERSION}&quot;</span> --define <span class="s2">&quot;release ${RELEASE}&quot;</span> --define <span class="s2">&quot;arch ${ARCH}&quot;</span> --define <span class="s2">&quot;java_version ${JAVA_VERSION}&quot;</span> --define <span class="s2">&quot;username ${NSBOGAN_USERNAME}&quot;</span> --define <span class="s2">&quot;password ${NSBOGAN_PASSWORD}&quot;</span> -bb ~/rpmbuild/SPECS/rpm.spec<span class="o">)</span>
+    <span class="c"># copy to dist</span>
+    @cp -f ~/rpmbuild/RPMS/<span class="k">${</span><span class="nv">ARCH</span><span class="k">}</span>/<span class="k">$(</span>RPM_FILE<span class="k">)</span> <span class="k">$(</span>DIST_DIR<span class="k">)</span>/</code></pre></div>
+
+<p>So, are you ready to try it?</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">make rpm</code></pre></div>
+
+<p>I ran it on Fedora 20 as well on a custom Linux distribution running in AWS cloud. Since the package does not depend on architecture, you could in theory build it on OSX machine, but it’s not what I would recommend, getting proper <code>rpmbuild</code> port configured is not something you enjory very much.</p>
+
+<h2 id="install-rpm">Install RPM</h2>
+
+<p>To test your installation, use these commands</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># rpm install</span>
+rpm --install --replacepkgs --replacefiles --nosignature --nodigest <span class="k">$(</span>DIST_DIR<span class="k">)</span>/<span class="k">$(</span>RPM_FILE<span class="k">)</span>
+
+<span class="c"># test rpm install</span>
+rpm --freshen -v --test --replacepkgs --replacefiles --nosignature --nodigest <span class="k">$(</span>DIST_DIR<span class="k">)</span>/<span class="k">$(</span>RPM_FILE<span class="k">)</span></code></pre></div>
+
+<p>Now you can hand RPM package over to your Dev Support guys, they’ll put it into local repo and make RPM install a part of bake or post-bake process.</p>
+
+<p>Yet nothing stops you from creating a CI plan (job) for the Atlassian CLI RPM package itself. You can run <code>make rpm</code> and test rpm install on the very same build agent this package is targeted for, thus creating yet another “CI Loop”, which is good.</p>
 
     <hr>
     <div class="pagination btn-group">
