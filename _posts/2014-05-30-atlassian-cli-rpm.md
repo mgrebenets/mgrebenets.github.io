@@ -13,6 +13,8 @@ This post describes how to create an RPM package for Atlassian CLI to install it
 
 <!--more-->
 
+Jump directly to [Summary](#tldr) if just want to grab the end result.
+
 ## Why Bother?
 Same question as one would as for using [Homebrew on OSX]({% post_url 2014-05-30-atlassian-cli-homebrew%}). And same answer again - Automation.
 
@@ -315,3 +317,8 @@ rpm --freshen -v --test --replacepkgs --replacefiles --nosignature --nodigest $(
 Now you can hand RPM package over to your Dev Support guys, they'll put it into local repo and make RPM install a part of bake or post-bake process.
 
 Yet nothing stops you from creating a CI plan (job) for the Atlassian CLI RPM package itself. You can run `make rpm` and test rpm install on the very same build agent this package is targeted for, thus creating yet another "CI Loop", which is good.
+
+## <a name="tldr"/> Summary
+
+- Create [RPM spec](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/nsbogan-atlassian-cli-rpm.spec)
+- Run `mark rpm -f RPMMakefile` using this [Makefile](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/RPMMakefile)
