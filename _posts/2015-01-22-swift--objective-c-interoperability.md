@@ -58,7 +58,7 @@ Further on, I declare a generic class with type conforming to pure Swift protoco
 
 So what happens if I pass an Objective-C subclass to this generic class initializer?
 
-To be honest, nothing happens most right away. For reasons unknown to me my project compiled and ran. And it was running OK for a while until at some moment it started crashing consistently.
+To be honest, nothing happens most away. For reasons unknown to me my project compiled and ran. And it was running OK for a while until at some moment it started crashing consistently.
 
 So the problem in this case is that I'm implicitly checking the conformance of Objective-C object `ObjCSubclass` to a non Objective-C (pure Swift) protocol `PureSwiftProtocol`. This check occurs when calling `return instance.value` where instance is an instance of `ObjCSubclass` but the access to it's property happens by converting it to `PureSwiftProtocol`.
 
