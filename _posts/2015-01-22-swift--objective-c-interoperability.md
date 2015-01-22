@@ -79,7 +79,8 @@ But that won't make compiler happy because it has no idea how to map `PureSwiftE
 
 {% highlight objective-c %}
 typedef NS_ENUM(NSInteger, PureSwiftEnum) {
-  PureSwiftEnumValue
+  PureSwiftEnumValue,
+  PureSwiftEnumAnotherValue,
 };
 {% endhighlight %}
 
