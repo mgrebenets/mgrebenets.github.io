@@ -84,7 +84,7 @@ typedef NS_ENUM(NSInteger, PureSwiftEnum) {
 };
 {% endhighlight %}
 
-# Solution B: Wrap it Up
+## Solution B: Wrap it Up
 
 If you don't want to revert back to adding Objective-C code with the hope that Apple eventually fixes this issue in the future, you can try another ugly trick - wrap your Objective-C class with pure Swift class that conforms to the same protocol.
 
