@@ -60,7 +60,7 @@ So what happens if I pass an Objective-C subclass to this generic class initiali
 
 To be honest, nothing happens most away. For reasons unknown to me my project compiled and ran. And it was running OK for a while until at some moment it started crashing consistently.
 
-So the problem in this case is that I'm implicitly checking the conformance of Objective-C object `ObjCSubclass` to a non Objective-C (pure Swift) protocol `PureSwiftProtocol`. This check occurs when calling `return instance.value` where instance is an instance of `ObjCSubclass` but the access to it's property happens by converting it to `PureSwiftProtocol`.
+So the problem in this case is that I'm implicitly checking the conformance of Objective-C object `ObjCSubclass` to a non Objective-C (pure Swift) protocol `PureSwiftProtocol`. This check occurs when calling `return embeddedInstance.value` where `embeddedInstance` is an instance of `ObjCSubclass` but the access to it's property happens by converting it to `PureSwiftProtocol`.
 
 Apparently, this is a known issue. There's a couple of discussions on StackOverflow ([one](http://stackoverflow.com/questions/24132738/swift-set-delegate-to-self-gives-exc-bad-access), [two](http://stackoverflow.com/questions/24174348/calling-method-using-optional-chaining-on-weak-variable-causes-exc-bad-access)).
 
@@ -115,3 +115,6 @@ println(generic.accessValue())
 {% endhighlight %}
 
 With this setup my crash went away and hadn't reappeared since then.
+
+## Summary
+Reference to [swift-objc-interop.swift](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-objc-interop.swift) to experiment and run it from command line or in Playground
