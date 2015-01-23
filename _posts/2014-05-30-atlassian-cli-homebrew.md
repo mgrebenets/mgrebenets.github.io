@@ -35,7 +35,7 @@ Well, Homebrew does all that and then much more. After initial installation upgr
 ### Create Formula
 You could use `brew create <link>` command, but that will create formula in `/usr/loca/Library/Formula`. Instead let's create it manually.
 
-Let's say our company is called i4nApps (I know, it's a wierd name...), so create new Ruby file
+Let's say our company is called i4nApps (I know, it's a weird name...), so create new Ruby file
 
 {% highlight bash %}
 touch i4napps-atlassian-cli.rb
@@ -288,7 +288,7 @@ I4nAppsEnv.new.patch("atlassian.sh")
 
 Make sure to put this line **before** `atlassian.sh` is moved and renamed.
 
-> The nested class is used because Homebrew only expects one formula file. If you have other files used as an external dependencies, Homebew will not fetch them from repository when running `tap` command.
+> The nested class is used because Homebrew only expects one formula file. If you have other files used as an external dependencies, Homebrew will not fetch them from repository when running `tap` command.
 
 ### Push to SCM
 

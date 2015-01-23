@@ -79,9 +79,9 @@ Some of the header attributes worth mentioning separately. For starters the _Sou
 %setup
 {% endhighlight %}
 
-I myself just found out about it recently and didn't try it yet. So in this article I'll do the job of setup macro with shell commands, but this is definetly where improvements should be made.
+I myself just found out about it recently and didn't try it yet. So in this article I'll do the job of setup macro with shell commands, but this is definitely where improvements should be made.
 
-Then there's `_tmppath` varible. You will notice later that it's not passed to RPM script directly anywhere, instead, it's picked up from a special `.rpmmacros` file. You'll see how it's used later on.
+Then there's `_tmppath` variable. You will notice later that it's not passed to RPM script directly anywhere, instead, it's picked up from a special `.rpmmacros` file. You'll see how it's used later on.
 
 ### Install
 Now it's time to define install command. It's again very similar to Homebrew's install. So I will give here brief description of the steps with the code and for more details you can always get back to [Homebrew post]({% post_url 2014-05-30-atlassian-cli-homebrew%}).
@@ -134,7 +134,7 @@ sed -i.bak -e "s,\(.*\)https://fisheye.example.com\(.*\),\1https://fisheye.nsbog
 sed -i.bak -e "s,\(.*\)https://crubicle.example.com\(.*\),\1https://crubicle.nsbogan.com.au\2,g" $filename
 {% endhighlight %}
 
-Finally rename ambigous `all.sh` to `atlassian-all.sh` and move all `.sh` files to `bin` folder. I personally prefer to drop `.sh` part from the filename in the process.
+Finally rename ambiguous `all.sh` to `atlassian-all.sh` and move all `.sh` files to `bin` folder. I personally prefer to drop `.sh` part from the filename in the process.
 
 {% highlight bash %}
 # all.sh - rename to atlassian-all.sh before moving
