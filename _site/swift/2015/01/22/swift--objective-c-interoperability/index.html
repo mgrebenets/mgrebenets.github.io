@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        Swift & Objective-C Interoperability - 
+      
+      NSBogan
+    </title>
+    <meta name="description" content="A practical manifestation of Swift & Objective-C interoperability problems">
+    <meta name="author" content="Maksym Grebenets">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+  </head>
+
+  <body>
+    <div id="page-wrap">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="container">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+
+            <a class="brand" href="/">NSBogan</a>
+
+            <div class="nav-collapse">
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+              </ul>
+              <ul class="nav pull-right social visible-desktop">
+                <li class="divider-vertical"></li>
+                
+                <li>
+                  <a href="https://github.com/mgrebenets" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+                
+                
+                
+                <li>
+                  <a href="https://twitter.com/mgrebenets" class="zocial twitter icon" target="_blank">
+                    <span class="hidden-desktop">Twitter</span>
+                  </a>
+                </li>
+                
+                
+                
+                
+                <li>
+                  <a href="http://feeds.feedburner.com/mgrebenets@gmail.com" class="zocial rss icon" target="_blank">
+                    <span class="hidden-desktop">FeedBurner</span>
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="content">
+          
+<div class="page-header">
+  <h1>
+    Swift & Objective-C Interoperability 
+    
+  </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    
+<p>I’ve stumbled on an issue while working on my hobby project. One of the few related to Swift and Objective-C interoperability.</p>
+
+<!--more-->
+
+<p>Let’s setup a simple code base.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">import</span> <span class="n">AppKit</span>
+<span class="k">typealias</span> <span class="n">BaseObjCClass</span> <span class="o">=</span> <span class="bp">NSObject</span>
+
+<span class="k">enum</span> <span class="n">PureSwiftEnum</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="n">Value</span><span class="p">,</span> <span class="n">AnotherValue</span>
+<span class="p">}</span>
+
+<span class="k">protocol</span> <span class="n">PureSwiftProtocol</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="nl">value</span><span class="p">:</span> <span class="n">PureSwiftEnum</span> <span class="p">{</span> <span class="kr">get</span> <span class="p">}</span>
+  <span class="k">var</span> <span class="nl">size</span><span class="p">:</span> <span class="bp">CGSize</span> <span class="p">{</span> <span class="kr">get</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nl">ObjCSubclass</span><span class="p">:</span> <span class="n">BaseObjCClass</span><span class="p">,</span> <span class="n">PureSwiftProtocol</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="nl">value</span><span class="p">:</span> <span class="n">PureSwiftEnum</span> <span class="o">=</span> <span class="p">.</span><span class="n">Value</span>
+  <span class="k">var</span> <span class="nl">size</span><span class="p">:</span> <span class="bp">CGSize</span> <span class="o">=</span> <span class="n">CGSizeZero</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="n">GenericClass</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">where</span> <span class="nl">T</span><span class="p">:</span> <span class="n">PureSwiftProtocol</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="nl">embeddedInstance</span><span class="p">:</span> <span class="n">T</span>
+  <span class="k">init</span><span class="p">(</span><span class="nl">embeddedInstance</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">instance</span> <span class="o">=</span> <span class="n">instance</span>
+  <span class="p">}</span>
+
+  <span class="k">func</span> <span class="n">accessValue</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">PureSwiftEnum</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">instance</span><span class="p">.</span><span class="n">value</span>
+  <span class="p">}</span>
+
+  <span class="k">func</span> <span class="n">accessSize</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="bp">CGSize</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">instance</span><span class="p">.</span><span class="n">size</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">let</span> <span class="n">objectGeneric</span> <span class="o">=</span> <span class="n">GenericClass</span><span class="p">(</span><span class="nl">embeddedInstance</span><span class="p">:</span> <span class="n">ObjCSubclass</span><span class="p">())</span>
+
+<span class="n">println</span><span class="p">(</span><span class="n">objectGeneric</span><span class="p">.</span><span class="n">accessValue</span><span class="p">())</span>
+<span class="n">println</span><span class="p">(</span><span class="n">objectGeneric</span><span class="p">.</span><span class="n">accessSize</span><span class="p">())</span></code></pre></div>
+
+<p>There’s pure Swift enum, protocol and a subclass of Objective-C class that adopts pure Swift protocol. By the way, have you ever tried declaring Swift enum with just one case?</p>
+
+<p>Further on, I declare a generic class with type conforming to pure Swift protocol.</p>
+
+<p>So what happens if I pass an Objective-C subclass to this generic class initializer?</p>
+
+<p>To be honest, nothing happens most away. For reasons unknown to me my project compiled and ran. And it was running OK for a while until at some moment it started crashing consistently.</p>
+
+<p>So the problem in this case is that I’m implicitly checking the conformance of Objective-C object <code>ObjCSubclass</code> to a non Objective-C (pure Swift) protocol <code>PureSwiftProtocol</code>. This check occurs when calling <code>return embeddedInstance.value</code> where <code>embeddedInstance</code> is an instance of <code>ObjCSubclass</code> but the access to it’s property happens by converting it to <code>PureSwiftProtocol</code>.</p>
+
+<p>Apparently, this is a known issue. There’s a couple of discussions on StackOverflow (<a href="http://stackoverflow.com/questions/24132738/swift-set-delegate-to-self-gives-exc-bad-access">one</a>, <a href="http://stackoverflow.com/questions/24174348/calling-method-using-optional-chaining-on-weak-variable-causes-exc-bad-access">two</a>).</p>
+
+<h2 id="solution-a-back-to-roots">Solution A: Back to Roots</h2>
+
+<p>The first solution is to turn <code>PureSwiftProtocol</code> into Objective-C protocol by using <code>@objc</code> notation.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="p">@</span><span class="n">objc</span> <span class="k">protocol</span> <span class="n">PureSwiftProtocol</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="nl">value</span><span class="p">:</span> <span class="n">PureSwiftEnum</span> <span class="p">{</span> <span class="kr">get</span> <span class="p">}</span>
+  <span class="k">var</span> <span class="nl">size</span><span class="p">:</span> <span class="bp">CGSize</span> <span class="p">{</span> <span class="kr">get</span> <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>But that won’t make compiler happy because it has no idea how to map <code>PureSwiftEnum</code> into Objective-C. So you have to take it one step further. You have to declare <code>PureSwiftEnum</code> as Objective-C enum (with <code>NS_ENUM</code>), obviously you have to do it in Objective-C header file and properly setup bridging header in your project.</p>
+
+<div class="highlight"><pre><code class="language-objective-c" data-lang="objective-c"><span class="k">typedef</span> <span class="nf">NS_ENUM</span><span class="p">(</span><span class="bp">NSInteger</span><span class="p">,</span> <span class="n">PureSwiftEnum</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">PureSwiftEnumValue</span><span class="p">,</span>
+  <span class="n">PureSwiftEnumAnotherValue</span><span class="p">,</span>
+<span class="p">};</span></code></pre></div>
+
+<h2 id="solution-b-wrap-it-up">Solution B: Wrap it Up</h2>
+
+<p>If you don’t want to revert back to adding Objective-C code with the hope that Apple eventually fixes this issue in the future, you can try another ugly trick - wrap your Objective-C class with pure Swift class that conforms to the same protocol.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">class</span> <span class="nl">PureSwiftWrapper</span><span class="p">:</span> <span class="n">PureSwiftProtocol</span> <span class="p">{</span>
+  <span class="k">var</span> <span class="nl">objcInstance</span><span class="p">:</span> <span class="n">ObjCSubclass</span>
+
+  <span class="k">init</span><span class="p">(</span><span class="nl">objcInstance</span><span class="p">:</span> <span class="n">ObjcSubclass</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">self</span><span class="p">.</span><span class="n">objcInstance</span> <span class="o">=</span> <span class="n">objcInstance</span>
+  <span class="p">}</span>
+
+  <span class="k">var</span> <span class="nl">value</span><span class="p">:</span> <span class="n">PureSwiftEnum</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">objcInstance</span><span class="p">.</span><span class="n">value</span>
+  <span class="p">}</span>
+
+  <span class="k">var</span> <span class="nl">size</span><span class="p">:</span> <span class="bp">CGSize</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">objcInstance</span><span class="p">.</span><span class="n">size</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Now you can pass an instance of <code>PureSwiftWrapper</code> to <code>GenericClass</code></p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="n">wrapper</span> <span class="o">=</span> <span class="n">PureSwiftWrapper</span><span class="p">(</span><span class="nl">objcInstance</span><span class="p">:</span> <span class="n">ObjCSubclass</span><span class="p">())</span>
+<span class="k">let</span> <span class="n">generic</span> <span class="o">=</span> <span class="n">GenericClass</span><span class="p">(</span><span class="nl">embeddedInstance</span><span class="p">:</span> <span class="n">wrapper</span><span class="p">)</span>
+
+<span class="n">println</span><span class="p">(</span><span class="n">generic</span><span class="p">.</span><span class="n">accessValue</span><span class="p">())</span></code></pre></div>
+
+<p>With this setup my crash went away and hadn’t reappeared since then.</p>
+
+<h2 id="summary">Summary</h2>
+<p>Reference to <a href="https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-objc-interop.swift">swift-objc-interop.swift</a> to experiment and run it from command line or in Playground</p>
+
+    <hr>
+    <div class="pagination btn-group">
+      
+        <a class="btn prev" href="/swift/2015/01/12/flappy-swift" title="Flappy Swift">&larr; Previous</a>
+      
+        <a class="btn" href="/archive.html">Archive</a>
+      
+        <a class="btn next" href="/swift/2015/01/27/swift-dictionary-literal-convertible" title="Swift Dictionary Literal Convertible">Next &rarr;</a>
+      
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <section>
+      <h4>Published</h4>
+      <div class="date"><span>22 January 2015</span></div>
+    </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          Swift
+        </span>
+      </section>
+         
+    
+      <section>
+        <h4>Tags</h4>
+        <ul class="tag_box">
+          
+          
+
+
+  
+     
+    	<li><a href="/tags.html#swift-ref">swift <span>3</span></a></li>
+     
+    	<li><a href="/tags.html#ios-ref">ios <span>5</span></a></li>
+     
+    	<li><a href="/tags.html#apple-ref">apple <span>5</span></a></li>
+     
+    	<li><a href="/tags.html#objc-ref">objc <span>1</span></a></li>
+    
+  
+
+
+
+        </ul>
+      </section>
+             
+  </div>
+</div>
+
+
+        </div>
+      </div> <!-- /container -->
+
+      <div class="footer-push"></div>
+    </div><!--/.page-wrap -->
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2015 Maksym Grebenets
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+

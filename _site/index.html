@@ -170,6 +170,157 @@
 <ul>
   
     <li>
+      <a href="/2015/02/01/xcode-derived-data">Xcode Derived Data</a>
+      
+
+    </li>
+  
+    <li>
+      <a href="/2015/02/01/mobile-ci-daemon-vs-agent">Mobile CI Daemon vs Agent</a>
+      
+
+    </li>
+  
+    <li>
+      <a href="/2015/02/01/mobile-ci--osx-keychain">Mobile CI &amp; OSX Keychain</a>
+      
+
+    </li>
+  
+    <li>
+      <a href="/2015/02/01/mobile-ci--ios-simulator">Mobile CI &amp; iOS Simulator</a>
+      
+
+    </li>
+  
+    <li>
+      <a href="/2015/02/01/jenkins-remote-node">Jenkins Remote Node</a>
+      
+
+    </li>
+  
+    <li>
+      <a href="/2015/02/01/jenkins-ci-server-on-osx">Jenkins CI Server on OSX</a>
+      
+
+    </li>
+  
+    <li>
+      <a href="/2015/02/01/bamboo-remote-agent">Bamboo Remote Agent</a>
+      
+<p>use these links
+https://confluence.atlassian.com/display/BAMBOO021/Running+Bamboo+behind+a+firewall+with+Remote+Agents+outside+the+firewall</p>
+
+<p>why it can’t sit in the cloud
+https://answers.atlassian.com/questions/22655/bamboo-mac-agent</p>
+
+<p>how to get the jar
+how to configure it’s launch
+how to make it a launch agent (and why not launch daemon)
+how to configure plist, what are other options around that
+what’s the purpose of .sh runner script and how it relates to jar</p>
+
+<p>fails to get fingerprint and other stuff</p>
+
+<p>put all the notes about failover url
+it must have a host name or ip when both are running in local environment</p>
+
+<p>it must have an ip (hostname won’t work) when server is outside your network (e.g. aws cloud)</p>
+
+<p>how to enable logging and use it for debugging problems</p>
+
+<p>keychain: might be good as a separate note
+how to unlock keychain for it (all the keys)
+how to unlock keychain as part of build scripts (might be good as a separate note)</p>
+
+<p>simulator: separate note
+how to enable dev mode on the machine (and why)
+how to work with simulator, reset it (via ios-sim old days, via xcrun since xcode 6)</p>
+
+<p>derived data - separate and very short note</p>
+
+<p>note on the Docker with the link I saw once</p>
+
+
+    </li>
+  
+    <li>
+      <a href="/2015/02/01/bamboo-group-agent">Bamboo Group Agent</a>
+      
+<p>what is it for? why do you need to use it?
+example: a setup with server and agents in the cloud
+and self-hosted mac agent</p>
+
+<p>most plans will expect default capabilities because all the agents are same (cloned)
+so there’s no need to define those special capabilities most of the time
+so you have a swarm of build plans with no capabilities
+and any of those will be more than happy to jump on your mac agent</p>
+
+<p>solution:
+a - tell other devs to fix their plans - unreal, most plans were created ages ago and it’s just difficult to carry such work trying to orchestrate so many other peeps
+a.a - fix them yourself - hah!</p>
+
+<p>b - use group agent
+group agent marks the agent as part  of a group
+only plans belonging to this group can run on this agent
+you list groups separated by comma when configuring it
+this part prevents all other build plans from using group agent</p>
+
+<p>when creating plans you mark them as requiring build agent
+this part locks your plan to a group agent</p>
+
+<p>drawbacks:
+lock the entire plan, no way to lock on job basis
+with a typical ios plan, only build, unit test and some packaging/signing requires OSX (xcode)
+all the rest (upload to hockey, testflight, etc., reporting, ) only needs build artifacts and network access
+depending on your plan only 20% to 50% os actual jobs need OSX,
+since mac agent is a scarce resource you’d benefit from running all the other jobs on cloud agents
+but it’s not possible</p>
+
+<p>reason:
+there isn’t much to be done
+the API (URL) that atlassian provides for plugin developers only allows filtering target agents for the plan
+there’s no granular control for jobs
+so just accept the reality and look for ways to optimize the non-OSX parts of the build plan</p>
+
+<p>another drawback: deployment projects
+describe the problem, provide the solution
+add link to a custom group agent plugin build</p>
+
+
+    </li>
+  
+    <li>
+      <a href="/2015/02/01/bamboo-ci-server-on-osx">Bamboo CI Server on OSX</a>
+      
+
+    </li>
+  
+    <li>
+      <a href="/mobile%20ci/2015/01/29/bamboo-vs-jenkins">Bamboo vs Jenkins</a>
+      
+<p>A [biased and subjective] comparison of Bamboo and Jenkins as CI servers for mobile, based on practical experience with both.</p>
+
+
+    </li>
+  
+    <li>
+      <a href="/swift/2015/01/27/swift-dictionary-literal-convertible">Swift Dictionary Literal Convertible</a>
+      
+<p>A practical example of Swift’s <code>DictionaryLiteralConvertible</code> protocol application.</p>
+
+
+    </li>
+  
+    <li>
+      <a href="/swift/2015/01/22/swift--objective-c-interoperability">Swift &amp; Objective-C Interoperability</a>
+      
+<p>I’ve stumbled on an issue while working on my hobby project. One of the few related to Swift and Objective-C interoperability.</p>
+
+
+    </li>
+  
+    <li>
       <a href="/swift/2015/01/12/flappy-swift">Flappy Swift</a>
       
 <p>Yet another clone of <a href="https://bitbucket.org/i4niac/flappy-swift">Flappy Bird</a>. Once again written in Swift.

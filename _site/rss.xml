@@ -5,10 +5,681 @@
         <description>NSBogan - Maksym Grebenets</description>
         <link>http://mgrebenets.github.io</link>
         <link>http://mgrebenets.github.io</link>
-        <lastBuildDate>2015-01-18T00:48:10+11:00</lastBuildDate>
-        <pubDate>2015-01-18T00:48:10+11:00</pubDate>
+        <lastBuildDate>2015-02-05T16:06:04+11:00</lastBuildDate>
+        <pubDate>2015-02-05T16:06:04+11:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>Xcode Derived Data</title>
+                <description>
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/xcode-derived-data</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/xcode-derived-data</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Mobile CI Daemon vs Agent</title>
+                <description>
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/mobile-ci-daemon-vs-agent</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/mobile-ci-daemon-vs-agent</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Mobile CI & OSX Keychain</title>
+                <description>
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/mobile-ci--osx-keychain</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/mobile-ci--osx-keychain</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Mobile CI & iOS Simulator</title>
+                <description>
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/mobile-ci--ios-simulator</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/mobile-ci--ios-simulator</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Jenkins Remote Node</title>
+                <description>
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/jenkins-remote-node</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/jenkins-remote-node</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Jenkins CI Server on OSX</title>
+                <description>
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/jenkins-ci-server-on-osx</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/jenkins-ci-server-on-osx</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Bamboo Remote Agent</title>
+                <description>
+&lt;p&gt;use these links
+https://confluence.atlassian.com/display/BAMBOO021/Running+Bamboo+behind+a+firewall+with+Remote+Agents+outside+the+firewall&lt;/p&gt;
+
+&lt;p&gt;why it can’t sit in the cloud
+https://answers.atlassian.com/questions/22655/bamboo-mac-agent&lt;/p&gt;
+
+&lt;p&gt;how to get the jar
+how to configure it’s launch
+how to make it a launch agent (and why not launch daemon)
+how to configure plist, what are other options around that
+what’s the purpose of .sh runner script and how it relates to jar&lt;/p&gt;
+
+&lt;p&gt;fails to get fingerprint and other stuff&lt;/p&gt;
+
+&lt;p&gt;put all the notes about failover url
+it must have a host name or ip when both are running in local environment&lt;/p&gt;
+
+&lt;p&gt;it must have an ip (hostname won’t work) when server is outside your network (e.g. aws cloud)&lt;/p&gt;
+
+&lt;p&gt;how to enable logging and use it for debugging problems&lt;/p&gt;
+
+&lt;p&gt;keychain: might be good as a separate note
+how to unlock keychain for it (all the keys)
+how to unlock keychain as part of build scripts (might be good as a separate note)&lt;/p&gt;
+
+&lt;p&gt;simulator: separate note
+how to enable dev mode on the machine (and why)
+how to work with simulator, reset it (via ios-sim old days, via xcrun since xcode 6)&lt;/p&gt;
+
+&lt;p&gt;derived data - separate and very short note&lt;/p&gt;
+
+&lt;p&gt;note on the Docker with the link I saw once&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/bamboo-remote-agent</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/bamboo-remote-agent</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Bamboo Group Agent</title>
+                <description>
+&lt;p&gt;what is it for? why do you need to use it?
+example: a setup with server and agents in the cloud
+and self-hosted mac agent&lt;/p&gt;
+
+&lt;p&gt;most plans will expect default capabilities because all the agents are same (cloned)
+so there’s no need to define those special capabilities most of the time
+so you have a swarm of build plans with no capabilities
+and any of those will be more than happy to jump on your mac agent&lt;/p&gt;
+
+&lt;p&gt;solution:
+a - tell other devs to fix their plans - unreal, most plans were created ages ago and it’s just difficult to carry such work trying to orchestrate so many other peeps
+a.a - fix them yourself - hah!&lt;/p&gt;
+
+&lt;p&gt;b - use group agent
+group agent marks the agent as part  of a group
+only plans belonging to this group can run on this agent
+you list groups separated by comma when configuring it
+this part prevents all other build plans from using group agent&lt;/p&gt;
+
+&lt;p&gt;when creating plans you mark them as requiring build agent
+this part locks your plan to a group agent&lt;/p&gt;
+
+&lt;p&gt;drawbacks:
+lock the entire plan, no way to lock on job basis
+with a typical ios plan, only build, unit test and some packaging/signing requires OSX (xcode)
+all the rest (upload to hockey, testflight, etc., reporting, ) only needs build artifacts and network access
+depending on your plan only 20% to 50% os actual jobs need OSX,
+since mac agent is a scarce resource you’d benefit from running all the other jobs on cloud agents
+but it’s not possible&lt;/p&gt;
+
+&lt;p&gt;reason:
+there isn’t much to be done
+the API (URL) that atlassian provides for plugin developers only allows filtering target agents for the plan
+there’s no granular control for jobs
+so just accept the reality and look for ways to optimize the non-OSX parts of the build plan&lt;/p&gt;
+
+&lt;p&gt;another drawback: deployment projects
+describe the problem, provide the solution
+add link to a custom group agent plugin build&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/bamboo-group-agent</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/bamboo-group-agent</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Bamboo CI Server on OSX</title>
+                <description>
+</description>
+                <link>http://mgrebenets.github.io/2015/02/01/bamboo-ci-server-on-osx</link>
+                <guid>http://mgrebenets.github.io/2015/02/01/bamboo-ci-server-on-osx</guid>
+                <pubDate>2015-02-01T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Bamboo vs Jenkins</title>
+                <description>
+&lt;p&gt;A [biased and subjective] comparison of Bamboo and Jenkins as CI servers for mobile, based on practical experience with both.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Continuous Integration and Continuous Deployment (Delivery, Distribution) has been around for quite a while. But surprisingly enough on a global scale it pretty much just got into its teen years in regards to Mobile. Well, subjectively, of course.&lt;/p&gt;
+
+&lt;p&gt;You can see all levels of mobile CI these days. Some would still install builds from Xcode, others would have a quickly patched up build server under their desk. Xcode Bots meets the needs of yet another group of people. Travis CI is good and for open source projects it’s probably the best option.&lt;/p&gt;
+
+&lt;p&gt;The advanced level of CI would include distributed build systems with multiple build nodes, support for automated unit and UI tests, running tests on physical devices, automatic deployment to TestFlight, Hockey App, Over the Air, and much more. It becomes not just mobile development, but spans into areas like DevOps and others. &lt;a href=&quot;https://codeascraft.com/2014/02/28/etsys-journey-to-continuous-integration-for-mobile-apps/&quot;&gt;Etsy’s blog post&lt;/a&gt; is a good example of where this path can take you.&lt;/p&gt;
+
+&lt;p&gt;If you decide to take mobile CI seriously, you have to pick a build server to start with.&lt;/p&gt;
+
+&lt;p&gt;I personally have worked with Bamboo for 1.5 years and I’m dealing with Jenkins right now, so I have few insights and can give some comparison of the two.&lt;/p&gt;
+
+&lt;h2 id=&quot;setup--configuration&quot;&gt;Setup &amp;amp; Configuration&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;/2015/02/01/bamboo-ci-server-on-osx&quot;&gt;Bamboo installation&lt;/a&gt; and &lt;a href=&quot;/2015/02/01/jenkins-ci-server-on-osx&quot;&gt;Jenkins installation&lt;/a&gt; tasks are about the same in terms of time and knowledge required. While installing one of the two you’ll climb a certain learning curve which will help you heaps if you ever have to deal with second option.&lt;/p&gt;
+
+&lt;p&gt;Both are built using Java, both will need a database setup. Jenkins and Bamboo will setup and configure &lt;a href=&quot;http://en.wikipedia.org/wiki/MySQL&quot;&gt;MySQL&lt;/a&gt; by default, however, Bamboo will recommend you to configure custom database like &lt;a href=&quot;http://en.wikipedia.org/wiki/PostgreSQL&quot;&gt;PostgreSQL&lt;/a&gt; for production environment.&lt;/p&gt;
+
+&lt;p&gt;Being Java applications both will require similar JVM configuration. Default configuration won’t really serve you well. You’ll experience out of memory issues as soon as you add a couple of basic build plans/jobs.&lt;/p&gt;
+
+&lt;p&gt;And lot’s of other things are similar: configuration behind proxy, login vs non-login user (&lt;a href=&quot;/2015/02/01/mobile-ci-daemon-vs-agent&quot;&gt;Launch Agent vs Daemon&lt;/a&gt;), &lt;a href=&quot;/2015/02/01/mobile-ci--osx-keychain&quot;&gt;OSX Keychain&lt;/a&gt;, &lt;a href=&quot;/2015/02/01/mobile-ci--ios-simulator&quot;&gt;iOS Simulator&lt;/a&gt;, etc.&lt;/p&gt;
+
+&lt;h2 id=&quot;gui&quot;&gt;GUI&lt;/h2&gt;
+&lt;p&gt;Obviously, this is not a comparison criteria at all. This criteria is as subjective as it could possibly be!&lt;/p&gt;
+
+&lt;p&gt;Out of the box Bamboo UI looks much better than Jenkins version.&lt;/p&gt;
+
+&lt;p&gt;With Jenkins there are ways to improve your day to day user experience. You can customize theme and even make your custom UI improvements, like adding “Build Now” button where you like it.&lt;/p&gt;
+
+&lt;p&gt;You should start by installing &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Simple+Theme+Plugin&quot;&gt;Simple Theme Plugin&lt;/a&gt; and then configure it with one of the available themes. Not all the themes will look good, it all depends on the Jenkins version you have and browser you use, etc. I tried a buch of them and ironically enough the only theme that looks good on our production CI box is called &lt;a href=&quot;https://github.com/djonsson/jenkins-atlassian-theme&quot;&gt;“Atlassian”&lt;/a&gt;. But I’m dealing with slightly outdated Jenkins version, you could get better results with up to date Jenkins.&lt;/p&gt;
+
+&lt;h2 id=&quot;plugins&quot;&gt;Plugins&lt;/h2&gt;
+&lt;p&gt;This is where the large community plays it’s role. Subjectively or not, Jenkins has a larger choice of plugins of all kinds, starting from management and organization of build jobs and ending up with reporting.&lt;/p&gt;
+
+&lt;p&gt;While Bamboo supports lots of job management features out of the box, reporting plugins is something that needs to be improved.&lt;/p&gt;
+
+&lt;p&gt;TODO: take the plugins I use (PMD, Cobertura, Unit Tests, HTML publisher, SLOC)
+TODO: note that jenkins shows graphics with trends&lt;/p&gt;
+
+&lt;p&gt;And then there is the Mother and the Farther of all Jenkins plugins - &lt;a href=&quot;&quot;&gt;Jenkins Job DSL Plugin&lt;/a&gt;. Short summary: it allows you to manage your configuration as a code.&lt;/p&gt;
+
+&lt;p&gt;Check out this good talk and resources (TODO: put more links as a reference) to find out more.&lt;/p&gt;
+
+&lt;p&gt;I plan to write a post about my personal experience with using Job DSL plugin.&lt;/p&gt;
+
+&lt;h2 id=&quot;build-jobplan-structure&quot;&gt;Build Job/Plan Structure&lt;/h2&gt;
+
+&lt;p&gt;There is a bit of confusion caused by terminology used by Bamboo and Jenkins.&lt;/p&gt;
+
+&lt;h3 id=&quot;bamboo&quot;&gt;Bamboo&lt;/h3&gt;
+
+&lt;p&gt;With Bamboo you start by creating Build &lt;em&gt;Plan&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Each plan consists of one ore more Build &lt;em&gt;Stages&lt;/em&gt;. Stages run in &lt;strong&gt;sequential&lt;/strong&gt; order. If one stage fails next stages are never executed. Stages can be configured as manual to be triggered by hand.&lt;/p&gt;
+
+&lt;p&gt;Stages contain Build &lt;em&gt;Jobs&lt;/em&gt;. Build jobs in one stage can run in &lt;strong&gt;parallel&lt;/strong&gt; if there’s enough build agents for that. Each job can require different capabilities and can be dispatched to run on some designated build agent. Build jobs may produce Build &lt;em&gt;Artefacts&lt;/em&gt; and share them with other jobs in consequent stages. Since jobs are parallelized, if one of them fails other jobs will still keep running until they finish on their own.&lt;/p&gt;
+
+&lt;p&gt;Finally each job is made of Build &lt;em&gt;Tasks&lt;/em&gt;. Tasks run in order from top to bottom. A task may be a basic shell script or one of the many tasks provided via plugins. Here’s a generalized example of a job and it’s tasks. One large and important group of taks is reporting tasks.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Checkout git repository&lt;/li&gt;
+  &lt;li&gt;Build&lt;/li&gt;
+  &lt;li&gt;Test&lt;/li&gt;
+  &lt;li&gt;Deploy&lt;/li&gt;
+  &lt;li&gt;Generate test report&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A summary of a Build Plan structure&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Build Stage
+    &lt;ul&gt;
+      &lt;li&gt;Build Job
+        &lt;ul&gt;
+          &lt;li&gt;Task&lt;/li&gt;
+          &lt;li&gt;Task&lt;/li&gt;
+          &lt;li&gt;[&lt;em&gt;more tasks&lt;/em&gt;]&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;[&lt;em&gt;more jobs&lt;/em&gt;]&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;[&lt;em&gt;more stages&lt;/em&gt;]&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;Not so Parallel&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Bamboo deserves a special side-note in regards to parallel job execution and iOS build plans.&lt;/p&gt;
+
+&lt;p&gt;As I mentioned before, the way you assign build jobs to local or remote agents is via capabilities. An agent defines capabilities it has, a job declares capabilities it wants, and then Bamboo matches the two.&lt;/p&gt;
+
+&lt;p&gt;If you are in total control of your CI setup and mobile team is the only one using your particular Bamboo server and all agents, you have all the power to set all the agents capabilities and then enforce a requirement that all build jobs created by you or your teammates must explicitly specify which capabilities they need. This way you’ll harness the full power of distributed configuration, all build jobs will run only on the agents they really should run on.&lt;/p&gt;
+
+&lt;p&gt;Another situation is when mobile CI is a new addition to company CI setup. There is already a CI server and few dozens of build agents and a lot of other teams using this CI configuration. Lots of teams with lots of plans created over the years.&lt;/p&gt;
+
+&lt;p&gt;Now imagine that you are adding your specialized Mac build agent to be used for Xcode builds only. You setup and configure remote Mac agent, connect it to the server and… all the other build plans start jumping on your Mac agent! That’s because 99% of those plans declare no capabilities they require, they simply expect that all the agents are identical in terms of capabilities. And that works because all the agents are indeed identical clones. Well &lt;em&gt;were&lt;/em&gt; identical clones until a new Mac agent was added.&lt;/p&gt;
+
+&lt;p&gt;There’s no easy fix to this problem and you can tackle it in one of 2 ways.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Ideal Solution&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Ideally, CI must be done right. All the build plans must be maintained, updated and removed if no longer needed. As a requirement, all build plans must explicitly declare capabilities they require to be able run. This is something to be enforced at team management level. Company has to have guidelines for creating and managing build plans and there must be a person or even a team (Dev Support team) responsible for keeping guidelines up to date and enforcing them.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Down to Earth Solution&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The reality is rough. The number of existing plans is overhelming, it will take months to chase people responsible for each build plan and communicate the importance of declaring capabilities to them. The whole change has to be made in a safe way so it doesn’t break existing workflows and production deployments.&lt;/p&gt;
+
+&lt;p&gt;You don’t have months of waiting allocated in your schedule, you need mobile CI running ASAP. One thing you could do is to setup your own CI server just for mobile and essentially move to “under the desk” setup. This way you get no support from Dev Support team (given that you have one) and all the trouble of setting up, configuring and supporting the server and agents is now yours.&lt;/p&gt;
+
+&lt;p&gt;However, you still can do mobile CI as part of company wide CI. There is a plugin that will help you - &lt;a href=&quot;/2015/02/01/bamboo-group-agent&quot;&gt;Bamboo Group Agent plugin&lt;/a&gt;. Have a read if you interested, Group Agent plugin offers a solution which is not fully flexible, but will help with original problem.&lt;/p&gt;
+
+&lt;h3 id=&quot;jenkins&quot;&gt;Jenkins&lt;/h3&gt;
+
+&lt;p&gt;With Jenkins you start by creating Build Project, which is on occasions called &lt;em&gt;Build Job&lt;/em&gt; causing certain confusion. In this post I’ll stick with Project term.&lt;/p&gt;
+
+&lt;p&gt;By default all you get is a basic Freestyle project that includes&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Description&lt;/li&gt;
+  &lt;li&gt;Parameters&lt;/li&gt;
+  &lt;li&gt;Build Triggers&lt;/li&gt;
+  &lt;li&gt;Build Environment&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Build Steps&lt;/em&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Post-build Actions&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you draw an analogy to Bamboo, then all you get is a build &lt;em&gt;plan&lt;/em&gt; with single &lt;em&gt;stage&lt;/em&gt; containing single &lt;em&gt;job&lt;/em&gt; and list of &lt;em&gt;tasks&lt;/em&gt; (Build Steps and Post-build Actions are nothing but tasks). That’s it. There are no stages and no way to run anything in parallel.&lt;/p&gt;
+
+&lt;p&gt;This is where plugins get into play. &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin&quot;&gt;Mutlijob Plugin&lt;/a&gt; does exactly the same thing as Bamboo. Stages are called &lt;em&gt;Phases&lt;/em&gt;, phases include &lt;em&gt;Jobs&lt;/em&gt;. Jobs run in &lt;strong&gt;parallel&lt;/strong&gt; when possible, while phases execution order is sequential.&lt;/p&gt;
+
+&lt;p&gt;One very important distinction is that jobs in multi job project are actually references to existing build projects.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Multi Job Build Project
+    &lt;ul&gt;
+      &lt;li&gt;Build Phase
+        &lt;ul&gt;
+          &lt;li&gt;Build Job 1 –&amp;gt; Build Project 1&lt;/li&gt;
+          &lt;li&gt;Build Job 2 –&amp;gt; Build Project 2&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In theory you can have a multi job project that includes a job which is a multi job project… You could even unintentionally create build job retain cycles and an infinite build loop.&lt;/p&gt;
+
+&lt;p&gt;Multijob Plugin support is added to &lt;a href=&quot;https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#multijob-phase&quot;&gt;Job DSL Plugin&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once again with a fair bit of work Jenkins can match Bamboo’s default functionality and then with another fair bit of work can surpass it.&lt;/p&gt;
+
+&lt;p&gt;Jenkins is still prone to the same problem Bamboo is when it comes to adding iOS build nodes to existing infrastructure. Chances are high your Mac build node will be used by all the other build projects if capabilities are not configured properly. In Jenkins world there are no capabilities as such, instead labels are used. Each build node can be labeled with multiple labels and build jobs can use complex logic expression to specify target nodes they want to run on. But then, if labels were not used in your corporate CI from day the amount of work required for labelling existing build projects can be too big. At this moment I am not aware of a Jenkins analogue of Bamboo Group Agent.&lt;/p&gt;
+
+&lt;h2 id=&quot;pipelines&quot;&gt;Pipelines&lt;/h2&gt;
+
+&lt;p&gt;TODO: work on pipelines, how bamboo does that&lt;/p&gt;
+
+&lt;p&gt;https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin
+https://wiki.jenkins-ci.org/display/JENKINS/Promoted+Builds+Plugin&lt;/p&gt;
+
+&lt;h2 id=&quot;branch-management&quot;&gt;Branch Management&lt;/h2&gt;
+
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;p&gt;why this is important?
+why would you get builds for branches rather than waiting for PRs and their merge
+examples with testers being able to test feature while it’s being developed in feature branch
+this way feature is tested before it get’s merged to main branch
+can possibly catch bugs earlier this way
+can have customized builds with something really special to be prepared and made available for stake holders&lt;/p&gt;
+
+&lt;p&gt;bamboo - does a great job with it’s feature to automatically create plan branches
+nice support for aging, for permanent branches, for branch name regex, etc.
+very good support for upstream and downstream merges (branch updater and branch keeper)
+will help to detect merge conflicts earlier
+branches are nicely organized in UI
+mention the fact about plan dependencies
+a child plan branches can be matched up to parent plan branches
+and child plan will pick up build artifacts from matching parent plan
+etc.&lt;/p&gt;
+
+&lt;p&gt;jenkins
+by default - nothing like that at all
+the most popular Git plugin is shaped up for development mode other than mobile
+it allows to specify multiple branches but then those will be just merged before the build, that’s not having a plan for a branch
+alternatives (list 3) are somewhat closer but not quite there anyway
+the best of them was multi-job plugin (imho)
+but i could not get branch filtering working and had to create plans for all branches
+doesn’t have branch merging strategies configurable
+not much on branch ageing (check)
+can’t tell much on handling child plans in regards to branches&lt;/p&gt;
+
+&lt;p&gt;however, the mentioned before job dsl plugin can take care of it all
+with a bit of groovy scripting you can get the branch filtering, aging and the rest
+you can nicely organized branch jobs into views and folders and have total control over it
+you can generate and upate child plans the way you want it
+same goes for branch merging strategies
+in many ways, when used right (with a bit of effort though) job dsl plugin does all what bamboo does
+and then more&lt;/p&gt;
+
+&lt;h2 id=&quot;distributed-builds&quot;&gt;Distributed Builds&lt;/h2&gt;
+&lt;p&gt;Both Bamboo and Jenkins have support for distributed builds. Bamboo is using &lt;a href=&quot;https://confluence.atlassian.com/display/BAMBOO/Bamboo+remote+agent+installation+guide&quot;&gt;Remote Agents&lt;/a&gt; while Jenkins calls them &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Distributed+builds&quot;&gt;Remote Nodes&lt;/a&gt;, sometimes referred as slave nodes.&lt;/p&gt;
+
+&lt;p&gt;A side note - both servers support local build agents/nodes as well. Those are running locally (as the name suggests) on the same hardware as the build server.&lt;/p&gt;
+
+&lt;p&gt;Back to remote agents/nodes. Complexity of setting them up and configuring doesn’t vary much between the two CI servers.&lt;/p&gt;
+
+&lt;p&gt;Both will suffer from issues caused by sitting behind the company proxy, specifically if the server is located somewhere outside your company network (e.g. in AWS cloud).&lt;/p&gt;
+
+&lt;p&gt;Why the server is in the cloud and the agent/node is not? - you’d ask. Well, that takes us to next topic.&lt;/p&gt;
+
+&lt;h2 id=&quot;mac-support&quot;&gt;Mac Support&lt;/h2&gt;
+&lt;p&gt;Right, this whole comparison is focusing on Mobile CI after all, meaning you have to deal with one of the most popular mobile platforms these days - that is iOS.&lt;/p&gt;
+
+&lt;p&gt;To build an iOS app you must have Xcode, which can run only on OSX (unless you want to follow the path of certain insanity and make it work on other OS).&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Hackintosh&lt;/em&gt;? Not a very good idea I’d say. The company does iOS development and wants to go with Hackintosh to setup OSX build server, really?&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Cloud (aka OnDemand)&lt;/em&gt;? Could be a really good option, but not with industry giants like AWS. AWS or alike is where you’d go if using Bamboo OnDemand feature. I can find posts as old as 2011 discussing this issue: &lt;a href=&quot;https://answers.atlassian.com/questions/22655/bamboo-mac-agent&quot;&gt;one&lt;/a&gt;, [two]((https://jira.atlassian.com/browse/BAM-11870). Apple doesn’t make it easy to run virtual OSX instances to the extent that none of the big cloud providers are brave enough to provide official support for this feature. These days you can go with one of the many Mac Mini colocation services. You either rent a Mac hardware or even provide your own.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Self-hosted&lt;/em&gt;? This is also an option. If your company has security concerns about those Mac hosting providers, or doesn’t want to spend money for that, or for any other reason, you can always purchase Mac hardware and host it in your data center.&lt;/p&gt;
+
+&lt;p&gt;Whenever you are using self-hosting or remote hosting, you end up dealing with native hardware. I find that Mac Minis with maximized CPU, RAM, and SSD storage are perfect candidates for iOS CI box. The more you have the better.&lt;/p&gt;
+
+&lt;p&gt;Next step is to install remote agent/node and get it running. As I mentioned already, installing &lt;a href=&quot;/2015/02/01/bamboo-remote-agent&quot;&gt;remote agent for Bamboo&lt;/a&gt; is around the same complexity as installing &lt;a href=&quot;/2015/02/01/jenkins-remote-node&quot;&gt;remote node for Jenkins&lt;/a&gt;. The problems start popping up when you begin using them.&lt;/p&gt;
+
+&lt;h3 id=&quot;bamboo-remote-agent&quot;&gt;Bamboo Remote Agent&lt;/h3&gt;
+&lt;p&gt;Thins you definitely need to know in regards to Bamboo remote agent.&lt;/p&gt;
+
+&lt;p&gt;[The rumor has it that] Atlassian are using Mac OSX to develop their products, including Bamboo, but OSX is never ever listed as &lt;em&gt;officially&lt;/em&gt; supported. Indeed, why would you choose to run your JIRA, Stash, Bamboo, whatever, on OSX server? Hopefully with increasing demand for iOS CI Atlassian will put a bit higher priority on fixing Bamboo issues for OSX, and there’s plenty btw.&lt;/p&gt;
+
+&lt;p&gt;Before you even start using remote agent on OSX, you have to experience a bit of pain &lt;a href=&quot;/2015/02/01/bamboo-remote-agent&quot;&gt;when trying to set it up&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Major and the most important group of issues is related to &lt;strong&gt;Artefacts Sharing&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Whenever your remote agent finishes a build stage it is most often producing build artefacts. It &lt;em&gt;doesn’t matter&lt;/em&gt; if those artefacts are shared or not, they must be copied to the server anyway. That is part of distributed build system. Your remote agent can go offline any time, your build plan jobs can run on different agents with different capabilities and artefacts must be passed from one agent to another. All in all, the reality is - the artefacts must be shared.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Problem Proxy&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Is your remote agent behind proxy? May I introduce you to &lt;a href=&quot;http://en.wikipedia.org/wiki/Chunked_transfer_encoding&quot;&gt;HTTP 1.1 Chunked Transfer Encoding&lt;/a&gt; then? Well, not to the feature itself, but how it relates to Bamboo: &lt;a href=&quot;https://jira.atlassian.com/browse/BAM-5182&quot;&gt;BAM-5182&lt;/a&gt;, &lt;a href=&quot;https://confluence.atlassian.com/pages/viewpage.action?pageId=420971598&quot;&gt;more&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Bamboo server requires support of HTTP chunked transfer feature of 1.1 protocol version to pick up artefacts. If your proxy doesn’t support this feature, you are in trouble. Strictly speaking, this is not Bamboo’s problem, this is the problem of your company network team. HTTP 1.1 standard was released in &lt;a href=&quot;http://www.w3.org/Protocols/rfc2616/rfc2616.html&quot;&gt;1999&lt;/a&gt;! There is a lot of http proxy implementations that support it, &lt;a href=&quot;http://nginx.org/en/&quot;&gt;nginx&lt;/a&gt; for example. However, things move really slow in most of big companies when it comes to changing network infrastructure. If you are so unlucky and you company is still stuck around 1999 in terms of network infrastructure, you will most likely have to find a work-around rather than waiting months and months before you get any progress on proxy upgrade.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Problem Atlassian&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;But wait then! Too early to take all the blame off the Atlassian’s shoulders!&lt;/p&gt;
+
+&lt;p&gt;First of all, Bamboo remote agent JAR &lt;a href=&quot;https://answers.atlassian.com/questions/75941/remote-agent-not-honoring-the-dhttp-nonproxyhosts-parameter&quot;&gt;totally disrespects JVM flags for http proxy whitelist (nonProxyHosts)&lt;/a&gt;, &lt;a href=&quot;https://jira.atlassian.com/browse/BAM-12041&quot;&gt;upvote!&lt;/a&gt; You can find ways around this issue, for example re-routing network calls using tools like &lt;a href=&quot;http://squidman.net/squidman/&quot;&gt;SquidMan&lt;/a&gt;, but then you will face &lt;em&gt;The Final Blocker&lt;/em&gt;: &lt;a href=&quot;https://jira.atlassian.com/browse/BAM-8111&quot;&gt;BAM!&lt;/a&gt;, &lt;a href=&quot;https://jira.atlassian.com/browse/BAM-8226&quot;&gt;BAM!&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Yes, Bamboo remote agent &lt;a href=&quot;https://jira.atlassian.com/browse/BAM-8111?focusedCommentId=622466&amp;amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-622466&quot;&gt;is 27 (&lt;em&gt;twenty seven!&lt;/em&gt;) times slower than plain scp&lt;/a&gt; (&lt;a href=&quot;http://en.wikipedia.org/wiki/Secure_copy&quot;&gt;secure copy over ssh&lt;/a&gt;) command when it comes to copying a single &lt;code&gt;.zip&lt;/code&gt; file which is around few hundred Mb of size.&lt;/p&gt;
+
+&lt;p&gt;Imagine that after spending all the time trying to figure out issues around your proxy and enable the agent to share artefacts with the server you end up facing this beast? It renders all your distributed build setup useless, it takes way more time to copy build artefacts than to produce them. From reports it looks like this issue is specific for Mac OS build agents only.&lt;/p&gt;
+
+&lt;p&gt;When I faced this problem I ended up sharing artefacts via Amazon S3 bucket. This is extra work, extra shell scripts to upload and download artefacts, additional expenses for S3 bucket. You become responsible for managing outdated artefacts, you are the one who has to account for multiple build plan branches, and much more. This is really a bit too much of overhead and it is extra annoying when you know this is a core Bamboo functionality and it’s &lt;strong&gt;supposed to work right out of the box&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;jenkins-remote-node&quot;&gt;Jenkins Remote Node&lt;/h3&gt;
+
+&lt;p&gt;TODO:&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/mobile%20ci/2015/01/29/bamboo-vs-jenkins</link>
+                <guid>http://mgrebenets.github.io/mobile%20ci/2015/01/29/bamboo-vs-jenkins</guid>
+                <pubDate>2015-01-29T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Swift Dictionary Literal Convertible</title>
+                <description>
+&lt;p&gt;A practical example of Swift’s &lt;code&gt;DictionaryLiteralConvertible&lt;/code&gt; protocol application.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;If “Literal Convertibles” sounds strange to you then a good place to start is an excellent &lt;a href=&quot;http://nshipster.com/swift-literal-convertible/&quot;&gt;NSHipster’s post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;OK, let’s say we have some struct in Swift.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Double&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Timeout failed.&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is a structure holding timeout options for some abstract waiting function. If waiting takes longer that &lt;code&gt;timeout&lt;/code&gt; then waiting is terminated and the &lt;code&gt;message&lt;/code&gt; is displayed. For convenience default values are provided.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Waiting for \(options.timeout). Message: \(options.message)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// TODO: wait for some condition and fail after timeout&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Custom timeout failed.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, wouldn’t it be nice to add some syntactic sugar and pass a dictionary with key-value pairs for waiting options, instead of calling &lt;code&gt;Options&lt;/code&gt; initializer?&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Of course compiler doesn’t like this code, though it fails to tell us exactly why.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Options&amp;#39;&lt;/span&gt; does not have a member named &lt;span class=&quot;s1&quot;&gt;&amp;#39;Value&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s experiment a bit.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;SomeString&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Doesn’t make much sense but this time compiler complains with more sane error message.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Type &lt;span class=&quot;s1&quot;&gt;&amp;#39;Options&amp;#39;&lt;/span&gt; does not conform to protocol &lt;span class=&quot;s1&quot;&gt;&amp;#39;StringLiteralConvertible&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Basically it doesn’t know how to construct and instance of &lt;code&gt;Options&lt;/code&gt; type from &lt;code&gt;String&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So when we used dictionary before, compiler had no idea how to create an instance of &lt;code&gt;Options&lt;/code&gt; from a dictionary, but sadly couldn’t communicate it back to us in a human-friendly form.&lt;/p&gt;
+
+&lt;p&gt;To be able to create &lt;code&gt;Options&lt;/code&gt; objects from dictionaries &lt;code&gt;Options&lt;/code&gt; has to conform to &lt;code&gt;DictionaryLiteralConvertible&lt;/code&gt; protocol.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;c1&quot;&gt;/// Conforming types can be initialized with dictionary literals&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;protocol&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DictionaryLiteralConvertible&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;/// Create an instance initialized with `elements`.&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dictionaryLiteral&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)...)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;To conform to this protocol we need to implement &lt;code&gt;init&lt;/code&gt; and define type aliases for &lt;code&gt;Key&lt;/code&gt; and &lt;code&gt;Value&lt;/code&gt;. This was somewhat of a surprise for me, even when reading NSHipster’s post for the first time I didn’t realize that typealias are part of the protocol and had to be “implemented” (declared) too. I must have confused &lt;code&gt;typealias&lt;/code&gt; with C’s &lt;code&gt;typedef&lt;/code&gt; for a while, hence misunderstanding of &lt;code&gt;typealias&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;OK, first attempt in conforming to the protocol.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;extension&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DictionaryLiteralConvertible&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AnyObject&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dictionaryLiteral&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)...)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Double&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;message&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;fatalError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Unknown key: \(key)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;For dictionary keys the &lt;code&gt;String&lt;/code&gt; type is used, and for values use &lt;code&gt;AnyObject&lt;/code&gt; since we can pass either &lt;code&gt;Double&lt;/code&gt; or &lt;code&gt;String&lt;/code&gt; as a value.&lt;/p&gt;
+
+&lt;p&gt;I’m sure there’s a better more type-safe way to type alias &lt;code&gt;Value&lt;/code&gt; to make it more “functional”. Probably using enums. I’m still learning though.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;init&lt;/code&gt; iterates over the contents of the dictionary and initializes struct’s members with values from the dictionary. The &lt;code&gt;as&lt;/code&gt; is used to type cast &lt;code&gt;AnyObject&lt;/code&gt; to &lt;code&gt;Double&lt;/code&gt; or &lt;code&gt;String&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I’m aware that use of &lt;code&gt;self&lt;/code&gt; is not strictly required in this case and &lt;code&gt;self.timeout =&lt;/code&gt; works same as just &lt;code&gt;timeout =&lt;/code&gt;, but I tend to explicitly use &lt;code&gt;self.&lt;/code&gt; syntax in initializers, kind of rule of thumb.&lt;/p&gt;
+
+&lt;p&gt;Let’s try it again.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It works. Also notice that we can now provide partial arguments, like only timeout but no message in this case, something we couldn’t with default struct initializer (would have to implement additional initializers).&lt;/p&gt;
+
+&lt;p&gt;Yet there are few things that smell in this code (apart from &lt;code&gt;AnyObject&lt;/code&gt; I suppose).&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use of hard-coded string literals like “timeout” is not good, typos happen all the time and it’s quite painful to debug this type of errors.&lt;/li&gt;
+  &lt;li&gt;Default &lt;code&gt;case&lt;/code&gt; statement with &lt;code&gt;fatalError&lt;/code&gt; plug.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let’s now fix both these issues. First we will use a custom enum type for keys.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OptionKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that’s it not even backed up by a raw &lt;code&gt;String&lt;/code&gt; type, there’s no need for that at the moment.&lt;/p&gt;
+
+&lt;p&gt;Now can rewrite the &lt;code&gt;Options&lt;/code&gt; extension.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;extension&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DictionaryLiteralConvertible&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OptionKey&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AnyObject&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dictionaryLiteral&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)...)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Double&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Main changes are&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use &lt;code&gt;OptionKey&lt;/code&gt; for &lt;code&gt;Key&lt;/code&gt; type alias.&lt;/li&gt;
+  &lt;li&gt;Get rid of &lt;code&gt;default:&lt;/code&gt; case, wrong key errors are now handled at compile time, not at run time.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Using the &lt;code&gt;wait&lt;/code&gt; function is now as simple as&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Custom timeout failed.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You can &lt;a href=&quot;https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-dictionary-literal-convertible.swift&quot;&gt;grab the swift code&lt;/a&gt; and try it yourself in playground or just by running from command line with &lt;code&gt;xcrun swift&lt;/code&gt;.&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/swift/2015/01/27/swift-dictionary-literal-convertible</link>
+                <guid>http://mgrebenets.github.io/swift/2015/01/27/swift-dictionary-literal-convertible</guid>
+                <pubDate>2015-01-27T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Swift & Objective-C Interoperability</title>
+                <description>
+&lt;p&gt;I’ve stumbled on an issue while working on my hobby project. One of the few related to Swift and Objective-C interoperability.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Let’s setup a simple code base.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppKit&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BaseObjCClass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;NSObject&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AnotherValue&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;protocol&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;ObjCSubclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BaseObjCClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CGSizeZero&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GenericClass&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;embeddedInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;embeddedInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;instance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instance&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accessValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accessSize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objectGeneric&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GenericClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;embeddedInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ObjCSubclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objectGeneric&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accessValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objectGeneric&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accessSize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;There’s pure Swift enum, protocol and a subclass of Objective-C class that adopts pure Swift protocol. By the way, have you ever tried declaring Swift enum with just one case?&lt;/p&gt;
+
+&lt;p&gt;Further on, I declare a generic class with type conforming to pure Swift protocol.&lt;/p&gt;
+
+&lt;p&gt;So what happens if I pass an Objective-C subclass to this generic class initializer?&lt;/p&gt;
+
+&lt;p&gt;To be honest, nothing happens most away. For reasons unknown to me my project compiled and ran. And it was running OK for a while until at some moment it started crashing consistently.&lt;/p&gt;
+
+&lt;p&gt;So the problem in this case is that I’m implicitly checking the conformance of Objective-C object &lt;code&gt;ObjCSubclass&lt;/code&gt; to a non Objective-C (pure Swift) protocol &lt;code&gt;PureSwiftProtocol&lt;/code&gt;. This check occurs when calling &lt;code&gt;return embeddedInstance.value&lt;/code&gt; where &lt;code&gt;embeddedInstance&lt;/code&gt; is an instance of &lt;code&gt;ObjCSubclass&lt;/code&gt; but the access to it’s property happens by converting it to &lt;code&gt;PureSwiftProtocol&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Apparently, this is a known issue. There’s a couple of discussions on StackOverflow (&lt;a href=&quot;http://stackoverflow.com/questions/24132738/swift-set-delegate-to-self-gives-exc-bad-access&quot;&gt;one&lt;/a&gt;, &lt;a href=&quot;http://stackoverflow.com/questions/24174348/calling-method-using-optional-chaining-on-weak-variable-causes-exc-bad-access&quot;&gt;two&lt;/a&gt;).&lt;/p&gt;
+
+&lt;h2 id=&quot;solution-a-back-to-roots&quot;&gt;Solution A: Back to Roots&lt;/h2&gt;
+
+&lt;p&gt;The first solution is to turn &lt;code&gt;PureSwiftProtocol&lt;/code&gt; into Objective-C protocol by using &lt;code&gt;@objc&lt;/code&gt; notation.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objc&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;protocol&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;But that won’t make compiler happy because it has no idea how to map &lt;code&gt;PureSwiftEnum&lt;/code&gt; into Objective-C. So you have to take it one step further. You have to declare &lt;code&gt;PureSwiftEnum&lt;/code&gt; as Objective-C enum (with &lt;code&gt;NS_ENUM&lt;/code&gt;), obviously you have to do it in Objective-C header file and properly setup bridging header in your project.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;NS_ENUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSInteger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;PureSwiftEnumValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;PureSwiftEnumAnotherValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;solution-b-wrap-it-up&quot;&gt;Solution B: Wrap it Up&lt;/h2&gt;
+
+&lt;p&gt;If you don’t want to revert back to adding Objective-C code with the hope that Apple eventually fixes this issue in the future, you can try another ugly trick - wrap your Objective-C class with pure Swift class that conforms to the same protocol.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;PureSwiftWrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ObjCSubclass&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ObjcSubclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objcInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objcInstance&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now you can pass an instance of &lt;code&gt;PureSwiftWrapper&lt;/code&gt; to &lt;code&gt;GenericClass&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;wrapper&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftWrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ObjCSubclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generic&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GenericClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;embeddedInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;wrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;generic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accessValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;With this setup my crash went away and hadn’t reappeared since then.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+&lt;p&gt;Reference to &lt;a href=&quot;https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-objc-interop.swift&quot;&gt;swift-objc-interop.swift&lt;/a&gt; to experiment and run it from command line or in Playground&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/swift/2015/01/22/swift--objective-c-interoperability</link>
+                <guid>http://mgrebenets.github.io/swift/2015/01/22/swift--objective-c-interoperability</guid>
+                <pubDate>2015-01-22T00:00:00+11:00</pubDate>
+        </item>
 
         <item>
                 <title>Flappy Swift</title>
@@ -51,6 +722,8 @@ Accompanied by &lt;a href=&quot;https://bitbucket.org/i4niac/flappy-boo&quot;&gt
 &lt;p&gt;This post describes how to create an RPM package for Atlassian CLI to install it on &lt;a href=&quot;http://en.wikipedia.org/wiki/Category:RPM-based_Linux_distributions&quot;&gt;RMP-based Linux distributions&lt;/a&gt;.&lt;/p&gt;
 
 &lt;!--more--&gt;
+
+&lt;p&gt;Jump directly to &lt;a href=&quot;#tldr&quot;&gt;Summary&lt;/a&gt; if just want to grab the end result.&lt;/p&gt;
 
 &lt;h2 id=&quot;why-bother&quot;&gt;Why Bother?&lt;/h2&gt;
 &lt;p&gt;Same question as one would as for using &lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Homebrew on OSX&lt;/a&gt;. And same answer again - Automation.&lt;/p&gt;
@@ -108,9 +781,9 @@ Atlassian CLI tools by Bob Swift. See https://marketplace.atlassian.com/plugins/
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;%prep
 %setup&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;I myself just found out about it recently and didn’t try it yet. So in this article I’ll do the job of setup macro with shell commands, but this is definetly where improvements should be made.&lt;/p&gt;
+&lt;p&gt;I myself just found out about it recently and didn’t try it yet. So in this article I’ll do the job of setup macro with shell commands, but this is definitely where improvements should be made.&lt;/p&gt;
 
-&lt;p&gt;Then there’s &lt;code&gt;_tmppath&lt;/code&gt; varible. You will notice later that it’s not passed to RPM script directly anywhere, instead, it’s picked up from a special &lt;code&gt;.rpmmacros&lt;/code&gt; file. You’ll see how it’s used later on.&lt;/p&gt;
+&lt;p&gt;Then there’s &lt;code&gt;_tmppath&lt;/code&gt; variable. You will notice later that it’s not passed to RPM script directly anywhere, instead, it’s picked up from a special &lt;code&gt;.rpmmacros&lt;/code&gt; file. You’ll see how it’s used later on.&lt;/p&gt;
 
 &lt;h3 id=&quot;install&quot;&gt;Install&lt;/h3&gt;
 &lt;p&gt;Now it’s time to define install command. It’s again very similar to Homebrew’s install. So I will give here brief description of the steps with the code and for more details you can always get back to &lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Homebrew post&lt;/a&gt;.&lt;/p&gt;
@@ -157,7 +830,7 @@ sed -i.bak -e &lt;span class=&quot;s2&quot;&gt;&amp;quot;s,\(.*\)https://conflue
 sed -i.bak -e &lt;span class=&quot;s2&quot;&gt;&amp;quot;s,\(.*\)https://fisheye.example.com\(.*\),\1https://fisheye.nsbogan.com.au\2,g&amp;quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;
 sed -i.bak -e &lt;span class=&quot;s2&quot;&gt;&amp;quot;s,\(.*\)https://crubicle.example.com\(.*\),\1https://crubicle.nsbogan.com.au\2,g&amp;quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;Finally rename ambigous &lt;code&gt;all.sh&lt;/code&gt; to &lt;code&gt;atlassian-all.sh&lt;/code&gt; and move all &lt;code&gt;.sh&lt;/code&gt; files to &lt;code&gt;bin&lt;/code&gt; folder. I personally prefer to drop &lt;code&gt;.sh&lt;/code&gt; part from the filename in the process.&lt;/p&gt;
+&lt;p&gt;Finally rename ambiguous &lt;code&gt;all.sh&lt;/code&gt; to &lt;code&gt;atlassian-all.sh&lt;/code&gt; and move all &lt;code&gt;.sh&lt;/code&gt; files to &lt;code&gt;bin&lt;/code&gt; folder. I personally prefer to drop &lt;code&gt;.sh&lt;/code&gt; part from the filename in the process.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# all.sh - rename to atlassian-all.sh before moving&lt;/span&gt;
 mv %&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;buildroot&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;/opt/nsbogan-atlassian-cli/all.sh %&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;buildroot&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;/opt/nsbogan-atlassian-cli/atlassian-all.sh
@@ -319,6 +992,13 @@ rpm --freshen -v --test --replacepkgs --replacefiles --nosignature --nodigest &l
 &lt;p&gt;Now you can hand RPM package over to your Dev Support guys, they’ll put it into local repo and make RPM install a part of bake or post-bake process.&lt;/p&gt;
 
 &lt;p&gt;Yet nothing stops you from creating a CI plan (job) for the Atlassian CLI RPM package itself. You can run &lt;code&gt;make rpm&lt;/code&gt; and test rpm install on the very same build agent this package is targeted for, thus creating yet another “CI Loop”, which is good.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-nametldr-summary&quot;&gt;&lt;a name=&quot;tldr&quot;&gt;&lt;/a&gt; Summary&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Create &lt;a href=&quot;https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/nsbogan-atlassian-cli-rpm.spec&quot;&gt;RPM spec&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Run &lt;code&gt;make rpm -f RPMMakefile&lt;/code&gt; using this &lt;a href=&quot;https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/RPMMakefile&quot;&gt;RPMMakefile&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <link>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</link>
                 <guid>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</guid>
@@ -354,7 +1034,7 @@ After you install it, you need to update your &lt;code&gt;PATH&lt;/code&gt;. By 
 &lt;h3 id=&quot;create-formula&quot;&gt;Create Formula&lt;/h3&gt;
 &lt;p&gt;You could use &lt;code&gt;brew create &amp;lt;link&amp;gt;&lt;/code&gt; command, but that will create formula in &lt;code&gt;/usr/loca/Library/Formula&lt;/code&gt;. Instead let’s create it manually.&lt;/p&gt;
 
-&lt;p&gt;Let’s say our company is called i4nApps (I know, it’s a wierd name…), so create new Ruby file&lt;/p&gt;
+&lt;p&gt;Let’s say our company is called i4nApps (I know, it’s a weird name…), so create new Ruby file&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;touch i4napps-atlassian-cli.rb&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
@@ -595,7 +1275,7 @@ We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&
 &lt;p&gt;Make sure to put this line &lt;strong&gt;before&lt;/strong&gt; &lt;code&gt;atlassian.sh&lt;/code&gt; is moved and renamed.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;The nested class is used because Homebrew only expects one formula file. If you have other files used as an external dependencies, Homebew will not fetch them from repository when running &lt;code&gt;tap&lt;/code&gt; command.&lt;/p&gt;
+  &lt;p&gt;The nested class is used because Homebrew only expects one formula file. If you have other files used as an external dependencies, Homebrew will not fetch them from repository when running &lt;code&gt;tap&lt;/code&gt; command.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h3 id=&quot;push-to-scm&quot;&gt;Push to SCM&lt;/h3&gt;

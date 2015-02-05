@@ -1,0 +1,519 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        Bamboo vs Jenkins - 
+      
+      NSBogan
+    </title>
+    <meta name="description" content="Bamboo vs Jenkins as Mobile CI">
+    <meta name="author" content="Maksym Grebenets">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+  </head>
+
+  <body>
+    <div id="page-wrap">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="container">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+
+            <a class="brand" href="/">NSBogan</a>
+
+            <div class="nav-collapse">
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+              </ul>
+              <ul class="nav pull-right social visible-desktop">
+                <li class="divider-vertical"></li>
+                
+                <li>
+                  <a href="https://github.com/mgrebenets" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+                
+                
+                
+                <li>
+                  <a href="https://twitter.com/mgrebenets" class="zocial twitter icon" target="_blank">
+                    <span class="hidden-desktop">Twitter</span>
+                  </a>
+                </li>
+                
+                
+                
+                
+                <li>
+                  <a href="http://feeds.feedburner.com/mgrebenets@gmail.com" class="zocial rss icon" target="_blank">
+                    <span class="hidden-desktop">FeedBurner</span>
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="content">
+          
+<div class="page-header">
+  <h1>
+    Bamboo vs Jenkins 
+    
+  </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    
+<p>A [biased and subjective] comparison of Bamboo and Jenkins as CI servers for mobile, based on practical experience with both.</p>
+
+<!--more-->
+
+<p>Continuous Integration and Continuous Deployment (Delivery, Distribution) has been around for quite a while. But surprisingly enough on a global scale it pretty much just got into its teen years in regards to Mobile. Well, subjectively, of course.</p>
+
+<p>You can see all levels of mobile CI these days. Some would still install builds from Xcode, others would have a quickly patched up build server under their desk. Xcode Bots meets the needs of yet another group of people. Travis CI is good and for open source projects it’s probably the best option.</p>
+
+<p>The advanced level of CI would include distributed build systems with multiple build nodes, support for automated unit and UI tests, running tests on physical devices, automatic deployment to TestFlight, Hockey App, Over the Air, and much more. It becomes not just mobile development, but spans into areas like DevOps and others. <a href="https://codeascraft.com/2014/02/28/etsys-journey-to-continuous-integration-for-mobile-apps/">Etsy’s blog post</a> is a good example of where this path can take you.</p>
+
+<p>If you decide to take mobile CI seriously, you have to pick a build server to start with.</p>
+
+<p>I personally have worked with Bamboo for 1.5 years and I’m dealing with Jenkins right now, so I have few insights and can give some comparison of the two.</p>
+
+<h2 id="setup--configuration">Setup &amp; Configuration</h2>
+<p><a href="/2015/02/01/bamboo-ci-server-on-osx">Bamboo installation</a> and <a href="/2015/02/01/jenkins-ci-server-on-osx">Jenkins installation</a> tasks are about the same in terms of time and knowledge required. While installing one of the two you’ll climb a certain learning curve which will help you heaps if you ever have to deal with second option.</p>
+
+<p>Both are built using Java, both will need a database setup. Jenkins and Bamboo will setup and configure <a href="http://en.wikipedia.org/wiki/MySQL">MySQL</a> by default, however, Bamboo will recommend you to configure custom database like <a href="http://en.wikipedia.org/wiki/PostgreSQL">PostgreSQL</a> for production environment.</p>
+
+<p>Being Java applications both will require similar JVM configuration. Default configuration won’t really serve you well. You’ll experience out of memory issues as soon as you add a couple of basic build plans/jobs.</p>
+
+<p>And lot’s of other things are similar: configuration behind proxy, login vs non-login user (<a href="/2015/02/01/mobile-ci-daemon-vs-agent">Launch Agent vs Daemon</a>), <a href="/2015/02/01/mobile-ci--osx-keychain">OSX Keychain</a>, <a href="/2015/02/01/mobile-ci--ios-simulator">iOS Simulator</a>, etc.</p>
+
+<h2 id="gui">GUI</h2>
+<p>Obviously, this is not a comparison criteria at all. This criteria is as subjective as it could possibly be!</p>
+
+<p>Out of the box Bamboo UI looks much better than Jenkins version.</p>
+
+<p>With Jenkins there are ways to improve your day to day user experience. You can customize theme and even make your custom UI improvements, like adding “Build Now” button where you like it.</p>
+
+<p>You should start by installing <a href="https://wiki.jenkins-ci.org/display/JENKINS/Simple+Theme+Plugin">Simple Theme Plugin</a> and then configure it with one of the available themes. Not all the themes will look good, it all depends on the Jenkins version you have and browser you use, etc. I tried a buch of them and ironically enough the only theme that looks good on our production CI box is called <a href="https://github.com/djonsson/jenkins-atlassian-theme">“Atlassian”</a>. But I’m dealing with slightly outdated Jenkins version, you could get better results with up to date Jenkins.</p>
+
+<h2 id="plugins">Plugins</h2>
+<p>This is where the large community plays it’s role. Subjectively or not, Jenkins has a larger choice of plugins of all kinds, starting from management and organization of build jobs and ending up with reporting.</p>
+
+<p>While Bamboo supports lots of job management features out of the box, reporting plugins is something that needs to be improved.</p>
+
+<p>TODO: take the plugins I use (PMD, Cobertura, Unit Tests, HTML publisher, SLOC)
+TODO: note that jenkins shows graphics with trends</p>
+
+<p>And then there is the Mother and the Farther of all Jenkins plugins - <a href="">Jenkins Job DSL Plugin</a>. Short summary: it allows you to manage your configuration as a code.</p>
+
+<p>Check out this good talk and resources (TODO: put more links as a reference) to find out more.</p>
+
+<p>I plan to write a post about my personal experience with using Job DSL plugin.</p>
+
+<h2 id="build-jobplan-structure">Build Job/Plan Structure</h2>
+
+<p>There is a bit of confusion caused by terminology used by Bamboo and Jenkins.</p>
+
+<h3 id="bamboo">Bamboo</h3>
+
+<p>With Bamboo you start by creating Build <em>Plan</em>.</p>
+
+<p>Each plan consists of one ore more Build <em>Stages</em>. Stages run in <strong>sequential</strong> order. If one stage fails next stages are never executed. Stages can be configured as manual to be triggered by hand.</p>
+
+<p>Stages contain Build <em>Jobs</em>. Build jobs in one stage can run in <strong>parallel</strong> if there’s enough build agents for that. Each job can require different capabilities and can be dispatched to run on some designated build agent. Build jobs may produce Build <em>Artefacts</em> and share them with other jobs in consequent stages. Since jobs are parallelized, if one of them fails other jobs will still keep running until they finish on their own.</p>
+
+<p>Finally each job is made of Build <em>Tasks</em>. Tasks run in order from top to bottom. A task may be a basic shell script or one of the many tasks provided via plugins. Here’s a generalized example of a job and it’s tasks. One large and important group of taks is reporting tasks.</p>
+
+<ul>
+  <li>Checkout git repository</li>
+  <li>Build</li>
+  <li>Test</li>
+  <li>Deploy</li>
+  <li>Generate test report</li>
+</ul>
+
+<p>A summary of a Build Plan structure</p>
+
+<ul>
+  <li>Build Stage
+    <ul>
+      <li>Build Job
+        <ul>
+          <li>Task</li>
+          <li>Task</li>
+          <li>[<em>more tasks</em>]</li>
+        </ul>
+      </li>
+      <li>[<em>more jobs</em>]</li>
+    </ul>
+  </li>
+  <li>[<em>more stages</em>]</li>
+</ul>
+
+<p><em>Not so Parallel</em></p>
+
+<p>Bamboo deserves a special side-note in regards to parallel job execution and iOS build plans.</p>
+
+<p>As I mentioned before, the way you assign build jobs to local or remote agents is via capabilities. An agent defines capabilities it has, a job declares capabilities it wants, and then Bamboo matches the two.</p>
+
+<p>If you are in total control of your CI setup and mobile team is the only one using your particular Bamboo server and all agents, you have all the power to set all the agents capabilities and then enforce a requirement that all build jobs created by you or your teammates must explicitly specify which capabilities they need. This way you’ll harness the full power of distributed configuration, all build jobs will run only on the agents they really should run on.</p>
+
+<p>Another situation is when mobile CI is a new addition to company CI setup. There is already a CI server and few dozens of build agents and a lot of other teams using this CI configuration. Lots of teams with lots of plans created over the years.</p>
+
+<p>Now imagine that you are adding your specialized Mac build agent to be used for Xcode builds only. You setup and configure remote Mac agent, connect it to the server and… all the other build plans start jumping on your Mac agent! That’s because 99% of those plans declare no capabilities they require, they simply expect that all the agents are identical in terms of capabilities. And that works because all the agents are indeed identical clones. Well <em>were</em> identical clones until a new Mac agent was added.</p>
+
+<p>There’s no easy fix to this problem and you can tackle it in one of 2 ways.</p>
+
+<p><em>Ideal Solution</em></p>
+
+<p>Ideally, CI must be done right. All the build plans must be maintained, updated and removed if no longer needed. As a requirement, all build plans must explicitly declare capabilities they require to be able run. This is something to be enforced at team management level. Company has to have guidelines for creating and managing build plans and there must be a person or even a team (Dev Support team) responsible for keeping guidelines up to date and enforcing them.</p>
+
+<p><em>Down to Earth Solution</em></p>
+
+<p>The reality is rough. The number of existing plans is overhelming, it will take months to chase people responsible for each build plan and communicate the importance of declaring capabilities to them. The whole change has to be made in a safe way so it doesn’t break existing workflows and production deployments.</p>
+
+<p>You don’t have months of waiting allocated in your schedule, you need mobile CI running ASAP. One thing you could do is to setup your own CI server just for mobile and essentially move to “under the desk” setup. This way you get no support from Dev Support team (given that you have one) and all the trouble of setting up, configuring and supporting the server and agents is now yours.</p>
+
+<p>However, you still can do mobile CI as part of company wide CI. There is a plugin that will help you - <a href="/2015/02/01/bamboo-group-agent">Bamboo Group Agent plugin</a>. Have a read if you interested, Group Agent plugin offers a solution which is not fully flexible, but will help with original problem.</p>
+
+<h3 id="jenkins">Jenkins</h3>
+
+<p>With Jenkins you start by creating Build Project, which is on occasions called <em>Build Job</em> causing certain confusion. In this post I’ll stick with Project term.</p>
+
+<p>By default all you get is a basic Freestyle project that includes</p>
+
+<ul>
+  <li>Description</li>
+  <li>Parameters</li>
+  <li>Build Triggers</li>
+  <li>Build Environment</li>
+  <li><em>Build Steps</em></li>
+  <li><em>Post-build Actions</em></li>
+</ul>
+
+<p>If you draw an analogy to Bamboo, then all you get is a build <em>plan</em> with single <em>stage</em> containing single <em>job</em> and list of <em>tasks</em> (Build Steps and Post-build Actions are nothing but tasks). That’s it. There are no stages and no way to run anything in parallel.</p>
+
+<p>This is where plugins get into play. <a href="https://wiki.jenkins-ci.org/display/JENKINS/Multijob+Plugin">Mutlijob Plugin</a> does exactly the same thing as Bamboo. Stages are called <em>Phases</em>, phases include <em>Jobs</em>. Jobs run in <strong>parallel</strong> when possible, while phases execution order is sequential.</p>
+
+<p>One very important distinction is that jobs in multi job project are actually references to existing build projects.</p>
+
+<ul>
+  <li>Multi Job Build Project
+    <ul>
+      <li>Build Phase
+        <ul>
+          <li>Build Job 1 –&gt; Build Project 1</li>
+          <li>Build Job 2 –&gt; Build Project 2</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>In theory you can have a multi job project that includes a job which is a multi job project… You could even unintentionally create build job retain cycles and an infinite build loop.</p>
+
+<p>Multijob Plugin support is added to <a href="https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#multijob-phase">Job DSL Plugin</a>.</p>
+
+<p>Once again with a fair bit of work Jenkins can match Bamboo’s default functionality and then with another fair bit of work can surpass it.</p>
+
+<p>Jenkins is still prone to the same problem Bamboo is when it comes to adding iOS build nodes to existing infrastructure. Chances are high your Mac build node will be used by all the other build projects if capabilities are not configured properly. In Jenkins world there are no capabilities as such, instead labels are used. Each build node can be labeled with multiple labels and build jobs can use complex logic expression to specify target nodes they want to run on. But then, if labels were not used in your corporate CI from day the amount of work required for labelling existing build projects can be too big. At this moment I am not aware of a Jenkins analogue of Bamboo Group Agent.</p>
+
+<h2 id="pipelines">Pipelines</h2>
+
+<p>TODO: work on pipelines, how bamboo does that</p>
+
+<p>https://wiki.jenkins-ci.org/display/JENKINS/Join+Plugin
+https://wiki.jenkins-ci.org/display/JENKINS/Promoted+Builds+Plugin</p>
+
+<h2 id="branch-management">Branch Management</h2>
+
+<p>TODO:</p>
+
+<p>why this is important?
+why would you get builds for branches rather than waiting for PRs and their merge
+examples with testers being able to test feature while it’s being developed in feature branch
+this way feature is tested before it get’s merged to main branch
+can possibly catch bugs earlier this way
+can have customized builds with something really special to be prepared and made available for stake holders</p>
+
+<p>bamboo - does a great job with it’s feature to automatically create plan branches
+nice support for aging, for permanent branches, for branch name regex, etc.
+very good support for upstream and downstream merges (branch updater and branch keeper)
+will help to detect merge conflicts earlier
+branches are nicely organized in UI
+mention the fact about plan dependencies
+a child plan branches can be matched up to parent plan branches
+and child plan will pick up build artifacts from matching parent plan
+etc.</p>
+
+<p>jenkins
+by default - nothing like that at all
+the most popular Git plugin is shaped up for development mode other than mobile
+it allows to specify multiple branches but then those will be just merged before the build, that’s not having a plan for a branch
+alternatives (list 3) are somewhat closer but not quite there anyway
+the best of them was multi-job plugin (imho)
+but i could not get branch filtering working and had to create plans for all branches
+doesn’t have branch merging strategies configurable
+not much on branch ageing (check)
+can’t tell much on handling child plans in regards to branches</p>
+
+<p>however, the mentioned before job dsl plugin can take care of it all
+with a bit of groovy scripting you can get the branch filtering, aging and the rest
+you can nicely organized branch jobs into views and folders and have total control over it
+you can generate and upate child plans the way you want it
+same goes for branch merging strategies
+in many ways, when used right (with a bit of effort though) job dsl plugin does all what bamboo does
+and then more</p>
+
+<h2 id="distributed-builds">Distributed Builds</h2>
+<p>Both Bamboo and Jenkins have support for distributed builds. Bamboo is using <a href="https://confluence.atlassian.com/display/BAMBOO/Bamboo+remote+agent+installation+guide">Remote Agents</a> while Jenkins calls them <a href="https://wiki.jenkins-ci.org/display/JENKINS/Distributed+builds">Remote Nodes</a>, sometimes referred as slave nodes.</p>
+
+<p>A side note - both servers support local build agents/nodes as well. Those are running locally (as the name suggests) on the same hardware as the build server.</p>
+
+<p>Back to remote agents/nodes. Complexity of setting them up and configuring doesn’t vary much between the two CI servers.</p>
+
+<p>Both will suffer from issues caused by sitting behind the company proxy, specifically if the server is located somewhere outside your company network (e.g. in AWS cloud).</p>
+
+<p>Why the server is in the cloud and the agent/node is not? - you’d ask. Well, that takes us to next topic.</p>
+
+<h2 id="mac-support">Mac Support</h2>
+<p>Right, this whole comparison is focusing on Mobile CI after all, meaning you have to deal with one of the most popular mobile platforms these days - that is iOS.</p>
+
+<p>To build an iOS app you must have Xcode, which can run only on OSX (unless you want to follow the path of certain insanity and make it work on other OS).</p>
+
+<p><em>Hackintosh</em>? Not a very good idea I’d say. The company does iOS development and wants to go with Hackintosh to setup OSX build server, really?</p>
+
+<p><em>Cloud (aka OnDemand)</em>? Could be a really good option, but not with industry giants like AWS. AWS or alike is where you’d go if using Bamboo OnDemand feature. I can find posts as old as 2011 discussing this issue: <a href="https://answers.atlassian.com/questions/22655/bamboo-mac-agent">one</a>, [two]((https://jira.atlassian.com/browse/BAM-11870). Apple doesn’t make it easy to run virtual OSX instances to the extent that none of the big cloud providers are brave enough to provide official support for this feature. These days you can go with one of the many Mac Mini colocation services. You either rent a Mac hardware or even provide your own.</p>
+
+<p><em>Self-hosted</em>? This is also an option. If your company has security concerns about those Mac hosting providers, or doesn’t want to spend money for that, or for any other reason, you can always purchase Mac hardware and host it in your data center.</p>
+
+<p>Whenever you are using self-hosting or remote hosting, you end up dealing with native hardware. I find that Mac Minis with maximized CPU, RAM, and SSD storage are perfect candidates for iOS CI box. The more you have the better.</p>
+
+<p>Next step is to install remote agent/node and get it running. As I mentioned already, installing <a href="/2015/02/01/bamboo-remote-agent">remote agent for Bamboo</a> is around the same complexity as installing <a href="/2015/02/01/jenkins-remote-node">remote node for Jenkins</a>. The problems start popping up when you begin using them.</p>
+
+<h3 id="bamboo-remote-agent">Bamboo Remote Agent</h3>
+<p>Thins you definitely need to know in regards to Bamboo remote agent.</p>
+
+<p>[The rumor has it that] Atlassian are using Mac OSX to develop their products, including Bamboo, but OSX is never ever listed as <em>officially</em> supported. Indeed, why would you choose to run your JIRA, Stash, Bamboo, whatever, on OSX server? Hopefully with increasing demand for iOS CI Atlassian will put a bit higher priority on fixing Bamboo issues for OSX, and there’s plenty btw.</p>
+
+<p>Before you even start using remote agent on OSX, you have to experience a bit of pain <a href="/2015/02/01/bamboo-remote-agent">when trying to set it up</a>.</p>
+
+<p>Major and the most important group of issues is related to <strong>Artefacts Sharing</strong>.</p>
+
+<p>Whenever your remote agent finishes a build stage it is most often producing build artefacts. It <em>doesn’t matter</em> if those artefacts are shared or not, they must be copied to the server anyway. That is part of distributed build system. Your remote agent can go offline any time, your build plan jobs can run on different agents with different capabilities and artefacts must be passed from one agent to another. All in all, the reality is - the artefacts must be shared.</p>
+
+<p><strong>Problem Proxy</strong></p>
+
+<p>Is your remote agent behind proxy? May I introduce you to <a href="http://en.wikipedia.org/wiki/Chunked_transfer_encoding">HTTP 1.1 Chunked Transfer Encoding</a> then? Well, not to the feature itself, but how it relates to Bamboo: <a href="https://jira.atlassian.com/browse/BAM-5182">BAM-5182</a>, <a href="https://confluence.atlassian.com/pages/viewpage.action?pageId=420971598">more</a>.</p>
+
+<p>Bamboo server requires support of HTTP chunked transfer feature of 1.1 protocol version to pick up artefacts. If your proxy doesn’t support this feature, you are in trouble. Strictly speaking, this is not Bamboo’s problem, this is the problem of your company network team. HTTP 1.1 standard was released in <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">1999</a>! There is a lot of http proxy implementations that support it, <a href="http://nginx.org/en/">nginx</a> for example. However, things move really slow in most of big companies when it comes to changing network infrastructure. If you are so unlucky and you company is still stuck around 1999 in terms of network infrastructure, you will most likely have to find a work-around rather than waiting months and months before you get any progress on proxy upgrade.</p>
+
+<p><strong>Problem Atlassian</strong></p>
+
+<p>But wait then! Too early to take all the blame off the Atlassian’s shoulders!</p>
+
+<p>First of all, Bamboo remote agent JAR <a href="https://answers.atlassian.com/questions/75941/remote-agent-not-honoring-the-dhttp-nonproxyhosts-parameter">totally disrespects JVM flags for http proxy whitelist (nonProxyHosts)</a>, <a href="https://jira.atlassian.com/browse/BAM-12041">upvote!</a> You can find ways around this issue, for example re-routing network calls using tools like <a href="http://squidman.net/squidman/">SquidMan</a>, but then you will face <em>The Final Blocker</em>: <a href="https://jira.atlassian.com/browse/BAM-8111">BAM!</a>, <a href="https://jira.atlassian.com/browse/BAM-8226">BAM!</a>.</p>
+
+<p>Yes, Bamboo remote agent <a href="https://jira.atlassian.com/browse/BAM-8111?focusedCommentId=622466&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-622466">is 27 (<em>twenty seven!</em>) times slower than plain scp</a> (<a href="http://en.wikipedia.org/wiki/Secure_copy">secure copy over ssh</a>) command when it comes to copying a single <code>.zip</code> file which is around few hundred Mb of size.</p>
+
+<p>Imagine that after spending all the time trying to figure out issues around your proxy and enable the agent to share artefacts with the server you end up facing this beast? It renders all your distributed build setup useless, it takes way more time to copy build artefacts than to produce them. From reports it looks like this issue is specific for Mac OS build agents only.</p>
+
+<p>When I faced this problem I ended up sharing artefacts via Amazon S3 bucket. This is extra work, extra shell scripts to upload and download artefacts, additional expenses for S3 bucket. You become responsible for managing outdated artefacts, you are the one who has to account for multiple build plan branches, and much more. This is really a bit too much of overhead and it is extra annoying when you know this is a core Bamboo functionality and it’s <strong>supposed to work right out of the box</strong>.</p>
+
+<h3 id="jenkins-remote-node">Jenkins Remote Node</h3>
+
+<p>TODO:</p>
+
+    <hr>
+    <div class="pagination btn-group">
+      
+        <a class="btn prev" href="/swift/2015/01/27/swift-dictionary-literal-convertible" title="Swift Dictionary Literal Convertible">&larr; Previous</a>
+      
+        <a class="btn" href="/archive.html">Archive</a>
+      
+        <a class="btn next" href="/2015/02/01/bamboo-ci-server-on-osx" title="Bamboo CI Server on OSX">Next &rarr;</a>
+      
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <section>
+      <h4>Published</h4>
+      <div class="date"><span>29 January 2015</span></div>
+    </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          Mobile CI
+        </span>
+      </section>
+         
+    
+      <section>
+        <h4>Tags</h4>
+        <ul class="tag_box">
+          
+          
+
+
+  
+     
+    	<li><a href="/tags.html#mobile-ref">mobile <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#bamboo-ref">bamboo <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#jenkins-ref">jenkins <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#atlassian-ref">atlassian <span>4</span></a></li>
+     
+    	<li><a href="/tags.html#ci-ref">ci <span>1</span></a></li>
+    
+  
+
+
+
+        </ul>
+      </section>
+             
+  </div>
+</div>
+
+
+        </div>
+      </div> <!-- /container -->
+
+      <div class="footer-push"></div>
+    </div><!--/.page-wrap -->
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2015 Maksym Grebenets
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+

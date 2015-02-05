@@ -9,6 +9,18 @@ http://mgrebenets.github.io/rss.xml
 http://mgrebenets.github.io/sitemap.txt
 http://mgrebenets.github.io/tags.html
 
+http://mgrebenets.github.io/2015/02/01/xcode-derived-data
+http://mgrebenets.github.io/2015/02/01/mobile-ci-daemon-vs-agent
+http://mgrebenets.github.io/2015/02/01/mobile-ci--osx-keychain
+http://mgrebenets.github.io/2015/02/01/mobile-ci--ios-simulator
+http://mgrebenets.github.io/2015/02/01/jenkins-remote-node
+http://mgrebenets.github.io/2015/02/01/jenkins-ci-server-on-osx
+http://mgrebenets.github.io/2015/02/01/bamboo-remote-agent
+http://mgrebenets.github.io/2015/02/01/bamboo-group-agent
+http://mgrebenets.github.io/2015/02/01/bamboo-ci-server-on-osx
+http://mgrebenets.github.io/mobile%20ci/2015/01/29/bamboo-vs-jenkins
+http://mgrebenets.github.io/swift/2015/01/27/swift-dictionary-literal-convertible
+http://mgrebenets.github.io/swift/2015/01/22/swift--objective-c-interoperability
 http://mgrebenets.github.io/swift/2015/01/12/flappy-swift
 http://mgrebenets.github.io/references/2014/06/05/shark-2-for-ios
 http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm
