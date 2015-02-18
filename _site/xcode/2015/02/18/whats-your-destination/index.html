@@ -1,0 +1,397 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        What's your destination? - 
+      
+      NSBogan
+    </title>
+    <meta name="description" content="xcodebuild destination tips">
+    <meta name="author" content="Maksym Grebenets">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+  </head>
+
+  <body>
+    <div id="page-wrap">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="container">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+
+            <a class="brand" href="/">NSBogan</a>
+
+            <div class="nav-collapse">
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+              </ul>
+              <ul class="nav pull-right social visible-desktop">
+                <li class="divider-vertical"></li>
+                
+                <li>
+                  <a href="https://github.com/mgrebenets" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+                
+                
+                
+                <li>
+                  <a href="https://twitter.com/mgrebenets" class="zocial twitter icon" target="_blank">
+                    <span class="hidden-desktop">Twitter</span>
+                  </a>
+                </li>
+                
+                
+                
+                
+                <li>
+                  <a href="http://feeds.feedburner.com/mgrebenets@gmail.com" class="zocial rss icon" target="_blank">
+                    <span class="hidden-desktop">FeedBurner</span>
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="content">
+          
+<div class="page-header">
+  <h1>
+    What's your destination? 
+    
+  </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    
+<p>Few hands on tricks about <code>-destination</code> option of <code>xcodebuild</code>.</p>
+
+<!--more-->
+
+<p>Destination option (<code>-destination</code>) was a new addition to Xcode 5 release. It is documented on <a href="https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html">xcodebuild man page</a> and you get the same by running <code>man xcodebuild</code>. This option lets you be more verbose with your <code>xcodebuild</code> commands. For example, if you have a physical device plugged in, running <code>xcodebuild</code> with no destination specifier will build the project for this physical device. Using destination specifier you can explicitly tell <code>xcodebuild</code> to build for simulator.</p>
+
+<p>Allow me just to quote the man page here</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">The -destination option takes as its argument a destination specifier describing the device <span class="o">(</span>or devices<span class="o">)</span> to use as a destination.  A destination specifier is a single argument consisting of a <span class="nb">set </span>of comma-separated <span class="nv">key</span><span class="o">=</span>value pairs.  The -destination option may be specified multiple <span class="nb">times </span>to cause xcodebuild to perform the specified action on multiple destinations.</code></pre></div>
+
+<p>By the way, pay a closer attention to the last sentence. It’s a really nice feature, for example with single command you can run tests on multiple simulators.</p>
+
+<p>One of the keys supported is “platform” and there are 3 options: “OS X”, “iOS” and “iOS Simulator”. Let’s get more details on the last two. iOS and iOS Simulator platforms both require a “name” and “OS” keys to specify device name and iOS version. The question is “How to get list of all names and OS versions?”. There are many way to do that.</p>
+
+<h2 id="instruments">Instruments</h2>
+
+<p>The Xcode Instruments command line utility has an undocumented <code>-s</code> option, which lists all devices and templates. By adding <code>devices</code> to the invocation only devices are be listed.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">instruments -s devices
+<span class="c"># or</span>
+xcrun instruments -s devices</code></pre></div>
+
+<p>Example output, note that it also includes your Mac as a device.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">Known Devices:
+R5003398 <span class="o">[</span>5C25B8A6-EDF5-5856-B8B9-CB28DFBFADC4<span class="o">]</span>
+Maksym<span class="err">&#39;</span>s iPhone <span class="o">(</span>8.1.3<span class="o">)</span> <span class="o">[</span>5dc0e5a8a9f7c0af1feea4bfa13860c9e61350d6<span class="o">]</span>
+MyIPhone6 <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>9151073B-3B7D-441A-8069-E797FA5059CE<span class="o">]</span>
+Resizable iPad <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>15FC1628-B369-44DE-8CE0-756439D9AEBC<span class="o">]</span>
+Resizable iPhone <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>5E7A9E8C-D3A8-4E58-935F-8754B100E867<span class="o">]</span>
+iPad <span class="m">2</span> <span class="o">(</span>7.1 Simulator<span class="o">)</span> <span class="o">[</span>43DD0C31-685F-4FC8-941F-0BB9B305CD2D<span class="o">]</span>
+iPad <span class="m">2</span> <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>8D722A9F-2DA9-45A2-BAFB-44075AA519D6<span class="o">]</span>
+iPad Air <span class="o">(</span>7.1 Simulator<span class="o">)</span> <span class="o">[</span>2FB923E2-F0F4-49DE-8FC3-81960386B8CE<span class="o">]</span>
+iPad Air <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>6032BE94-1A62-4ADB-9013-50FAB2B088F6<span class="o">]</span>
+iPad Retina <span class="o">(</span>7.1 Simulator<span class="o">)</span> <span class="o">[</span>F1967F38-BE03-430F-BFB1-AFF4E2E4511C<span class="o">]</span>
+iPad Retina <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>E8652514-3042-4958-9027-48A9A95392CE<span class="o">]</span>
+iPhone 4s <span class="o">(</span>7.1 Simulator<span class="o">)</span> <span class="o">[</span>57DBC56E-1E04-4384-9A07-7B47C119BEAB<span class="o">]</span>
+iPhone 4s <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>DDF255C3-8BEF-4A97-8B3F-AD651BABF6CB<span class="o">]</span>
+iPhone <span class="m">5</span> <span class="o">(</span>7.1 Simulator<span class="o">)</span> <span class="o">[</span>BAF484D4-803C-478D-BAC1-916376C22C48<span class="o">]</span>
+iPhone <span class="m">5</span> <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>45E5CE55-093D-48C0-AA26-AA4E5C569FDB<span class="o">]</span>
+iPhone 5s <span class="o">(</span>7.1 Simulator<span class="o">)</span> <span class="o">[</span>6856CCCF-842E-48E8-897B-87BB1865CD10<span class="o">]</span>
+iPhone 5s <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>0AC6BB28-E860-4320-A532-272BE43C067C<span class="o">]</span>
+iPhone <span class="m">6</span> <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>7953EE9F-19E8-4D0C-9219-268FB0BA6626<span class="o">]</span>
+iPhone <span class="m">6</span> Plus <span class="o">(</span>8.1 Simulator<span class="o">)</span> <span class="o">[</span>E574C367-1BAA-4F9F-BB92-BD5F6BAB1226<span class="o">]</span></code></pre></div>
+
+<h2 id="simctl">SimCtl</h2>
+
+<p>Another option is to use <code>xcrun simctl</code>, which is a new addition to Xcode 6. In fact, <code>simctl</code> looks like a very promising tool that allows you to create, boot, launch and then shutdown and destroy iOS simulators on the fly, and provides commands to install and launch specific apps. If you ever used <a href="https://www.genymotion.com/#!/">Genymotion</a> you might have created Android simulators using <a href="https://www.virtualbox.org/">VirtualBox</a> command line utility, Apple works towards the same flexibility with <code>simctl</code>.</p>
+
+<p>In cotext of this article, to see a list of available devices, run this command</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">xcrun simctl list</code></pre></div>
+
+<p>You will get the list of device types, runtimes and devices. Device types and runtimes will be handy if you need to create new simulators. You can tell <code>simctl</code> to filter output, for example, list devices only</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">xcrun simctl list devices</code></pre></div>
+
+<p>Sample output</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">==</span> <span class="nv">Devices</span> <span class="o">==</span>
+-- iOS 7.0 --
+    iPhone 4s <span class="o">(</span>6CF0F409-F4F8-4BCD-AC4E-30E58947A3EB<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span> <span class="o">(</span>unavailable<span class="o">)</span>
+    iPhone <span class="m">5</span> <span class="o">(</span>1C08AA1B-9C0C-499B-9570-972EF52941D9<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span> <span class="o">(</span>unavailable<span class="o">)</span>
+    iPhone 5s <span class="o">(</span>3DD4CAA5-6CD7-4DFB-AF95-6494EAE6E90F<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span> <span class="o">(</span>unavailable<span class="o">)</span>
+    iPad <span class="m">2</span> <span class="o">(</span>C4E52F2A-C1C0-408F-8177-5AAF7895D3B5<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span> <span class="o">(</span>unavailable<span class="o">)</span>
+    iPad Retina <span class="o">(</span>D145A9C9-DFD0-4564-8A45-BF68A80426AC<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span> <span class="o">(</span>unavailable<span class="o">)</span>
+    iPad Air <span class="o">(</span>091FC037-5C7F-45FC-9089-E424A9806D60<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span> <span class="o">(</span>unavailable<span class="o">)</span>
+-- iOS 7.1 --
+    iPhone 4s <span class="o">(</span>57DBC56E-1E04-4384-9A07-7B47C119BEAB<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPhone <span class="m">5</span> <span class="o">(</span>BAF484D4-803C-478D-BAC1-916376C22C48<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPhone 5s <span class="o">(</span>6856CCCF-842E-48E8-897B-87BB1865CD10<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPad <span class="m">2</span> <span class="o">(</span>43DD0C31-685F-4FC8-941F-0BB9B305CD2D<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPad Retina <span class="o">(</span>F1967F38-BE03-430F-BFB1-AFF4E2E4511C<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPad Air <span class="o">(</span>2FB923E2-F0F4-49DE-8FC3-81960386B8CE<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+-- iOS 8.1 --
+    iPhone 4s <span class="o">(</span>DDF255C3-8BEF-4A97-8B3F-AD651BABF6CB<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPhone <span class="m">5</span> <span class="o">(</span>45E5CE55-093D-48C0-AA26-AA4E5C569FDB<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPhone 5s <span class="o">(</span>0AC6BB28-E860-4320-A532-272BE43C067C<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPhone <span class="m">6</span> Plus <span class="o">(</span>E574C367-1BAA-4F9F-BB92-BD5F6BAB1226<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPhone <span class="m">6</span> <span class="o">(</span>7953EE9F-19E8-4D0C-9219-268FB0BA6626<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    MyIPhone6 <span class="o">(</span>9151073B-3B7D-441A-8069-E797FA5059CE<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPad <span class="m">2</span> <span class="o">(</span>8D722A9F-2DA9-45A2-BAFB-44075AA519D6<span class="o">)</span> <span class="o">(</span>Booted<span class="o">)</span>
+    iPad Retina <span class="o">(</span>E8652514-3042-4958-9027-48A9A95392CE<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    iPad Air <span class="o">(</span>6032BE94-1A62-4ADB-9013-50FAB2B088F6<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    Resizable iPhone <span class="o">(</span>5E7A9E8C-D3A8-4E58-935F-8754B100E867<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span>
+    Resizable iPad <span class="o">(</span>15FC1628-B369-44DE-8CE0-756439D9AEBC<span class="o">)</span> <span class="o">(</span>Shutdown<span class="o">)</span></code></pre></div>
+
+<p>To get more details just run <code>xcrun simctl list -h</code> to get help on <code>list</code> command.</p>
+
+<h2 id="xcodebuild">xcodebuild</h2>
+
+<p>Finally, to get the most detailed output, ask <code>xcodebuild</code> itself. It is not really documented and doesn’t look like a proper approach, but it works. The idea is to give <code>xcodebuild</code> invalid key-value pair in destination specifier and wait until it complains about it offering a list of valid options in return.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">xcodebuild <span class="nb">test</span> -project MyProject.xcodeproj -scheme MyScheme -destination <span class="s2">&quot;name=NoSuchName&quot;</span></code></pre></div>
+
+<p>The output is</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">xcodebuild: error: Unable to find a destination matching the provided destination specifier:
+    <span class="o">{</span> name:NoSuchName <span class="o">}</span>
+
+  Unsupported device specifier option.
+  The device “My Mac” does not support the following options: name
+  Please supply only supported device specifier options.
+
+  Available destinations <span class="k">for</span> the <span class="s2">&quot;MyScheme&quot;</span> scheme:
+    <span class="o">{</span> platform:iOS Simulator, id:C4E52F2A-C1C0-408F-8177-5AAF7895D3B5, OS:7.0, name:iPad <span class="m">2</span> <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:43DD0C31-685F-4FC8-941F-0BB9B305CD2D, OS:7.1, name:iPad <span class="m">2</span> <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:8D722A9F-2DA9-45A2-BAFB-44075AA519D6, OS:8.1, name:iPad <span class="m">2</span> <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:091FC037-5C7F-45FC-9089-E424A9806D60, OS:7.0, name:iPad Air <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:2FB923E2-F0F4-49DE-8FC3-81960386B8CE, OS:7.1, name:iPad Air <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:6032BE94-1A62-4ADB-9013-50FAB2B088F6, OS:8.1, name:iPad Air <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:D145A9C9-DFD0-4564-8A45-BF68A80426AC, OS:7.0, name:iPad Retina <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:F1967F38-BE03-430F-BFB1-AFF4E2E4511C, OS:7.1, name:iPad Retina <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:E8652514-3042-4958-9027-48A9A95392CE, OS:8.1, name:iPad Retina <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:6CF0F409-F4F8-4BCD-AC4E-30E58947A3EB, OS:7.0, name:iPhone 4s <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:57DBC56E-1E04-4384-9A07-7B47C119BEAB, OS:7.1, name:iPhone 4s <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:DDF255C3-8BEF-4A97-8B3F-AD651BABF6CB, OS:8.1, name:iPhone 4s <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:1C08AA1B-9C0C-499B-9570-972EF52941D9, OS:7.0, name:iPhone <span class="m">5</span> <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:BAF484D4-803C-478D-BAC1-916376C22C48, OS:7.1, name:iPhone <span class="m">5</span> <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:45E5CE55-093D-48C0-AA26-AA4E5C569FDB, OS:8.1, name:iPhone <span class="m">5</span> <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:3DD4CAA5-6CD7-4DFB-AF95-6494EAE6E90F, OS:7.0, name:iPhone 5s <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:6856CCCF-842E-48E8-897B-87BB1865CD10, OS:7.1, name:iPhone 5s <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:0AC6BB28-E860-4320-A532-272BE43C067C, OS:8.1, name:iPhone 5s <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:E574C367-1BAA-4F9F-BB92-BD5F6BAB1226, OS:8.1, name:iPhone <span class="m">6</span> Plus <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:7953EE9F-19E8-4D0C-9219-268FB0BA6626, OS:8.1, name:iPhone <span class="m">6</span> <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:15FC1628-B369-44DE-8CE0-756439D9AEBC, OS:8.1, name:Resizable iPad <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:5E7A9E8C-D3A8-4E58-935F-8754B100E867, OS:8.1, name:Resizable iPhone <span class="o">}</span>
+    <span class="o">{</span> platform:iOS Simulator, id:9151073B-3B7D-441A-8069-E797FA5059CE, OS:8.1, name:MyIPhone6 <span class="o">}</span>
+    <span class="o">{</span> platform:iOS, id:5dc0e5a8a9f7c0af1feea4bfa13860c9e61350d6, name:Maksym<span class="err">&#39;</span>s iPhone <span class="o">}</span></code></pre></div>
+
+<h2 id="back-to-destination">Back to Destination</h2>
+
+<p>Now that last output from <code>xcodebuild</code> is much better than anything else. It gives you all the key-value pairs as is, no additional guesswork involved. You get the “platform”, “OS” and “name” keys, and as a bonus you get an undocumented “id” key. Give it a try and see that it actually works.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">xcodebuild <span class="nb">test</span> -project MyProject.xcodeproj -scheme MyScheme -destination <span class="s2">&quot;id=E574C367-1BAA-4F9F-BB92-BD5F6BAB1226&quot;</span></code></pre></div>
+
+<p>It’s a bit annoying that it takes a while for <code>xcodebuild</code> to figure out that you’ve given it an invalid key-value pair, but still you can adopt this approach as part of CI workflow automation and grep all key-value pairs from <code>xcodebuild</code> output.</p>
+
+    <hr>
+    <div class="pagination btn-group">
+      
+        <a class="btn prev" href="/swift/2015/01/27/swift-dictionary-literal-convertible" title="Swift Dictionary Literal Convertible">&larr; Previous</a>
+      
+        <a class="btn" href="/archive.html">Archive</a>
+      
+        <a class="btn next disabled">Next &rarr;</a>
+      
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <section>
+      <h4>Published</h4>
+      <div class="date"><span>18 February 2015</span></div>
+    </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          Xcode
+        </span>
+      </section>
+         
+    
+      <section>
+        <h4>Tags</h4>
+        <ul class="tag_box">
+          
+          
+
+
+  
+     
+    	<li><a href="/tags.html#xcode-ref">xcode <span>4</span></a></li>
+     
+    	<li><a href="/tags.html#mobile-ref">mobile <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#ci-ref">ci <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#ios-ref">ios <span>6</span></a></li>
+     
+    	<li><a href="/tags.html#apple-ref">apple <span>6</span></a></li>
+    
+  
+
+
+
+        </ul>
+      </section>
+             
+  </div>
+</div>
+
+
+        </div>
+      </div> <!-- /container -->
+
+      <div class="footer-push"></div>
+    </div><!--/.page-wrap -->
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2015 Maksym Grebenets
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+

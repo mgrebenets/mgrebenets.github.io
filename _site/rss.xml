@@ -5,10 +5,407 @@
         <description>NSBogan - Maksym Grebenets</description>
         <link>http://mgrebenets.github.io</link>
         <link>http://mgrebenets.github.io</link>
-        <lastBuildDate>2015-01-18T00:48:10+11:00</lastBuildDate>
-        <pubDate>2015-01-18T00:48:10+11:00</pubDate>
+        <lastBuildDate>2015-02-18T12:52:48+11:00</lastBuildDate>
+        <pubDate>2015-02-18T12:52:48+11:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>What's your destination?</title>
+                <description>
+&lt;p&gt;Few hands on tricks about &lt;code&gt;-destination&lt;/code&gt; option of &lt;code&gt;xcodebuild&lt;/code&gt;.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Destination option (&lt;code&gt;-destination&lt;/code&gt;) was a new addition to Xcode 5 release. It is documented on &lt;a href=&quot;https://developer.apple.com/library/mac/documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html&quot;&gt;xcodebuild man page&lt;/a&gt; and you get the same by running &lt;code&gt;man xcodebuild&lt;/code&gt;. This option lets you be more verbose with your &lt;code&gt;xcodebuild&lt;/code&gt; commands. For example, if you have a physical device plugged in, running &lt;code&gt;xcodebuild&lt;/code&gt; with no destination specifier will build the project for this physical device. Using destination specifier you can explicitly tell &lt;code&gt;xcodebuild&lt;/code&gt; to build for simulator.&lt;/p&gt;
+
+&lt;p&gt;Allow me just to quote the man page here&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;The -destination option takes as its argument a destination specifier describing the device &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;or devices&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; to use as a destination.  A destination specifier is a single argument consisting of a &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;of comma-separated &lt;span class=&quot;nv&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;value pairs.  The -destination option may be specified multiple &lt;span class=&quot;nb&quot;&gt;times &lt;/span&gt;to cause xcodebuild to perform the specified action on multiple destinations.&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;By the way, pay a closer attention to the last sentence. It’s a really nice feature, for example with single command you can run tests on multiple simulators.&lt;/p&gt;
+
+&lt;p&gt;One of the keys supported is “platform” and there are 3 options: “OS X”, “iOS” and “iOS Simulator”. Let’s get more details on the last two. iOS and iOS Simulator platforms both require a “name” and “OS” keys to specify device name and iOS version. The question is “How to get list of all names and OS versions?”. There are many way to do that.&lt;/p&gt;
+
+&lt;h2 id=&quot;instruments&quot;&gt;Instruments&lt;/h2&gt;
+
+&lt;p&gt;The Xcode Instruments command line utility has an undocumented &lt;code&gt;-s&lt;/code&gt; option, which lists all devices and templates. By adding &lt;code&gt;devices&lt;/code&gt; to the invocation only devices are be listed.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;instruments -s devices
+&lt;span class=&quot;c&quot;&gt;# or&lt;/span&gt;
+xcrun instruments -s devices&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Example output, note that it also includes your Mac as a device.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Known Devices:
+R5003398 &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;5C25B8A6-EDF5-5856-B8B9-CB28DFBFADC4&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+Maksym&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;s iPhone &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1.3&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;5dc0e5a8a9f7c0af1feea4bfa13860c9e61350d6&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+MyIPhone6 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;9151073B-3B7D-441A-8069-E797FA5059CE&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+Resizable iPad &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;15FC1628-B369-44DE-8CE0-756439D9AEBC&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+Resizable iPhone &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;5E7A9E8C-D3A8-4E58-935F-8754B100E867&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPad &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;43DD0C31-685F-4FC8-941F-0BB9B305CD2D&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPad &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;8D722A9F-2DA9-45A2-BAFB-44075AA519D6&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPad Air &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;2FB923E2-F0F4-49DE-8FC3-81960386B8CE&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPad Air &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;6032BE94-1A62-4ADB-9013-50FAB2B088F6&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPad Retina &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;F1967F38-BE03-430F-BFB1-AFF4E2E4511C&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPad Retina &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;E8652514-3042-4958-9027-48A9A95392CE&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPhone 4s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;57DBC56E-1E04-4384-9A07-7B47C119BEAB&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPhone 4s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;DDF255C3-8BEF-4A97-8B3F-AD651BABF6CB&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPhone &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;BAF484D4-803C-478D-BAC1-916376C22C48&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPhone &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;45E5CE55-093D-48C0-AA26-AA4E5C569FDB&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPhone 5s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;6856CCCF-842E-48E8-897B-87BB1865CD10&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPhone 5s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0AC6BB28-E860-4320-A532-272BE43C067C&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPhone &lt;span class=&quot;m&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;7953EE9F-19E8-4D0C-9219-268FB0BA6626&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+iPhone &lt;span class=&quot;m&quot;&gt;6&lt;/span&gt; Plus &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8.1 Simulator&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;E574C367-1BAA-4F9F-BB92-BD5F6BAB1226&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;simctl&quot;&gt;SimCtl&lt;/h2&gt;
+
+&lt;p&gt;Another option is to use &lt;code&gt;xcrun simctl&lt;/code&gt;, which is a new addition to Xcode 6. In fact, &lt;code&gt;simctl&lt;/code&gt; looks like a very promising tool that allows you to create, boot, launch and then shutdown and destroy iOS simulators on the fly, and provides commands to install and launch specific apps. If you ever used &lt;a href=&quot;https://www.genymotion.com/#!/&quot;&gt;Genymotion&lt;/a&gt; you might have created Android simulators using &lt;a href=&quot;https://www.virtualbox.org/&quot;&gt;VirtualBox&lt;/a&gt; command line utility, Apple works towards the same flexibility with &lt;code&gt;simctl&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In cotext of this article, to see a list of available devices, run this command&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xcrun simctl list&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You will get the list of device types, runtimes and devices. Device types and runtimes will be handy if you need to create new simulators. You can tell &lt;code&gt;simctl&lt;/code&gt; to filter output, for example, list devices only&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xcrun simctl list devices&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Sample output&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;Devices&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;
+-- iOS 7.0 --
+    iPhone 4s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;6CF0F409-F4F8-4BCD-AC4E-30E58947A3EB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;unavailable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPhone &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1C08AA1B-9C0C-499B-9570-972EF52941D9&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;unavailable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPhone 5s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;3DD4CAA5-6CD7-4DFB-AF95-6494EAE6E90F&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;unavailable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C4E52F2A-C1C0-408F-8177-5AAF7895D3B5&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;unavailable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad Retina &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;D145A9C9-DFD0-4564-8A45-BF68A80426AC&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;unavailable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad Air &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;091FC037-5C7F-45FC-9089-E424A9806D60&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;unavailable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+-- iOS 7.1 --
+    iPhone 4s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;57DBC56E-1E04-4384-9A07-7B47C119BEAB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPhone &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;BAF484D4-803C-478D-BAC1-916376C22C48&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPhone 5s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;6856CCCF-842E-48E8-897B-87BB1865CD10&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;43DD0C31-685F-4FC8-941F-0BB9B305CD2D&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad Retina &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;F1967F38-BE03-430F-BFB1-AFF4E2E4511C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad Air &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;2FB923E2-F0F4-49DE-8FC3-81960386B8CE&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+-- iOS 8.1 --
+    iPhone 4s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;DDF255C3-8BEF-4A97-8B3F-AD651BABF6CB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPhone &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;45E5CE55-093D-48C0-AA26-AA4E5C569FDB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPhone 5s &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0AC6BB28-E860-4320-A532-272BE43C067C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPhone &lt;span class=&quot;m&quot;&gt;6&lt;/span&gt; Plus &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;E574C367-1BAA-4F9F-BB92-BD5F6BAB1226&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPhone &lt;span class=&quot;m&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;7953EE9F-19E8-4D0C-9219-268FB0BA6626&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    MyIPhone6 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;9151073B-3B7D-441A-8069-E797FA5059CE&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;8D722A9F-2DA9-45A2-BAFB-44075AA519D6&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Booted&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad Retina &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;E8652514-3042-4958-9027-48A9A95392CE&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    iPad Air &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;6032BE94-1A62-4ADB-9013-50FAB2B088F6&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    Resizable iPhone &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;5E7A9E8C-D3A8-4E58-935F-8754B100E867&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    Resizable iPad &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;15FC1628-B369-44DE-8CE0-756439D9AEBC&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Shutdown&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;To get more details just run &lt;code&gt;xcrun simctl list -h&lt;/code&gt; to get help on &lt;code&gt;list&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;h2 id=&quot;xcodebuild&quot;&gt;xcodebuild&lt;/h2&gt;
+
+&lt;p&gt;Finally, to get the most detailed output, ask &lt;code&gt;xcodebuild&lt;/code&gt; itself. It is not really documented and doesn’t look like a proper approach, but it works. The idea is to give &lt;code&gt;xcodebuild&lt;/code&gt; invalid key-value pair in destination specifier and wait until it complains about it offering a list of valid options in return.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xcodebuild &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; -project MyProject.xcodeproj -scheme MyScheme -destination &lt;span class=&quot;s2&quot;&gt;&amp;quot;name=NoSuchName&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The output is&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xcodebuild: error: Unable to find a destination matching the provided destination specifier:
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; name:NoSuchName &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  Unsupported device specifier option.
+  The device “My Mac” does not support the following options: name
+  Please supply only supported device specifier options.
+
+  Available destinations &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; the &lt;span class=&quot;s2&quot;&gt;&amp;quot;MyScheme&amp;quot;&lt;/span&gt; scheme:
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:C4E52F2A-C1C0-408F-8177-5AAF7895D3B5, OS:7.0, name:iPad &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:43DD0C31-685F-4FC8-941F-0BB9B305CD2D, OS:7.1, name:iPad &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:8D722A9F-2DA9-45A2-BAFB-44075AA519D6, OS:8.1, name:iPad &lt;span class=&quot;m&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:091FC037-5C7F-45FC-9089-E424A9806D60, OS:7.0, name:iPad Air &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:2FB923E2-F0F4-49DE-8FC3-81960386B8CE, OS:7.1, name:iPad Air &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:6032BE94-1A62-4ADB-9013-50FAB2B088F6, OS:8.1, name:iPad Air &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:D145A9C9-DFD0-4564-8A45-BF68A80426AC, OS:7.0, name:iPad Retina &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:F1967F38-BE03-430F-BFB1-AFF4E2E4511C, OS:7.1, name:iPad Retina &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:E8652514-3042-4958-9027-48A9A95392CE, OS:8.1, name:iPad Retina &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:6CF0F409-F4F8-4BCD-AC4E-30E58947A3EB, OS:7.0, name:iPhone 4s &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:57DBC56E-1E04-4384-9A07-7B47C119BEAB, OS:7.1, name:iPhone 4s &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:DDF255C3-8BEF-4A97-8B3F-AD651BABF6CB, OS:8.1, name:iPhone 4s &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:1C08AA1B-9C0C-499B-9570-972EF52941D9, OS:7.0, name:iPhone &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:BAF484D4-803C-478D-BAC1-916376C22C48, OS:7.1, name:iPhone &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:45E5CE55-093D-48C0-AA26-AA4E5C569FDB, OS:8.1, name:iPhone &lt;span class=&quot;m&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:3DD4CAA5-6CD7-4DFB-AF95-6494EAE6E90F, OS:7.0, name:iPhone 5s &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:6856CCCF-842E-48E8-897B-87BB1865CD10, OS:7.1, name:iPhone 5s &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:0AC6BB28-E860-4320-A532-272BE43C067C, OS:8.1, name:iPhone 5s &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:E574C367-1BAA-4F9F-BB92-BD5F6BAB1226, OS:8.1, name:iPhone &lt;span class=&quot;m&quot;&gt;6&lt;/span&gt; Plus &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:7953EE9F-19E8-4D0C-9219-268FB0BA6626, OS:8.1, name:iPhone &lt;span class=&quot;m&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:15FC1628-B369-44DE-8CE0-756439D9AEBC, OS:8.1, name:Resizable iPad &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:5E7A9E8C-D3A8-4E58-935F-8754B100E867, OS:8.1, name:Resizable iPhone &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS Simulator, id:9151073B-3B7D-441A-8069-E797FA5059CE, OS:8.1, name:MyIPhone6 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; platform:iOS, id:5dc0e5a8a9f7c0af1feea4bfa13860c9e61350d6, name:Maksym&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;s iPhone &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;back-to-destination&quot;&gt;Back to Destination&lt;/h2&gt;
+
+&lt;p&gt;Now that last output from &lt;code&gt;xcodebuild&lt;/code&gt; is much better than anything else. It gives you all the key-value pairs as is, no additional guesswork involved. You get the “platform”, “OS” and “name” keys, and as a bonus you get an undocumented “id” key. Give it a try and see that it actually works.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xcodebuild &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt; -project MyProject.xcodeproj -scheme MyScheme -destination &lt;span class=&quot;s2&quot;&gt;&amp;quot;id=E574C367-1BAA-4F9F-BB92-BD5F6BAB1226&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It’s a bit annoying that it takes a while for &lt;code&gt;xcodebuild&lt;/code&gt; to figure out that you’ve given it an invalid key-value pair, but still you can adopt this approach as part of CI workflow automation and grep all key-value pairs from &lt;code&gt;xcodebuild&lt;/code&gt; output.&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/xcode/2015/02/18/whats-your-destination</link>
+                <guid>http://mgrebenets.github.io/xcode/2015/02/18/whats-your-destination</guid>
+                <pubDate>2015-02-18T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Swift Dictionary Literal Convertible</title>
+                <description>
+&lt;p&gt;A practical example of Swift’s &lt;code&gt;DictionaryLiteralConvertible&lt;/code&gt; protocol application.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;If “Literal Convertibles” sounds strange to you then a good place to start is an excellent &lt;a href=&quot;http://nshipster.com/swift-literal-convertible/&quot;&gt;NSHipster’s post&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;OK, let’s say we have some struct in Swift.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Double&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Timeout failed.&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is a structure holding timeout options for some abstract waiting function. If waiting takes longer that &lt;code&gt;timeout&lt;/code&gt; then waiting is terminated and the &lt;code&gt;message&lt;/code&gt; is displayed. For convenience default values are provided.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Waiting for \(options.timeout). Message: \(options.message)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// TODO: wait for some condition and fail after timeout&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Custom timeout failed.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, wouldn’t it be nice to add some syntactic sugar and pass a dictionary with key-value pairs for waiting options, instead of calling &lt;code&gt;Options&lt;/code&gt; initializer?&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Of course compiler doesn’t like this code, though it fails to tell us exactly why.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Options&amp;#39;&lt;/span&gt; does not have a member named &lt;span class=&quot;s1&quot;&gt;&amp;#39;Value&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s experiment a bit.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;SomeString&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Doesn’t make much sense but this time compiler complains with more sane error message.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Type &lt;span class=&quot;s1&quot;&gt;&amp;#39;Options&amp;#39;&lt;/span&gt; does not conform to protocol &lt;span class=&quot;s1&quot;&gt;&amp;#39;StringLiteralConvertible&amp;#39;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Basically it doesn’t know how to construct and instance of &lt;code&gt;Options&lt;/code&gt; type from &lt;code&gt;String&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So when we used dictionary before, compiler had no idea how to create an instance of &lt;code&gt;Options&lt;/code&gt; from a dictionary, but sadly couldn’t communicate it back to us in a human-friendly form.&lt;/p&gt;
+
+&lt;p&gt;To be able to create &lt;code&gt;Options&lt;/code&gt; objects from dictionaries &lt;code&gt;Options&lt;/code&gt; has to conform to &lt;code&gt;DictionaryLiteralConvertible&lt;/code&gt; protocol.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;c1&quot;&gt;/// Conforming types can be initialized with dictionary literals&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;protocol&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DictionaryLiteralConvertible&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;/// Create an instance initialized with `elements`.&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dictionaryLiteral&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)...)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;To conform to this protocol we need to implement &lt;code&gt;init&lt;/code&gt; and define type aliases for &lt;code&gt;Key&lt;/code&gt; and &lt;code&gt;Value&lt;/code&gt;. This was somewhat of a surprise for me, even when reading NSHipster’s post for the first time I didn’t realize that typealias are part of the protocol and had to be “implemented” (declared) too. I must have confused &lt;code&gt;typealias&lt;/code&gt; with C’s &lt;code&gt;typedef&lt;/code&gt; for a while, hence misunderstanding of &lt;code&gt;typealias&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;OK, first attempt in conforming to the protocol.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;extension&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DictionaryLiteralConvertible&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AnyObject&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dictionaryLiteral&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)...)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Double&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;message&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;fatalError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Unknown key: \(key)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;For dictionary keys the &lt;code&gt;String&lt;/code&gt; type is used, and for values use &lt;code&gt;AnyObject&lt;/code&gt; since we can pass either &lt;code&gt;Double&lt;/code&gt; or &lt;code&gt;String&lt;/code&gt; as a value.&lt;/p&gt;
+
+&lt;p&gt;I’m sure there’s a better more type-safe way to type alias &lt;code&gt;Value&lt;/code&gt; to make it more “functional”. Probably using enums. I’m still learning though.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;init&lt;/code&gt; iterates over the contents of the dictionary and initializes struct’s members with values from the dictionary. The &lt;code&gt;as&lt;/code&gt; is used to type cast &lt;code&gt;AnyObject&lt;/code&gt; to &lt;code&gt;Double&lt;/code&gt; or &lt;code&gt;String&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I’m aware that use of &lt;code&gt;self&lt;/code&gt; is not strictly required in this case and &lt;code&gt;self.timeout =&lt;/code&gt; works same as just &lt;code&gt;timeout =&lt;/code&gt;, but I tend to explicitly use &lt;code&gt;self.&lt;/code&gt; syntax in initializers, kind of rule of thumb.&lt;/p&gt;
+
+&lt;p&gt;Let’s try it again.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;timeout&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It works. Also notice that we can now provide partial arguments, like only timeout but no message in this case, something we couldn’t with default struct initializer (would have to implement additional initializers).&lt;/p&gt;
+
+&lt;p&gt;Yet there are few things that smell in this code (apart from &lt;code&gt;AnyObject&lt;/code&gt; I suppose).&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use of hard-coded string literals like “timeout” is not good, typos happen all the time and it’s quite painful to debug this type of errors.&lt;/li&gt;
+  &lt;li&gt;Default &lt;code&gt;case&lt;/code&gt; statement with &lt;code&gt;fatalError&lt;/code&gt; plug.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let’s now fix both these issues. First we will use a custom enum type for keys.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OptionKey&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Message&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that’s it not even backed up by a raw &lt;code&gt;String&lt;/code&gt; type, there’s no need for that at the moment.&lt;/p&gt;
+
+&lt;p&gt;Now can rewrite the &lt;code&gt;Options&lt;/code&gt; extension.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;extension&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;Options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DictionaryLiteralConvertible&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OptionKey&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AnyObject&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dictionaryLiteral&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;elements&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)...)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elements&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Double&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Main changes are&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use &lt;code&gt;OptionKey&lt;/code&gt; for &lt;code&gt;Key&lt;/code&gt; type alias.&lt;/li&gt;
+  &lt;li&gt;Get rid of &lt;code&gt;default:&lt;/code&gt; case, wrong key errors are now handled at compile time, not at run time.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Using the &lt;code&gt;wait&lt;/code&gt; function is now as simple as&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Timeout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Custom timeout failed.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You can &lt;a href=&quot;https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-dictionary-literal-convertible.swift&quot;&gt;grab the swift code&lt;/a&gt; and try it yourself in playground or just by running from command line with &lt;code&gt;xcrun swift&lt;/code&gt;.&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/swift/2015/01/27/swift-dictionary-literal-convertible</link>
+                <guid>http://mgrebenets.github.io/swift/2015/01/27/swift-dictionary-literal-convertible</guid>
+                <pubDate>2015-01-27T00:00:00+11:00</pubDate>
+        </item>
+
+        <item>
+                <title>Swift & Objective-C Interoperability</title>
+                <description>
+&lt;p&gt;I’ve stumbled on an issue while working on my hobby project. One of the few related to Swift and Objective-C interoperability.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Let’s setup a simple code base.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppKit&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;typealias&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BaseObjCClass&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;NSObject&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AnotherValue&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;protocol&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;ObjCSubclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BaseObjCClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Value&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CGSizeZero&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GenericClass&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;embeddedInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;embeddedInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;instance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instance&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accessValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accessSize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objectGeneric&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GenericClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;embeddedInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ObjCSubclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objectGeneric&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accessValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objectGeneric&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accessSize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;There’s pure Swift enum, protocol and a subclass of Objective-C class that adopts pure Swift protocol. By the way, have you ever tried declaring Swift enum with just one case?&lt;/p&gt;
+
+&lt;p&gt;Further on, I declare a generic class with type conforming to pure Swift protocol.&lt;/p&gt;
+
+&lt;p&gt;So what happens if I pass an Objective-C subclass to this generic class initializer?&lt;/p&gt;
+
+&lt;p&gt;To be honest, nothing happens most away. For reasons unknown to me my project compiled and ran. And it was running OK for a while until at some moment it started crashing consistently.&lt;/p&gt;
+
+&lt;p&gt;So the problem in this case is that I’m implicitly checking the conformance of Objective-C object &lt;code&gt;ObjCSubclass&lt;/code&gt; to a non Objective-C (pure Swift) protocol &lt;code&gt;PureSwiftProtocol&lt;/code&gt;. This check occurs when calling &lt;code&gt;return embeddedInstance.value&lt;/code&gt; where &lt;code&gt;embeddedInstance&lt;/code&gt; is an instance of &lt;code&gt;ObjCSubclass&lt;/code&gt; but the access to it’s property happens by converting it to &lt;code&gt;PureSwiftProtocol&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Apparently, this is a known issue. There’s a couple of discussions on StackOverflow (&lt;a href=&quot;http://stackoverflow.com/questions/24132738/swift-set-delegate-to-self-gives-exc-bad-access&quot;&gt;one&lt;/a&gt;, &lt;a href=&quot;http://stackoverflow.com/questions/24174348/calling-method-using-optional-chaining-on-weak-variable-causes-exc-bad-access&quot;&gt;two&lt;/a&gt;).&lt;/p&gt;
+
+&lt;h2 id=&quot;solution-a-back-to-roots&quot;&gt;Solution A: Back to Roots&lt;/h2&gt;
+
+&lt;p&gt;The first solution is to turn &lt;code&gt;PureSwiftProtocol&lt;/code&gt; into Objective-C protocol by using &lt;code&gt;@objc&lt;/code&gt; notation.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objc&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;protocol&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;get&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;But that won’t make compiler happy because it has no idea how to map &lt;code&gt;PureSwiftEnum&lt;/code&gt; into Objective-C. So you have to take it one step further. You have to declare &lt;code&gt;PureSwiftEnum&lt;/code&gt; as Objective-C enum (with &lt;code&gt;NS_ENUM&lt;/code&gt;), obviously you have to do it in Objective-C header file and properly setup bridging header in your project.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-objective-c&quot; data-lang=&quot;objective-c&quot;&gt;&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;NS_ENUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;NSInteger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;PureSwiftEnumValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;PureSwiftEnumAnotherValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;solution-b-wrap-it-up&quot;&gt;Solution B: Wrap it Up&lt;/h2&gt;
+
+&lt;p&gt;If you don’t want to revert back to adding Objective-C code with the hope that Apple eventually fixes this issue in the future, you can try another ugly trick - wrap your Objective-C class with pure Swift class that conforms to the same protocol.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;PureSwiftWrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftProtocol&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ObjCSubclass&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ObjcSubclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;objcInstance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objcInstance&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftEnum&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;CGSize&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now you can pass an instance of &lt;code&gt;PureSwiftWrapper&lt;/code&gt; to &lt;code&gt;GenericClass&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;wrapper&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PureSwiftWrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;objcInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ObjCSubclass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generic&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GenericClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;embeddedInstance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;wrapper&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;generic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accessValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;With this setup my crash went away and hadn’t reappeared since then.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+&lt;p&gt;Reference to &lt;a href=&quot;https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-objc-interop.swift&quot;&gt;swift-objc-interop.swift&lt;/a&gt; to experiment and run it from command line or in Playground&lt;/p&gt;
+</description>
+                <link>http://mgrebenets.github.io/swift/2015/01/22/swift--objective-c-interoperability</link>
+                <guid>http://mgrebenets.github.io/swift/2015/01/22/swift--objective-c-interoperability</guid>
+                <pubDate>2015-01-22T00:00:00+11:00</pubDate>
+        </item>
 
         <item>
                 <title>Flappy Swift</title>
@@ -51,6 +448,8 @@ Accompanied by &lt;a href=&quot;https://bitbucket.org/i4niac/flappy-boo&quot;&gt
 &lt;p&gt;This post describes how to create an RPM package for Atlassian CLI to install it on &lt;a href=&quot;http://en.wikipedia.org/wiki/Category:RPM-based_Linux_distributions&quot;&gt;RMP-based Linux distributions&lt;/a&gt;.&lt;/p&gt;
 
 &lt;!--more--&gt;
+
+&lt;p&gt;Jump directly to &lt;a href=&quot;#tldr&quot;&gt;Summary&lt;/a&gt; if just want to grab the end result.&lt;/p&gt;
 
 &lt;h2 id=&quot;why-bother&quot;&gt;Why Bother?&lt;/h2&gt;
 &lt;p&gt;Same question as one would as for using &lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Homebrew on OSX&lt;/a&gt;. And same answer again - Automation.&lt;/p&gt;
@@ -108,9 +507,9 @@ Atlassian CLI tools by Bob Swift. See https://marketplace.atlassian.com/plugins/
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;%prep
 %setup&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;I myself just found out about it recently and didn’t try it yet. So in this article I’ll do the job of setup macro with shell commands, but this is definetly where improvements should be made.&lt;/p&gt;
+&lt;p&gt;I myself just found out about it recently and didn’t try it yet. So in this article I’ll do the job of setup macro with shell commands, but this is definitely where improvements should be made.&lt;/p&gt;
 
-&lt;p&gt;Then there’s &lt;code&gt;_tmppath&lt;/code&gt; varible. You will notice later that it’s not passed to RPM script directly anywhere, instead, it’s picked up from a special &lt;code&gt;.rpmmacros&lt;/code&gt; file. You’ll see how it’s used later on.&lt;/p&gt;
+&lt;p&gt;Then there’s &lt;code&gt;_tmppath&lt;/code&gt; variable. You will notice later that it’s not passed to RPM script directly anywhere, instead, it’s picked up from a special &lt;code&gt;.rpmmacros&lt;/code&gt; file. You’ll see how it’s used later on.&lt;/p&gt;
 
 &lt;h3 id=&quot;install&quot;&gt;Install&lt;/h3&gt;
 &lt;p&gt;Now it’s time to define install command. It’s again very similar to Homebrew’s install. So I will give here brief description of the steps with the code and for more details you can always get back to &lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Homebrew post&lt;/a&gt;.&lt;/p&gt;
@@ -157,7 +556,7 @@ sed -i.bak -e &lt;span class=&quot;s2&quot;&gt;&amp;quot;s,\(.*\)https://conflue
 sed -i.bak -e &lt;span class=&quot;s2&quot;&gt;&amp;quot;s,\(.*\)https://fisheye.example.com\(.*\),\1https://fisheye.nsbogan.com.au\2,g&amp;quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;
 sed -i.bak -e &lt;span class=&quot;s2&quot;&gt;&amp;quot;s,\(.*\)https://crubicle.example.com\(.*\),\1https://crubicle.nsbogan.com.au\2,g&amp;quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$filename&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;Finally rename ambigous &lt;code&gt;all.sh&lt;/code&gt; to &lt;code&gt;atlassian-all.sh&lt;/code&gt; and move all &lt;code&gt;.sh&lt;/code&gt; files to &lt;code&gt;bin&lt;/code&gt; folder. I personally prefer to drop &lt;code&gt;.sh&lt;/code&gt; part from the filename in the process.&lt;/p&gt;
+&lt;p&gt;Finally rename ambiguous &lt;code&gt;all.sh&lt;/code&gt; to &lt;code&gt;atlassian-all.sh&lt;/code&gt; and move all &lt;code&gt;.sh&lt;/code&gt; files to &lt;code&gt;bin&lt;/code&gt; folder. I personally prefer to drop &lt;code&gt;.sh&lt;/code&gt; part from the filename in the process.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# all.sh - rename to atlassian-all.sh before moving&lt;/span&gt;
 mv %&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;buildroot&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;/opt/nsbogan-atlassian-cli/all.sh %&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;buildroot&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;/opt/nsbogan-atlassian-cli/atlassian-all.sh
@@ -319,6 +718,13 @@ rpm --freshen -v --test --replacepkgs --replacefiles --nosignature --nodigest &l
 &lt;p&gt;Now you can hand RPM package over to your Dev Support guys, they’ll put it into local repo and make RPM install a part of bake or post-bake process.&lt;/p&gt;
 
 &lt;p&gt;Yet nothing stops you from creating a CI plan (job) for the Atlassian CLI RPM package itself. You can run &lt;code&gt;make rpm&lt;/code&gt; and test rpm install on the very same build agent this package is targeted for, thus creating yet another “CI Loop”, which is good.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-nametldr-summary&quot;&gt;&lt;a name=&quot;tldr&quot;&gt;&lt;/a&gt; Summary&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Create &lt;a href=&quot;https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/nsbogan-atlassian-cli-rpm.spec&quot;&gt;RPM spec&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Run &lt;code&gt;make rpm -f RPMMakefile&lt;/code&gt; using this &lt;a href=&quot;https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/RPMMakefile&quot;&gt;RPMMakefile&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <link>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</link>
                 <guid>http://mgrebenets.github.io/atlassian/2014/05/30/atlassian-cli-rpm</guid>
@@ -354,7 +760,7 @@ After you install it, you need to update your &lt;code&gt;PATH&lt;/code&gt;. By 
 &lt;h3 id=&quot;create-formula&quot;&gt;Create Formula&lt;/h3&gt;
 &lt;p&gt;You could use &lt;code&gt;brew create &amp;lt;link&amp;gt;&lt;/code&gt; command, but that will create formula in &lt;code&gt;/usr/loca/Library/Formula&lt;/code&gt;. Instead let’s create it manually.&lt;/p&gt;
 
-&lt;p&gt;Let’s say our company is called i4nApps (I know, it’s a wierd name…), so create new Ruby file&lt;/p&gt;
+&lt;p&gt;Let’s say our company is called i4nApps (I know, it’s a weird name…), so create new Ruby file&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;touch i4napps-atlassian-cli.rb&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
@@ -595,7 +1001,7 @@ We also set &lt;code&gt;JAVA_HOME&lt;/code&gt; here using &lt;code&gt;java_home&
 &lt;p&gt;Make sure to put this line &lt;strong&gt;before&lt;/strong&gt; &lt;code&gt;atlassian.sh&lt;/code&gt; is moved and renamed.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;The nested class is used because Homebrew only expects one formula file. If you have other files used as an external dependencies, Homebew will not fetch them from repository when running &lt;code&gt;tap&lt;/code&gt; command.&lt;/p&gt;
+  &lt;p&gt;The nested class is used because Homebrew only expects one formula file. If you have other files used as an external dependencies, Homebrew will not fetch them from repository when running &lt;code&gt;tap&lt;/code&gt; command.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h3 id=&quot;push-to-scm&quot;&gt;Push to SCM&lt;/h3&gt;

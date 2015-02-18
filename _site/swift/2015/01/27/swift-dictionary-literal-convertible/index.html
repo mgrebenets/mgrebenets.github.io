@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        Swift Dictionary Literal Convertible - 
+      
+      NSBogan
+    </title>
+    <meta name="description" content="Swift Dictionary Literal Convertible">
+    <meta name="author" content="Maksym Grebenets">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+  </head>
+
+  <body>
+    <div id="page-wrap">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="container">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+
+            <a class="brand" href="/">NSBogan</a>
+
+            <div class="nav-collapse">
+              <ul class="nav">
+                
+                
+                
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+              </ul>
+              <ul class="nav pull-right social visible-desktop">
+                <li class="divider-vertical"></li>
+                
+                <li>
+                  <a href="https://github.com/mgrebenets" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+                
+                
+                
+                <li>
+                  <a href="https://twitter.com/mgrebenets" class="zocial twitter icon" target="_blank">
+                    <span class="hidden-desktop">Twitter</span>
+                  </a>
+                </li>
+                
+                
+                
+                
+                <li>
+                  <a href="http://feeds.feedburner.com/mgrebenets@gmail.com" class="zocial rss icon" target="_blank">
+                    <span class="hidden-desktop">FeedBurner</span>
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="content">
+          
+<div class="page-header">
+  <h1>
+    Swift Dictionary Literal Convertible 
+    
+  </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    
+<p>A practical example of Swift’s <code>DictionaryLiteralConvertible</code> protocol application.</p>
+
+<!--more-->
+
+<p>If “Literal Convertibles” sounds strange to you then a good place to start is an excellent <a href="http://nshipster.com/swift-literal-convertible/">NSHipster’s post</a>.</p>
+
+<p>OK, let’s say we have some struct in Swift.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">struct</span> <span class="n">Options</span> <span class="p">{</span>
+  <span class="k">let</span> <span class="nl">timeout</span><span class="p">:</span> <span class="n">Double</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">let</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Timeout failed.&quot;</span>
+<span class="p">}</span></code></pre></div>
+
+<p>This is a structure holding timeout options for some abstract waiting function. If waiting takes longer that <code>timeout</code> then waiting is terminated and the <code>message</code> is displayed. For convenience default values are provided.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">func</span> <span class="nf">wait</span><span class="p">(</span><span class="nl">options</span><span class="p">:</span> <span class="n">Options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">println</span><span class="p">(</span><span class="s">&quot;Waiting for \(options.timeout). Message: \(options.message)&quot;</span><span class="p">)</span>
+  <span class="c1">// TODO: wait for some condition and fail after timeout</span>
+<span class="p">}</span>
+
+<span class="n">wait</span><span class="p">(</span><span class="n">Options</span><span class="p">(</span><span class="nl">timeout</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="nl">message</span><span class="p">:</span> <span class="s">&quot;Custom timeout failed.&quot;</span><span class="p">))</span></code></pre></div>
+
+<p>Now, wouldn’t it be nice to add some syntactic sugar and pass a dictionary with key-value pairs for waiting options, instead of calling <code>Options</code> initializer?</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">wait</span><span class="p">([</span><span class="s">&quot;timeout&quot;</span><span class="o">:</span> <span class="mf">0.1</span><span class="p">])</span></code></pre></div>
+
+<p>Of course compiler doesn’t like this code, though it fails to tell us exactly why.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="s1">&#39;Options&#39;</span> does not have a member named <span class="s1">&#39;Value&#39;</span></code></pre></div>
+
+<p>Let’s experiment a bit.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">wait</span><span class="p">(</span><span class="s">&quot;SomeString&quot;</span><span class="p">)</span></code></pre></div>
+
+<p>Doesn’t make much sense but this time compiler complains with more sane error message.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">Type <span class="s1">&#39;Options&#39;</span> does not conform to protocol <span class="s1">&#39;StringLiteralConvertible&#39;</span></code></pre></div>
+
+<p>Basically it doesn’t know how to construct and instance of <code>Options</code> type from <code>String</code>.</p>
+
+<p>So when we used dictionary before, compiler had no idea how to create an instance of <code>Options</code> from a dictionary, but sadly couldn’t communicate it back to us in a human-friendly form.</p>
+
+<p>To be able to create <code>Options</code> objects from dictionaries <code>Options</code> has to conform to <code>DictionaryLiteralConvertible</code> protocol.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="c1">/// Conforming types can be initialized with dictionary literals</span>
+<span class="k">protocol</span> <span class="n">DictionaryLiteralConvertible</span> <span class="p">{</span>
+  <span class="k">typealias</span> <span class="n">Key</span>
+  <span class="k">typealias</span> <span class="n">Value</span>
+
+  <span class="c1">/// Create an instance initialized with `elements`.</span>
+  <span class="k">init</span><span class="p">(</span><span class="n">dictionaryLiteral</span> <span class="nl">elements</span><span class="p">:</span> <span class="p">(</span><span class="n">Key</span><span class="p">,</span> <span class="n">Value</span><span class="p">)...)</span>
+<span class="p">}</span></code></pre></div>
+
+<p>To conform to this protocol we need to implement <code>init</code> and define type aliases for <code>Key</code> and <code>Value</code>. This was somewhat of a surprise for me, even when reading NSHipster’s post for the first time I didn’t realize that typealias are part of the protocol and had to be “implemented” (declared) too. I must have confused <code>typealias</code> with C’s <code>typedef</code> for a while, hence misunderstanding of <code>typealias</code>.</p>
+
+<p>OK, first attempt in conforming to the protocol.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">extension</span> <span class="nl">Options</span><span class="p">:</span> <span class="n">DictionaryLiteralConvertible</span> <span class="p">{</span>
+  <span class="k">typealias</span> <span class="n">Key</span> <span class="o">=</span> <span class="n">String</span>
+  <span class="k">typealias</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">AnyObject</span>
+
+  <span class="k">init</span><span class="p">(</span><span class="n">dictionaryLiteral</span> <span class="nl">elements</span><span class="p">:</span> <span class="p">(</span><span class="n">Key</span><span class="p">,</span> <span class="n">Value</span><span class="p">)...)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">in</span> <span class="n">elements</span> <span class="p">{</span>
+      <span class="k">switch</span> <span class="n">key</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="s">&quot;timeout&quot;</span><span class="o">:</span> <span class="nb">self</span><span class="p">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">value</span> <span class="kt">as</span> <span class="n">Double</span>
+        <span class="k">case</span> <span class="s">&quot;message&quot;</span><span class="o">:</span> <span class="nb">self</span><span class="p">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">value</span> <span class="kt">as</span> <span class="n">String</span>
+        <span class="k">default</span><span class="o">:</span>
+        <span class="n">fatalError</span><span class="p">(</span><span class="s">&quot;Unknown key: \(key)&quot;</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>For dictionary keys the <code>String</code> type is used, and for values use <code>AnyObject</code> since we can pass either <code>Double</code> or <code>String</code> as a value.</p>
+
+<p>I’m sure there’s a better more type-safe way to type alias <code>Value</code> to make it more “functional”. Probably using enums. I’m still learning though.</p>
+
+<p>The <code>init</code> iterates over the contents of the dictionary and initializes struct’s members with values from the dictionary. The <code>as</code> is used to type cast <code>AnyObject</code> to <code>Double</code> or <code>String</code>.</p>
+
+<p>I’m aware that use of <code>self</code> is not strictly required in this case and <code>self.timeout =</code> works same as just <code>timeout =</code>, but I tend to explicitly use <code>self.</code> syntax in initializers, kind of rule of thumb.</p>
+
+<p>Let’s try it again.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">wait</span><span class="p">([</span><span class="s">&quot;timeout&quot;</span><span class="o">:</span> <span class="mf">0.1</span><span class="p">])</span></code></pre></div>
+
+<p>It works. Also notice that we can now provide partial arguments, like only timeout but no message in this case, something we couldn’t with default struct initializer (would have to implement additional initializers).</p>
+
+<p>Yet there are few things that smell in this code (apart from <code>AnyObject</code> I suppose).</p>
+
+<ul>
+  <li>Use of hard-coded string literals like “timeout” is not good, typos happen all the time and it’s quite painful to debug this type of errors.</li>
+  <li>Default <code>case</code> statement with <code>fatalError</code> plug.</li>
+</ul>
+
+<p>Let’s now fix both these issues. First we will use a custom enum type for keys.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">enum</span> <span class="n">OptionKey</span> <span class="p">{</span>
+  <span class="k">case</span> <span class="n">Timeout</span><span class="p">,</span> <span class="n">Message</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Note that’s it not even backed up by a raw <code>String</code> type, there’s no need for that at the moment.</p>
+
+<p>Now can rewrite the <code>Options</code> extension.</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">extension</span> <span class="nl">Options</span><span class="p">:</span> <span class="n">DictionaryLiteralConvertible</span> <span class="p">{</span>
+  <span class="k">typealias</span> <span class="n">Key</span> <span class="o">=</span> <span class="n">OptionKey</span>
+  <span class="k">typealias</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">AnyObject</span>
+
+  <span class="k">init</span><span class="p">(</span><span class="n">dictionaryLiteral</span> <span class="nl">elements</span><span class="p">:</span> <span class="p">(</span><span class="n">Key</span><span class="p">,</span> <span class="n">Value</span><span class="p">)...)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">in</span> <span class="n">elements</span> <span class="p">{</span>
+      <span class="k">switch</span> <span class="n">key</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="p">.</span><span class="nl">Timeout</span><span class="p">:</span> <span class="n">timeout</span> <span class="o">=</span> <span class="n">value</span> <span class="kt">as</span> <span class="n">Double</span>
+        <span class="k">case</span> <span class="p">.</span><span class="nl">Message</span><span class="p">:</span> <span class="n">message</span> <span class="o">=</span> <span class="n">value</span> <span class="kt">as</span> <span class="n">String</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+
+<p>Main changes are</p>
+
+<ul>
+  <li>Use <code>OptionKey</code> for <code>Key</code> type alias.</li>
+  <li>Get rid of <code>default:</code> case, wrong key errors are now handled at compile time, not at run time.</li>
+</ul>
+
+<p>Using the <code>wait</code> function is now as simple as</p>
+
+<div class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">wait</span><span class="p">([.</span><span class="nl">Timeout</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">])</span>
+<span class="n">wait</span><span class="p">([.</span><span class="nl">Timeout</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="p">.</span><span class="nl">Message</span><span class="p">:</span> <span class="s">&quot;Custom timeout failed.&quot;</span><span class="p">])</span></code></pre></div>
+
+<p>You can <a href="https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-dictionary-literal-convertible.swift">grab the swift code</a> and try it yourself in playground or just by running from command line with <code>xcrun swift</code>.</p>
+
+    <hr>
+    <div class="pagination btn-group">
+      
+        <a class="btn prev" href="/swift/2015/01/22/swift--objective-c-interoperability" title="Swift & Objective-C Interoperability">&larr; Previous</a>
+      
+        <a class="btn" href="/archive.html">Archive</a>
+      
+        <a class="btn next" href="/xcode/2015/02/18/whats-your-destination" title="What's your destination?">Next &rarr;</a>
+      
+    </div>
+    <hr>
+    
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+  </div>
+  
+  <div class="span4">
+    <section>
+      <h4>Published</h4>
+      <div class="date"><span>27 January 2015</span></div>
+    </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          Swift
+        </span>
+      </section>
+         
+    
+      <section>
+        <h4>Tags</h4>
+        <ul class="tag_box">
+          
+          
+
+
+  
+     
+    	<li><a href="/tags.html#swift-ref">swift <span>3</span></a></li>
+     
+    	<li><a href="/tags.html#ios-ref">ios <span>6</span></a></li>
+     
+    	<li><a href="/tags.html#apple-ref">apple <span>6</span></a></li>
+    
+  
+
+
+
+        </ul>
+      </section>
+             
+  </div>
+</div>
+
+
+        </div>
+      </div> <!-- /container -->
+
+      <div class="footer-push"></div>
+    </div><!--/.page-wrap -->
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2015 Maksym Grebenets
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+
