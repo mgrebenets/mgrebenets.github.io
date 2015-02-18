@@ -103,7 +103,7 @@ This is the place to run things like `./configure` and `make`. However in our ca
 Our job is to cleanup first, then patch and rename some scripts and finally move the whole bunch to `/usr/local`. `/usr/local` is also called _prefix_, this is the location where Homebrew installs all packages, additionally there's a special `prefix` variable available in the formula.
 
 #### Cleanup
-So let's cleanup. Since we are installing on OSX, we don't need all the Windows stuff.
+So let's cleanup. Since we are installing on OS X, we don't need all the Windows stuff.
 
 {% highlight ruby %}
 # Delete Windows batch scripts

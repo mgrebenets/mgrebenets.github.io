@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Shark 2 for iOS/OSX"
+title: "Shark 2 for iOS/OS X"
 description: "Build Shark 2 Library for iOS and OS X"
 category: References
 tags: [shark, shark2, neural networks, ios, osx, xcode, make]
