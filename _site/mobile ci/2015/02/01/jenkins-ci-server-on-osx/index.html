@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="author" content="Maksym Grebenets" />
+    <title>Jenkins CI Server on Mac OS X</title>
+
+    <link rel="stylesheet" href="/assets/themes/dinky/css/styles.css">
+    <link rel="stylesheet" href="/assets/themes/dinky/css/pygment_trac.css">
+    <script src="/assets/themes/dinky/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header"><a href="/">NSBogan</a></h1>
+        <p class="header">mobile ios android xcode automation calabash cucumber</p>
+        <ul>
+          
+          
+          
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+        </ul>
+        
+        
+        <div class="misc vcard">
+          <h4>about</h4>
+          <ul>
+            
+            <li class="contact"><address><span class="author fn n">Maksym Grebenets</span> - <span class="fn email">mgrebenets@gmail.com</span></address></li>
+            
+            
+            <li class="github"><a href="http://github.com/mgrebenets/" rel="me">github.com/mgrebenets</a></li>
+            
+            
+            <li class="twitter"><a href="http://twitter.com/mgrebenets/" rel="me">twitter.com/mgrebenets</a></li>
+            
+            
+            
+            
+            
+          </ul>
+        </div><!-- misc -->
+        
+      </header>
+
+      <section>
+      
+<section>
+  <h1>Jenkins CI Server on Mac OS X</h1>
+
+  
+<p>A guide for setting up a Jenkins CI server on Mac OS X machine.</p>
+
+<!--more-->
+
+<p>So you want to have Continuous Integration for Mobile in your company and your final choice of CI server is Jenkins. If your company is big and you are lucky enough the Dev Support or Dev Ops team will do all the heavy-lifting and install it for you. But if it’s not the case you might’ve just landed on a page that has something to help you out.</p>
+
+<h2 id="install">Install</h2>
+
+<blockquote>
+  <p>A kind of warning first, avoid installing Jenkins as Launch Daemon. For detailed reasoning checkout out <a href="/2015/02/01/mobile-ci-daemon-vs-agent">this article</a>.</p>
+</blockquote>
+
+<p><a href="https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins">Jenkins Wiki</a> offers a list of options for Jenkins installation but doesn’t mention Mac OS X. It mentions <a href="https://www.docker.com/">Docker</a> though and I’ve heard nothing but good things about Docker. In this article I will stick with <a href="http://brew.sh/">Homebrew</a>.</p>
+
+<p>You will need JDK to be <a href="/mobile%20ci/2015/02/15/install-java-on-mac-os-x">installed and configured on your Mac</a> before proceeding.</p>
+
+<p>To install run a simple shell command.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">brew install jenkins</code></pre></div>
+
+<p>Jenkins will be installed to <code>usr/local</code> and Homebrew will actually tell you right away how to turn it into a Launch Agent.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">To have launchd start jenkins at login:
+    ln -sfv /usr/local/opt/jenkins/*.plist ~/Library/LaunchAgents
+Then to load jenkins now:
+    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist</code></pre></div>
+
+<p>This recommends you to symlink Jenkins launch agent plist file to <code>~/Library/LaunchAgents</code> but I would advise against it. As you will see next you will need to modify that file. That means if you ever upgrade Jenkins via Homebrew all your changes in plist will be lost. My recommendation is to copy it instead of making a symbolic link.</p>
+
+<p>Even more, once installed via Homebrew I then delegate Jenkins upgrades to Jenkins itself. For this reason I pin Homebrew formula to prevent Homebrew from upgrading Jenkins files.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">brew pin jenkins</code></pre></div>
+
+<p>Now you also have manual control over Jenkins installation and can start/stop it from command line.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># start</span>
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
+
+<span class="c"># stop</span>
+launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist</code></pre></div>
+
+<h2 id="configure">Configure</h2>
+
+<p>To understand why you need to change plist try to run Jenkins server. Give it a go, create a couple of build projects that do some basics like checking out git repository and running simple build command. Very soon you should get an error message saying that Jenkins has ran out of memory. This seems to be a common issue with JVM and Mac OS X, <a href="/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx">Bamboo installations run into same problems</a>. I’m not quite sure why default configuration doesn’t account for this, probably this is Mac specific and other operating systems are OK. Anyway, you need to modify default plist file for Launch Agent. Here’s what you need and might want to change.</p>
+
+<p><strong>JVM Virtual Memory and Garbage Collection</strong></p>
+
+<ul>
+  <li>Tell JVM to use a 64-bit data model if available (<code>-d64</code>).</li>
+  <li>Set minimum and maximum heap size with <code>-Xms</code> and <code>Xmx</code> flags. 512 Mb works for me most of the time.</li>
+  <li>Configure garbage collector, class unloading and permanent space.</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;string&gt;</span>-d64<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>-Xms512m<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>-Xmx512m<span class="nt">&lt;/string&gt;</span>
+  <span class="c">&lt;!-- Use Concurrent GC--&gt;</span>
+  <span class="nt">&lt;string&gt;</span>-XX:+UseConcMarkSweepGC<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>-XX:+CMSClassUnloadingEnabled<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>-XX:MaxPermSize=256m<span class="nt">&lt;/string&gt;</span></code></pre></div>
+
+<p><strong>HTTP Proxy</strong></p>
+
+<p>By far the largest source of issues and frustration, company proxy. Specify it using <code>-D</code> option.</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;string&gt;</span>-Dhttp.proxyHost=my-compnay-proxy-host.com.au<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>-Dhttp.proxyPort=8080<span class="nt">&lt;/string&gt;</span></code></pre></div>
+
+<p><strong>Port and Prefix</strong></p>
+
+<p>Run Jenkins on a custom port with custom prefix in url. This example uses default <code>8080</code> port and <code>/jenkins</code> prefix, so you can access your Jenkins dashboard like <code>http://yourhostname:8080/jenkins</code> or ever <code>http://youthostname/jenkins</code>. These arguments need to be passed to <code>jenkins.war</code> which was installed by Homebrew to <code>/usr/local/opt/jenkins/libexec</code>.</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;string&gt;</span>-jar<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>/usr/local/opt/jenkins/libexec/jenkins.war<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>--httpListenAddress=127.0.0.1<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>--httpPort=8080<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>--prefix=/jenkins<span class="nt">&lt;/string&gt;</span></code></pre></div>
+
+<p><strong>Run at Load</strong></p>
+
+<p>Enable Run at Load option to start server automatically if machine reboots.</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;key&gt;</span>RunAtLoad<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;true/&gt;</span></code></pre></div>
+
+<p><strong>Environment Variables</strong></p>
+
+<p>If any of the commands in this plist need environment variables this is how you can define them.</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;key&gt;</span>EnvironmentVariables<span class="nt">&lt;/key&gt;</span>
+   <span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>HTTP_PROXY<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;string&gt;</span>http://my-compnay-proxy-host.com.au:8080<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;/dict&gt;</span></code></pre></div>
+
+<p><strong>Standard Output and Error</strong></p>
+
+<p>It is up to you to redirect stdout and stderr. While sounds like a good idea for logging I would advise agains redirecting stderr into a file. I once had to deal with 90 Gb log file created by Bamboo remote agent over a few months period.</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="c">&lt;!--</span>
+<span class="c">  &lt;key&gt;StandardOutPath&lt;/key&gt;</span>
+<span class="c">  &lt;string&gt;/Users/i4niac/.jenkins/log/output.log&lt;/string&gt;</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;key&gt;</span>StandardErrorPath<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>/Users/i4niac/.jenkins/log/error.log<span class="nt">&lt;/string&gt;</span></code></pre></div>
+
+<p>Note that Jenkins put its files in <code>.jenkins</code> folder in your user’s home path. You also have to specify full paths when dealing with launch agent plists. Create <code>log</code> folder if it’s not there yet.</p>
+
+<p><strong>Other</strong></p>
+
+<p>By default Jenkins enables security protocol for email. I have also faced an issue with <a href="https://wiki.jenkins-ci.org/display/JENKINS/BitBucket+Plugin">Bitbucket Plugin</a> and had to set <code>preferIPv4Stack</code> flag as a workaround. These are all flags for <code>java</code> command.</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="nt">&lt;string&gt;</span>-Dmail.smtp.starttls.enable=true<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;string&gt;</span>-Djava.net.preferIPv4Stack=true<span class="nt">&lt;/string&gt;</span></code></pre></div>
+
+<p>Not put it all together</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;dict&gt;</span>
+  <span class="nt">&lt;key&gt;</span>Label<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;string&gt;</span>homebrew.mxcl.jenkins<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;key&gt;</span>ProgramArguments<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;array&gt;</span>
+    <span class="nt">&lt;string&gt;</span>/usr/bin/java<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-server<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-d64<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-Xms512m<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-Xmx512m<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-Dmail.smtp.starttls.enable=true<span class="nt">&lt;/string&gt;</span>
+    <span class="c">&lt;!-- Use Concurrent GC--&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-XX:+UseConcMarkSweepGC<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-XX:+CMSClassUnloadingEnabled<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-XX:MaxPermSize=256m<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-Djava.net.preferIPv4Stack=true<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-Dhttp.proxyHost=my-compnay-proxy-host.com.au<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-Dhttp.proxyPort=8080<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>-jar<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>/usr/local/opt/jenkins/libexec/jenkins.war<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>--httpListenAddress=127.0.0.1<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>--httpPort=8080<span class="nt">&lt;/string&gt;</span>
+    <span class="nt">&lt;string&gt;</span>--prefix=/jenkins<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;/array&gt;</span>
+  <span class="nt">&lt;key&gt;</span>RunAtLoad<span class="nt">&lt;/key&gt;</span>
+  <span class="nt">&lt;true/&gt;</span>
+
+  <span class="nt">&lt;key&gt;</span>EnvironmentVariables<span class="nt">&lt;/key&gt;</span>
+   <span class="nt">&lt;dict&gt;</span>
+    <span class="nt">&lt;key&gt;</span>HTTP_PROXY<span class="nt">&lt;/key&gt;</span>
+    <span class="nt">&lt;string&gt;</span>http://my-compnay-proxy-host.com.au:8080<span class="nt">&lt;/string&gt;</span>
+  <span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span></code></pre></div>
+
+<p>Now you have a reliable Jenkins server that runs 24/7 and performs stable CI tasks.</p>
+
+<h2 id="tips">Tips</h2>
+
+<p>To find out how exactly Jenkins was launched, grep active processes list.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">ps aux <span class="p">|</span> grep java</code></pre></div>
+
+<p>The output will tell you everything you need to know.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">jenkins   <span class="m">85</span>   0.0  3.8  <span class="m">4633552</span> <span class="m">636852</span>   ??  Ss   Tue02pm  20:11.30
+  /usr/bin/java
+    -Dfile.encoding<span class="o">=</span>UTF-8
+    -XX:PermSize<span class="o">=</span>256m -XX:MaxPermSize<span class="o">=</span>512m
+    -Xms512m -Xmx512m
+    -Djava.io.tmpdir<span class="o">=</span>/Users/Shared/Jenkins/tmp
+    -Dhttps.proxyHost<span class="o">=</span>my-compnay-proxy-host.com.au -Dhttps.proxyPort<span class="o">=</span>8080
+    -Dhttp.proxyHost<span class="o">=</span>my-compnay-proxy-host.com.au -Dhttp.proxyPort<span class="o">=</span>8080
+    -jar /usr/local/opt/jenkins/libexec/jenkins.war
+      --prefix<span class="o">=</span>/jenkins
+      --httpPort<span class="o">=</span>8080</code></pre></div>
+
+<h2 id="other-ways">Other Ways</h2>
+
+<h3 id="jenkins-runner">Jenkins Runner</h3>
+
+<p>There are other ways to install and start Jenkins server, one of them is using <a href="https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+Runner">jenkins.sh</a> runner script. It is not bundled with Homebrew installation by default, you should download it manually as mentioned on the Jenkins Wiki page.</p>
+
+<p>In this case all the configuration options are in <code>data/wrapper.conf</code> file, you can check <a href="https://github.com/mnadeem/JenkinsRunner/blob/master/conf/wrapper.conf">default file</a> and easily figure out where to add your custom options.</p>
+
+<p>The runner shell script itself can be launched as Launch Agent or Launch Daemon. Overall this is just a higher level of configuration.</p>
+
+<h3 id="legacy-runner">Legacy Runner</h3>
+
+<p>Another approach I’ve seen is to use custom runner script. I am actually working with one right now but I suspect this is a legacy version of <code>jenkins.sh</code>.</p>
+
+<p>The main difference is that all configuration is stored in Mac OS X defaults and then read by the script like this.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">defaults <span class="nb">read</span> /Library/Preferences/org.jenkins-ci</code></pre></div>
+
+<p>Defaults are stored as plist and are read as a dictionary. An example output looks like this</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">{</span>
+    <span class="nv">heapSize</span> <span class="o">=</span> 512m<span class="p">;</span>
+    <span class="s2">&quot;http.proxyHost&quot;</span> <span class="o">=</span> <span class="s2">&quot;my-company-proxy-host.com.au&quot;</span><span class="p">;</span>
+    <span class="s2">&quot;http.proxyPort&quot;</span> <span class="o">=</span> 8080<span class="p">;</span>
+    <span class="nv">httpPort</span> <span class="o">=</span> 8080<span class="p">;</span>
+    <span class="s2">&quot;https.proxyHost&quot;</span> <span class="o">=</span> <span class="s2">&quot;my-company-proxy-host.com.au&quot;</span><span class="p">;</span>
+    <span class="s2">&quot;https.proxyPort&quot;</span> <span class="o">=</span> 8080<span class="p">;</span>
+    <span class="nv">minHeapSize</span> <span class="o">=</span> 256m<span class="p">;</span>
+    <span class="nv">minPermGen</span> <span class="o">=</span> 256m<span class="p">;</span>
+    <span class="nv">permGen</span> <span class="o">=</span> 512m<span class="p">;</span>
+    <span class="nv">prefix</span> <span class="o">=</span> <span class="s2">&quot;/jenkins&quot;</span><span class="p">;</span>
+    <span class="nv">tmpdir</span> <span class="o">=</span> <span class="s2">&quot;/Users/Shared/Jenkins/tmp&quot;</span><span class="p">;</span>
+<span class="o">}</span></code></pre></div>
+
+<p>Using <code>[sudo] defaults write</code> you can change Jenkins configuration.</p>
+
+<p>Obviously this is less preferred way than using <code>wrapper.conf</code>. Using OS X defaults leads to configuration which is non-reusable on other operating systems and can’t be easily put in SCM if needed.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>A short summary - install with Homebrew, configure as Launch Agent. To configure Jenkins for Mobile CI tasks you can read other articles in this blog.</p>
+
+<p>The configuration is far from being final. You will have to install plugins, configure SSH keys for git repositories and perform multitude of other administrative tasks to bring your Jenkins CI box up to speed.</p>
+
+
+  
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+</section>
+
+
+      </section>
+
+      <footer>
+      <p><small>Hosted on <a href="http://pages.github.com/">GitHub Pages</a> using the <a href="https://github.com/sodabrew/theme-dinky">Dinky theme</a> for <a href="http://jekyllbootstrap.com/">Jekyll Bootstrap</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
+

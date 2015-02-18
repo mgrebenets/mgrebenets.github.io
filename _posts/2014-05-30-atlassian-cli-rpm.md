@@ -16,7 +16,7 @@ This post describes how to create an RPM package for Atlassian CLI to install it
 Jump directly to [Summary](#tldr) if just want to grab the end result.
 
 ## Why Bother?
-Same question as one would as for using [Homebrew on OSX]({% post_url 2014-05-30-atlassian-cli-homebrew%}). And same answer again - Automation.
+Same question as one would as for using [Homebrew on OS X]({% post_url 2014-05-30-atlassian-cli-homebrew%}). And same answer again - Automation.
 
 Let's assume you already use Atlassian CLI Client for number of build tasks, like automatically updating JIRA tickets, Confluence pages, Stash pull requests, etc.
 
@@ -300,7 +300,7 @@ So, are you ready to try it?
 make rpm
 {% endhighlight %}
 
-I ran it on Fedora 20 as well on a custom Linux distribution running in AWS cloud. Since the package does not depend on architecture, you could in theory build it on OSX machine, but it's not what I would recommend, getting proper `rpmbuild` port configured is not something you enjory very much.
+I ran it on Fedora 20 as well on a custom Linux distribution running in AWS cloud. Since the package does not depend on architecture, you could in theory build it on OS X machine, but it's not what I would recommend, getting proper `rpmbuild` port configured is not something you enjory very much.
 
 ## Install RPM
 

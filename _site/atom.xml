@@ -4,7 +4,7 @@
  <title>NSBogan</title>
  <link href="http://mgrebenets.github.io/" rel="self"/>
  <link href="http://mgrebenets.github.io"/>
- <updated>2015-02-13T23:41:06+11:00</updated>
+ <updated>2015-02-18T12:04:56+11:00</updated>
  <id>http://mgrebenets.github.io</id>
  <author>
    <name>Maksym Grebenets</name>
@@ -13,11 +13,289 @@
 
  
  <entry>
-   <title>OCLint</title>
-   <link href="http://mgrebenets.github.io/2015/02/08/oclint"/>
-   <updated>2015-02-08T00:00:00+11:00</updated>
-   <id>http://mgrebenets.github.io/2015/02/08/oclint</id>
+   <title>Install Java on Mac OS X</title>
+   <link href="http://mgrebenets.github.io/mobile%20ci/2015/02/15/install-java-on-mac-os-x"/>
+   <updated>2015-02-15T00:00:00+11:00</updated>
+   <id>http://mgrebenets.github.io/mobile%20ci/2015/02/15/install-java-on-mac-os-x</id>
    <content type="html">
+&lt;p&gt;A short how-to for installing and configuring Java Development Kit on Mac OS X.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Java is core technology used by CI servers like &lt;a href=&quot;/mobile%20ci/2015/02/01/jenkins-ci-server-on-osx&quot;&gt;Jenkins&lt;/a&gt;, &lt;a href=&quot;/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx&quot;&gt;Bamboo&lt;/a&gt; and others. It is also used by &lt;a href=&quot;/atlassian/2014/05/29/atlassian-cli&quot;&gt;Atlassian CLI Client&lt;/a&gt;. In fact installing and configuring JDK is such a common task that it deserves its own post.&lt;/p&gt;
+
+&lt;h2 id=&quot;java-version&quot;&gt;Java Version&lt;/h2&gt;
+
+&lt;p&gt;Select JDK version which you need: &lt;a href=&quot;http://support.apple.com/kb/DL1572&quot;&gt;1.6&lt;/a&gt;, &lt;a href=&quot;http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html&quot;&gt;1.7&lt;/a&gt; or &lt;a href=&quot;http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html&quot;&gt;1.8&lt;/a&gt;. Better install all of them, you never know what you might need one day.&lt;/p&gt;
+
+&lt;p&gt;I find that for most applications I’m using 1.7, rarely 1.6 for some outdated and unsupported application. These days more and more applications are updated to work with 1.8 without issues.&lt;/p&gt;
+
+&lt;h2 id=&quot;java-home&quot;&gt;Java Home&lt;/h2&gt;
+
+&lt;p&gt;Lots of applications if not all expect &lt;code&gt;JAVA_HOME&lt;/code&gt; environment variable to be set. This tells them where is the Java Virtual Machine (JVM) located. I would recommend to update your &lt;code&gt;~/.bash_profile&lt;/code&gt; and add something like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Default Java Home&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; -z &lt;span class=&quot;s2&quot;&gt;&amp;quot;$JAVA_VERSION&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;JAVA_VERSION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1.7
+&lt;span class=&quot;o&quot;&gt;[[&lt;/span&gt; -s /usr/libexec/java_home &lt;span class=&quot;o&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;JAVA_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;/usr/libexec/java_home -v &lt;span class=&quot;nv&quot;&gt;$JAVA_VERSION&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is an over-devensive version. It can safely run on OS other than Mac, but will not set &lt;code&gt;JAVA_HOME&lt;/code&gt; in that case. It uses OS X specific &lt;code&gt;java_home&lt;/code&gt; executable found in &lt;code&gt;/usr/libexec&lt;/code&gt;. A very convenient utility to get JVM path for Java installation. Try &lt;code&gt;-V&lt;/code&gt; to get a list of all JVMs installed.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;/usr/libexec/java_home -V
+
+&lt;span class=&quot;c&quot;&gt;# sample output&lt;/span&gt;
+Matching Java Virtual Machines &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;4&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
+    1.8.0_25, x86_64:	&lt;span class=&quot;s2&quot;&gt;&amp;quot;Java SE 8&amp;quot;&lt;/span&gt;	/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home
+    1.7.0_72, x86_64:	&lt;span class=&quot;s2&quot;&gt;&amp;quot;Java SE 7&amp;quot;&lt;/span&gt;	/Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home
+    1.6.0_65-b14-466.1, x86_64:	&lt;span class=&quot;s2&quot;&gt;&amp;quot;Java SE 6&amp;quot;&lt;/span&gt;	/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+    1.6.0_65-b14-466.1, i386:	&lt;span class=&quot;s2&quot;&gt;&amp;quot;Java SE 6&amp;quot;&lt;/span&gt;	/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+
+/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;If you are using shell other than bash, include the same in your shell’s version of .bash_profile or even source .bash_profile.&lt;/p&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>CocoaPods for Enterprise</title>
+   <link href="http://mgrebenets.github.io/mobile%20ci/2015/02/15/cocoapods-for-enterprise"/>
+   <updated>2015-02-15T00:00:00+11:00</updated>
+   <id>http://mgrebenets.github.io/mobile%20ci/2015/02/15/cocoapods-for-enterprise</id>
+   <content type="html">
+&lt;p&gt;A practical example of using CocoaPods for enterprise projects.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;The “Enterpise” definition isn’t that clear and is not something standard. I will define it as follows.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Enterprise is a company that builds more that one app on the same platform.&lt;/li&gt;
+  &lt;li&gt;Has a large number of in-house libraries and modules.&lt;/li&gt;
+  &lt;li&gt;Has a rather complex project configuration.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The challenge is to adopt CocoaPods for such projects. This is actually more of a case-study than success story of adopting CocoaPods.&lt;/p&gt;
+
+&lt;h2 id=&quot;xcconfig&quot;&gt;xcconfig&lt;/h2&gt;
+
+&lt;p&gt;One thing that “complex” project setup means is extensive use of xcconfig files. The problem is that CocoaPods generates it’s own xcconfigs and expects them to be applied to project target. If it detects existing xcconfigs it displays a warning in the end of generation step. Solution is to follow the advise and include Pods xcconfig in the very last xcconfig file which is applied to a target.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Pods&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;#include &amp;quot;Pods/Target Support Files/Pods/Pods.debug.xcconfig&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Make sure you do that for all targets and all configurations.&lt;/p&gt;
+
+&lt;h2 id=&quot;inherited&quot;&gt;$(inherited)&lt;/h2&gt;
+
+&lt;p&gt;This is next issue which is &lt;a href=&quot;https://github.com/CocoaPods/CocoaPods/issues/1761&quot;&gt;known to CocoaPods users&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The problem is that CocoaPods assumes it’s the only thing in the world using xcconfigs. So it never ever uses &lt;code&gt;$(inherited)&lt;/code&gt; thus it doesn’t pick up any of the previous definitions when included into other xcconfigs.&lt;/p&gt;
+
+&lt;p&gt;One of the solutions is to patch Pods xcconfig files as part of &lt;code&gt;pod upate&lt;/code&gt; or &lt;code&gt;pod install&lt;/code&gt; command. This is what post-install hooks are for. Consider this example&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Podfile for Alfred&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;https://github.com/CocoaPods/Specs.git&amp;#39;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;platform&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:ios&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;7.0&amp;#39;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;link_with&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;BT&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pod&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;Facebook-iOS-SDK&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;~&amp;gt; 3.20.0&amp;#39;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;post_install&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;installer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Running post install hooks&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Patching Pods xcconfig files&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;workDir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pwd&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;installer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;project&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;targets&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;build_configurations&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;xcconfigFilename&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;workDir&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/Pods/Target Support Files/Pods/Pods.&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;config&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;downcase&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;.xcconfig&amp;quot;&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;xcconfig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xcconfigFilename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;# insert $(inherited) for HEADER_SEARCH_PATHS and OTHER_LDFLAGS, make sure there&amp;#39;s only one occurrence&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;patchedXcconfig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xcconfig&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/HEADER_SEARCH_PATHS = (?&amp;lt;first&amp;gt;[^\$])/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;HEADER_SEARCH_PATHS = $(inherited) \k&amp;lt;first&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/OTHER_LDFLAGS = (?&amp;lt;first&amp;gt;[^\$])/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;OTHER_LDFLAGS = $(inherited) \k&amp;lt;first&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xcconfigFilename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;w&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;patchedXcconfig&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code&gt;post_install&lt;/code&gt; hook iterates through all targets, figures out the full path to generated Pods xcconfig and patches it by prepending &lt;code&gt;$(inherited)&lt;/code&gt; for all occurrences of &lt;code&gt;HEADER_SEARCH_PATHS&lt;/code&gt; and &lt;code&gt;OTHER_LDFLAGS&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;git-submodules-and-proxy&quot;&gt;Git Submodules and Proxy&lt;/h2&gt;
+
+&lt;p&gt;This another issue that may happen in “enterprise” environment, especially if proxy is involved. CocoaPods is not able to checkout pods with submodules. An example of a pod with such problems is &lt;a href=&quot;http://stackoverflow.com/questions/25953246/facebook-ios-sdk-installation-via-cocoapods&quot;&gt;Facebook SDK&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;To avoid this problem in the first place I would recommend to use pods with static frameworks instead of those that clone whole source base. Well, not for all pods, but this is often useful for 3rd party SDKs that don’t update often. This is what pods like Flurry, Crashlytics and others do. For some reason Facebook doesn’t have official podspec for framework only, but nothing stops you from creating one yourself and host it in-house.&lt;/p&gt;
+
+&lt;p&gt;If you have to have those submodules, use the following git trick:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;git config --global url.https://github.com/.insteadOf git://github.com/&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;See discussions on &lt;a href=&quot;http://stackoverflow.com/questions/1722807/git-convert-git-urls-to-http-urls&quot;&gt;StackOverflow&lt;/a&gt; and &lt;a href=&quot;https://coderwall.com/p/sitezg/force-git-to-clone-with-https-instead-of-git-urls&quot;&gt;this post&lt;/a&gt;. This command will modify your &lt;code&gt;.gitconfig&lt;/code&gt; by adding this line&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;url &lt;span class=&quot;s2&quot;&gt;&amp;quot;https://&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;       &lt;span class=&quot;nv&quot;&gt;insteadOf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; git://&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This will solve submodule issue and is much easier than other workarounds like messing up with proxy stuff and tools like &lt;code&gt;socat&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;git-submodules-for-internal-components&quot;&gt;Git Submodules for Internal Components&lt;/h2&gt;
+
+&lt;p&gt;Another blocker for migration is all those internal libraries you already use as submodules in your project. You still want to be able to change their code right inside submodule directory and work with git in-place. With pure CocoaPods approach this is not possible since all your changes will be reset on next &lt;code&gt;pod update&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;However, there’s a beatufil work-around that allows you to benefit from both worlds (submodules and pods). Here’s &lt;a href=&quot;http://albertodebortoli.github.io/blog/2014/03/11/cocoapods-working-with-internal-pods/&quot;&gt;a great article&lt;/a&gt; on the matter.&lt;/p&gt;
+
+&lt;p&gt;The idea is to use so called &lt;em&gt;Development Pods&lt;/em&gt;. That means in your Podfile you specify the path to a submodule directory which has podspec file. This way CocoaPods ignores version information in podspec and uses latest files from submodule directory to generate pods. You get all the benefits of working with submodules code directly and then get all the flexibility of CocoaPods approach.&lt;/p&gt;
+
+&lt;h2 id=&quot;build-problems&quot;&gt;Build Problems&lt;/h2&gt;
+
+&lt;p&gt;Final paragraph is related to building projects with &lt;code&gt;xcodebuild&lt;/code&gt; from command line. This is what happens on CI box after all.&lt;/p&gt;
+
+&lt;p&gt;If you try to run your old scripts which use custom configuration build directory you may run into link errors with Xcode not being able to find library file for Pods (&lt;code&gt;libPods.a&lt;/code&gt;). Tools like &lt;code&gt;xctool&lt;/code&gt; have this problem fixed, but I recall earlier version of &lt;code&gt;xctool&lt;/code&gt; being prone to the same problem.&lt;/p&gt;
+
+&lt;p&gt;The solution is twofold.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If specifying custom &lt;code&gt;CONFIGURATION_BUILD_DIR&lt;/code&gt; then make it an &lt;strong&gt;absolute&lt;/strong&gt; path&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Bad&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;CONFIGURATION_BUILD_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;build
+&lt;span class=&quot;c&quot;&gt;# Good&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;CONFIGURATION_BUILD_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;/build&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If overriding &lt;code&gt;CONFIGURATION_BUILD_DIR&lt;/code&gt; you &lt;strong&gt;must&lt;/strong&gt; also specify &lt;code&gt;OBJROOT&lt;/code&gt;, &lt;code&gt;SYMROOT&lt;/code&gt; and &lt;code&gt;DSTROOT&lt;/code&gt; and make sure all those are &lt;strong&gt;absolute&lt;/strong&gt; paths as well&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# example&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;OBJROOT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;/build &lt;span class=&quot;nv&quot;&gt;SYMROOT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;/build &lt;span class=&quot;nv&quot;&gt;DSTROOT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;/build&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Example of complete build command&lt;/span&gt;
+xcodebuild clean build &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -workspace Sandbox-ObjC.xcworkspace &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -scheme Sandbox-ObjC &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -configuration Release &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;CONFIGURATION_BUILD_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;/build &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;OBJROOT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;/build &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;SYMROOT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;/build &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;DSTROOT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;/build&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Mobile CI - OCLint</title>
+   <link href="http://mgrebenets.github.io/mobile%20ci/2015/02/08/oclint"/>
+   <updated>2015-02-08T00:00:00+11:00</updated>
+   <id>http://mgrebenets.github.io/mobile%20ci/2015/02/08/oclint</id>
+   <content type="html">
+&lt;p&gt;&lt;a href=&quot;http://oclint.org/&quot;&gt;OCLint&lt;/a&gt; is a fantastic static code analysis tool for improving quality and reducing defects by inspecting C, C++ and Objective-C code.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;I’m not going to copy-paste the rest of oclint.org here, check it out to see what the tool can do. In this article you will learn how to set it up and use for Mobile CI.&lt;/p&gt;
+
+&lt;p&gt;OCLint is often referred as a &lt;a href=&quot;http://en.wikipedia.org/wiki/Lint_%28software%29&quot;&gt;lint&lt;/a&gt; tool, but in the end of the day it’s a static analysis tool, meaning it analyses your code statically, that is without running it.&lt;/p&gt;
+
+&lt;h2 id=&quot;install&quot;&gt;Install&lt;/h2&gt;
+
+&lt;p&gt;For quite a while I though OCLint wasn’t available via &lt;a href=&quot;http://brew.sh/&quot;&gt;Homebrew&lt;/a&gt; package manager. While it technically isn’t there yet, but it’s supported by &lt;a href=&quot;http://caskroom.io/&quot;&gt;Homebrew Cask&lt;/a&gt;. If you never used it yet Homebrew Cask is an extension for Homebrew and lets you to manage OS X application just like packages. Another benefit of this tool is that it includes pure packages like oclint which are not yet available in Homebrew.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;brew install caskroom/cask/brew-cask&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now install OCLint&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;brew cask install oclint&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Check the installation, it’s now sitting in &lt;code&gt;usr/local/&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;use&quot;&gt;Use&lt;/h2&gt;
+
+&lt;p&gt;I will write about using OCLint with &lt;code&gt;xcodebuild&lt;/code&gt;, basically rewording &lt;a href=&quot;http://docs.oclint.org/en/dev/guide/xcodebuild.html&quot;&gt;official documentation&lt;/a&gt;. OCLint supports all other tools, check out &lt;a href=&quot;http://docs.oclint.org/en/dev/index.html#usage&quot;&gt;documentation for details&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Using OCLint with &lt;code&gt;xcodebuild&lt;/code&gt; requires 3 steps.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Build and capture output.&lt;/li&gt;
+  &lt;li&gt;Generate compile commands database (JSON format) for OCLint using &lt;code&gt;xcodebuild&lt;/code&gt; output.&lt;/li&gt;
+  &lt;li&gt;Run OCLint using generated JSON database.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The first step is straightforward, run &lt;code&gt;xcodebuild&lt;/code&gt; the way you would run it normally, the only difference is that you want to capture build output. Use &lt;code&gt;tee&lt;/code&gt; command to do that, for example&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;xcodebuild clean build -project MyProject -scheme MyScheme -configuration Debug &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; tee xcodebuild.log&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It is recommended to used Debug configuration for static analysis.&lt;/p&gt;
+
+&lt;p&gt;Next generate compilation commands database with &lt;code&gt;oclint-xcodebuild&lt;/code&gt; command. This command expects a file named &lt;code&gt;xcodebuild.log&lt;/code&gt; by default but in the example I will pass it explicitly. The default output file name is &lt;code&gt;compile_commands.json&lt;/code&gt; but I’ll be verbose this time anyway.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;oclint-xcodebuild -output compile_commands.json xcodebuild.log&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Optionally you can use &lt;code&gt;-e | -exclude&lt;/code&gt; file and pass regular expression which will exclude the files you are not interested in, such as 3rd party source code.&lt;/p&gt;
+
+&lt;p&gt;Finally, use &lt;code&gt;oclint-json-compilation-database&lt;/code&gt; to run oclint and generate report.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;oclint-json-compilation-database &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LINT_EXCLUDES&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -- &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -report-type &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LINT_REPORT_TYPE&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LINT_RULES&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LINT_DISABLE_RULES&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LINT_THRESHOLD&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -o &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LINT_REPORTS_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;/&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LINT_REPORT_FILE&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -stats &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -verbose &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -list-enabled-rules&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s analyse this call in details and expand actual values of all environment variables.&lt;/p&gt;
+
+&lt;p&gt;First you call &lt;code&gt;oclint-json-compilation-database&lt;/code&gt; and specify it’s own arguments. In this case it is a list of excludes passed as &lt;code&gt;${LINT_EXCLUDES}&lt;/code&gt;. Each folder you want to exclude should be passed with it’s own &lt;code&gt;-e&lt;/code&gt; flag, for example&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nv&quot;&gt;LINT_EXCLUDES&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; -e Libraries -e lib&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code&gt;-i [INCLUDES]&lt;/code&gt; option is used to do the opposite to exclude.&lt;/p&gt;
+
+&lt;p&gt;The double dash &lt;code&gt;--&lt;/code&gt; indicates the start of arguments which will be passed to invocation of &lt;code&gt;oclint&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Report type&lt;/strong&gt; specified via &lt;code&gt;-report-type&lt;/code&gt; can be one of &lt;code&gt;text&lt;/code&gt;, &lt;code&gt;html&lt;/code&gt;, &lt;code&gt;xml&lt;/code&gt;, &lt;code&gt;json&lt;/code&gt; and &lt;code&gt;pmd&lt;/code&gt;. For CI tasks you should definitely use (PMD)[http://en.wikipedia.org/wiki/PMD_%28software%29] report type. While running locally stick with &lt;code&gt;html&lt;/code&gt;. So you should set &lt;code&gt;LINT_REPORT_TYPE&lt;/code&gt; to one of these values. Read the &lt;a href=&quot;http://docs.oclint.org/en/dev/customizing/reports.html&quot;&gt;full documentation&lt;/a&gt; for more.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Lint rules&lt;/strong&gt; is an option with which you can override default threshold values for rules. For example, Objective-C is very verbose language, so let’s increase thresholds for the the max length of line of code, name of method and name of variable. This is how it will look in shell script&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Rules&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LINT_LONG_LINE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;300
+&lt;span class=&quot;nv&quot;&gt;LINT_LONG_VARIABLE_NAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;64
+&lt;span class=&quot;nv&quot;&gt;LINT_LONG_METHOD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;150
+
+&lt;span class=&quot;nv&quot;&gt;LINT_RULES&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;-rc LONG_LINE=${LINT_LONG_LINE} \&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;      -rc LONG_VARIABLE_NAME=${LINT_LONG_VARIABLE_NAME} \&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;      -rc LONG_METHOD=${LINT_LONG_METHOD}&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You may want to disable some rules as well. This could be useful when working with some legacy code which smells a lot and there are no plans to fix it ever. In cases like this it’s easier to silent some warnings. For example, let’s disable warning about the use of &lt;code&gt;_ivarName&lt;/code&gt; outside of accessors and initializers. Let’s also ignroe useless parentheses and warnings about unused method parameters.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Disable rules&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LINT_DISABLE_RULES&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;-disable-rule=UnusedMethodParameter \&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;            -disable-rule=UselessParentheses \&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;            -disable-rule=IvarAssignmentOutsideAccessorsOrInit&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://docs.oclint.org/en/dev/rules/index.html&quot;&gt;Full list of rules&lt;/a&gt; for further reference.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Threshold&lt;/strong&gt; allows you to control when analysis passes or fails. There are 3 priorities (Priority 1, 2 and 3) and each comes with default thresholds (0, 10 and 20). You can use &lt;code&gt;-max-priority-&amp;lt;N&amp;gt;&lt;/code&gt; command line option to customize priority &lt;code&gt;N&lt;/code&gt; threshold. This is how you would change it to 0, 20 and 30 correspondingly&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Threshold&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LINT_PRIORITY_1_THRESHOLD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0
+&lt;span class=&quot;nv&quot;&gt;LINT_PRIORITY_2_THRESHOLD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;20
+&lt;span class=&quot;nv&quot;&gt;LINT_PRIORITY_3_THRESHOLD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;30
+&lt;span class=&quot;nv&quot;&gt;LINT_THRESHOLD&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;-max-priority-1=${LINT_PRIORITY_1_THRESHOLD} -max-priority-2=${LINT_PRIORITY_2_THRESHOLD} -max-priority-3=${LINT_PRIORITY_3_THRESHOLD}&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Output&lt;/strong&gt; can be specified via &lt;code&gt;-o&lt;/code&gt; option. If you are using PMD report type, write out to XML file, for HTML report, write to HTML format. Better create a separate directory for reports, for example&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Reports&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LINT_REPORTS_DIR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;oclint-reports
+&lt;span class=&quot;c&quot;&gt;# use .html for HTML report type&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LINT_REPORT_FILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;oclint.xml
+
+mkdir -p &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LINT_REPORTS_DIR&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally add some verbosity with &lt;code&gt;-stats&lt;/code&gt; to output statistics, &lt;code&gt;-list-enabled-rules&lt;/code&gt; to eyeball the rules being used and &lt;code&gt;-verbose&lt;/code&gt; for what it stands.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;Give it a go. You now have a very powerful tool in your tool belt. Figure out your custom project thresholds, integrate it as part of your project &lt;a href=&quot;/2015/02/08/mobile-ci---makefiles&quot;&gt;makefile&lt;/a&gt;, run it as CI job and output reports using one of the plugins available.&lt;/p&gt;
 </content>
  </entry>
  
@@ -27,6 +305,9 @@
    <updated>2015-02-08T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/08/mobile-ci---unit-tests</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
@@ -36,6 +317,9 @@
    <updated>2015-02-08T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/08/mobile-ci---makefiles</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
@@ -45,6 +329,9 @@
    <updated>2015-02-08T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/08/code-coverage-for-ios</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
@@ -54,6 +341,9 @@
    <updated>2015-02-08T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/08/clang-static-analyzer</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
@@ -63,15 +353,40 @@
    <updated>2015-02-08T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/08/bitbucket-branches--job-dsl</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
  <entry>
    <title>Xcode Derived Data</title>
-   <link href="http://mgrebenets.github.io/2015/02/01/xcode-derived-data"/>
+   <link href="http://mgrebenets.github.io/mobile%20ci/2015/02/01/xcode-derived-data"/>
    <updated>2015-02-01T00:00:00+11:00</updated>
-   <id>http://mgrebenets.github.io/2015/02/01/xcode-derived-data</id>
+   <id>http://mgrebenets.github.io/mobile%20ci/2015/02/01/xcode-derived-data</id>
    <content type="html">
+&lt;p&gt;What is Xcode Derived Data and why is it important?&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;“Clean derived data”. You might have heard this phrase each time you face some extremely strange build problems.&lt;/p&gt;
+
+&lt;p&gt;DerivedData is a folder located in &lt;code&gt;~/Library/Developer/Xcode/DerivedData&lt;/code&gt;. It’s the location where Xcode stores all kinds of intermediate build results, generated indexes, etc. DerivedData location can be configured in Xcode preferences (Locations tab).&lt;/p&gt;
+
+&lt;p&gt;So now and then you run into odd build problems. The more complex your project is the more chances you have to face them. Using Swift increases that probability a fair bit. DerivedData folder is also infamous for growing up to gargantuan sizes.&lt;/p&gt;
+
+&lt;p&gt;I have faced this issue when dealing with Jenkins CI server running as Launch Daemon. Special jenkins non-login user would run &lt;code&gt;xcodebuild&lt;/code&gt; and that would create intermediate build files in DerivedData folder. But these new files would have access rights configured for non-login user. If you manually build the same project in the same folder while logged in as a “normal” login user you will mess up with files created previously by jenkins user. You will then see further build jobs failing while trying to write to DerivedData. Same applies to Bamboo or any other CI server running as Launch Daemon.&lt;/p&gt;
+
+&lt;p&gt;The lesson is - don’t mess up and run things manually in your CI server’s guts. Another lesson, don’t run CI Xcode build jobs as non-login user to avoid permissions problems. A practical advice to take home - clean Xcode Derived Data on regular basis on your CI box(es). You could create a cron job to do that, better yet create a CI plan/project that will run some time after midnight and execute this simple shell command&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;rm -rf /Users/maksym.grebenets/Library/Developer/Xcode/DerivedData/*&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Cleaning derived data might increase the time of first build for each project next day, but it’s a minor drawback. You will also claim free space back by killing DerivedData’s huge appetite.&lt;/p&gt;
+
+&lt;p&gt;For daily use on your development machine create a type alias in your bash profile.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;typealias xcode-clean-derived&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;rm -rf /Users/i4niac/Library/Developer/Xcode/DerivedData/*&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 </content>
  </entry>
  
@@ -81,15 +396,21 @@
    <updated>2015-02-01T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/01/mobile-ci-daemon-vs-agent</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
  <entry>
-   <title>Mobile CI & OSX Keychain</title>
+   <title>Mobile CI & Mac OS X Keychain</title>
    <link href="http://mgrebenets.github.io/2015/02/01/mobile-ci--osx-keychain"/>
    <updated>2015-02-01T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/01/mobile-ci--osx-keychain</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
@@ -99,6 +420,9 @@
    <updated>2015-02-01T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/01/mobile-ci--ios-simulator</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
 </content>
  </entry>
  
@@ -112,23 +436,24 @@
 
 &lt;!--more--&gt;
 
-&lt;p&gt;If you are up to a task to setup remote build node, that means that you already have a server or need to &lt;a href=&quot;/2015/02/01/jenkins-ci-server-on-osx&quot;&gt;install it first&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you are up to a task to setup remote build node, that means that you already have a server or need to &lt;a href=&quot;/mobile%20ci/2015/02/01/jenkins-ci-server-on-osx&quot;&gt;install it first&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;A good place to start is &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Distributed+builds&quot;&gt;Jenkins Wiki page&lt;/a&gt; with detailed description of all available options.&lt;/p&gt;
+&lt;p&gt;A good place to start is &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Distributed+builds&quot;&gt;Jenkins Wiki page&lt;/a&gt; with detailed description of all available options. Don’t forget to have a proper &lt;a href=&quot;/mobile%20ci/2015/02/15/install-java-on-mac-os-x&quot;&gt;JVM installation&lt;/a&gt; first.&lt;/p&gt;
 
 &lt;p&gt;I would recommend to do first time agent installation via Jenkins UI &lt;code&gt;Jenkins -&amp;gt; Manage Jenkins -&amp;gt; Manage Nodes&lt;/code&gt;. Select an option to create node, configure node’s properties (make sure root directory exists) and you are almost good to go. The preferred way to launch and agent is via SSH.&lt;/p&gt;
 
 &lt;p&gt;If Jenkins Wiki is such a good reference, then why bother with the post? - I bet that’s exactly what you are asking.&lt;/p&gt;
 
-&lt;p&gt;Well, again, the main focus is Mobile CI and part of any decent CI is tests, unit tests in particular. With iOS those must run in iOS Simulator which is a GUI application, which means you are facing &lt;a href=&quot;/2015/02/01/mobile-ci-daemon-vs-agent&quot;&gt;Deamon vs Agent&lt;/a&gt; issue. Here’s a very good &lt;a href=&quot;http://stackoverflow.com/questions/25380365/timeout-when-running-xcodebuild-tests-under-xcode-6-via-ssh&quot;&gt;discussion on StackOverflow&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Well, again, the main focus is Mobile CI and part of any decent CI is tests, unit tests in particular. With iOS those must run in iOS Simulator which is a GUI application, which means you are facing &lt;a href=&quot;/2015/02/01/mobile-ci-daemon-vs-agent&quot;&gt;Daemon vs Agent&lt;/a&gt; issue. Here’s a very good &lt;a href=&quot;http://stackoverflow.com/questions/25380365/timeout-when-running-xcodebuild-tests-under-xcode-6-via-ssh&quot;&gt;discussion on StackOverflow&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;So remote node launched via SSH is running as Launch Daemon and has no context to run GUI applications. If SSH session is running under non-login user, &lt;code&gt;xcodebuild test&lt;/code&gt; will fail with error code &lt;code&gt;139&lt;/code&gt; or alike. Running SSH session under login user will not help either, at best the simulator will but tests will never start. That rules out an option of running remote node via SSH. Trying all the tricks like enabling development mode, updating user’s group and security settings, didn’t work for me, probably because that answer was actual for Xcode 5, but not 6.&lt;/p&gt;
 
 &lt;p&gt;Next option would be launching slave agent via Java Web Start. Option with clicking button in the browser should be ignored right away, it hardly qualifies as automated approach. Using &lt;code&gt;javaws&lt;/code&gt; it a bit better though requires you to login to slave agent via GUI and then run the command and answer one prompt by clicking Run button. Finally, you can run it in a headless mode&lt;/p&gt;
 
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;java -jar slave.jar -jnlpUrl http://yourserver:8080/jenkins/computer/parasite/slave-agent.jnlp&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;java -jar slave.jar &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  -jnlpUrl http://yourserver:8080/jenkins/computer/parasite/slave-agent.jnlp&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;Now that’s better, this will start a slave agent that is capable of running GUI applications and thus running iOS unit tests in simulator. If you are puzzled where does &lt;code&gt;slave.jar&lt;/code&gt; come from, the answer is that it is put there by Jenkins server when you created slave agent via UI. The &lt;code&gt;jnlpUrl&lt;/code&gt; tells an agent where the server is. The order in which agent and server are fired up seems to be important. Server first, agent second, otherwise agent may fail to start. I had this issue while using GUI mode launch via &lt;code&gt;javaws&lt;/code&gt; and yet to confirm if it’s true for headless mode. Still you have to start an agent manually if remote node machine reboots.&lt;/p&gt;
+&lt;p&gt;Now that’s better, this will start a slave agent that is capable of running GUI applications and thus running iOS unit tests in simulator. If you are puzzled where does &lt;code&gt;slave.jar&lt;/code&gt; come from, the answer is that it is put there by Jenkins server when you have created slave agent via UI. The &lt;code&gt;jnlpUrl&lt;/code&gt; tells an agent where the server is. The order in which agent and server are fired up seems to be important. Server first, agent second, otherwise agent may fail to start. I had this issue while using GUI mode launch via &lt;code&gt;javaws&lt;/code&gt; and yet to confirm if it’s true for headless mode. Still you have to start an agent manually if remote node machine reboots.&lt;/p&gt;
 
 &lt;p&gt;I have one solution to offer. It is not the best I can think of, but it’s the easiest and reasonably reliable to start with. You need to turn the headless slave launch command into a Launch Daemon. The Launch Agent will start at the time of user’s login, so make sure the machine is configured for automatic login.&lt;/p&gt;
 
@@ -163,27 +488,290 @@
 
 &lt;p&gt;The &lt;code&gt;/Shared/Users/Jenkins-Agent-A&lt;/code&gt; is your agent’s home. You should have create one when setting up agent via server UI and &lt;code&gt;slave.jar&lt;/code&gt; should be already located in this folder. Now if agent machine reboots and autologin is configured, the agent will go back online automatically. If the server reboots though, I’m not quite sure what happens, my assumption is that agent will stay alive and will keep trying to reconnect to server and finally they both happily reunite. I’m yet to test how exactly it works in reality.&lt;/p&gt;
 
+&lt;p&gt;To manually start and stop an agent use following commands (typealias if you need to use them often)&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# start&lt;/span&gt;
+launchctl load ~/Library/LaunchAgents/org.jenkins-agent-a.plist
+
+&lt;span class=&quot;c&quot;&gt;# stop&lt;/span&gt;
+launchctl unload ~/Library/LaunchAgents/org.jenkins-agent-a.plist
+
+&lt;span class=&quot;c&quot;&gt;# list (by label)&lt;/span&gt;
+launchctl list org.jenkins-agent-a&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
 &lt;p&gt;One additional note. You can run a remote agent on localhost, which technically makes it not remote any more. This may be useful when for some reason Jenkins server is launched under non-login user session (Launch Daemon again) and you can’t use default master node to run unit tests.&lt;/p&gt;
 
-&lt;p&gt;That sums it up. To compare how things are in Bamboo universe &lt;a href=&quot;/2015/02/01/bamboo-remote-agent&quot;&gt;check out this post&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;That sums it up. To compare how things are in Bamboo universe &lt;a href=&quot;/mobile%20ci/2015/02/01/bamboo-remote-agent&quot;&gt;check out this post&lt;/a&gt;.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
-   <title>Jenkins CI Server on OSX</title>
-   <link href="http://mgrebenets.github.io/2015/02/01/jenkins-ci-server-on-osx"/>
+   <title>Jenkins CI Server on Mac OS X</title>
+   <link href="http://mgrebenets.github.io/mobile%20ci/2015/02/01/jenkins-ci-server-on-osx"/>
    <updated>2015-02-01T00:00:00+11:00</updated>
-   <id>http://mgrebenets.github.io/2015/02/01/jenkins-ci-server-on-osx</id>
+   <id>http://mgrebenets.github.io/mobile%20ci/2015/02/01/jenkins-ci-server-on-osx</id>
    <content type="html">
+&lt;p&gt;A guide for setting up a Jenkins CI server on Mac OS X machine.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;So you want to have Continuous Integration for Mobile in your company and your final choice of CI server is Jenkins. If your company is big and you are lucky enough the Dev Support or Dev Ops team will do all the heavy-lifting and install it for you. But if it’s not the case you might’ve just landed on a page that has something to help you out.&lt;/p&gt;
+
+&lt;h2 id=&quot;install&quot;&gt;Install&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A kind of warning first, avoid installing Jenkins as Launch Daemon. For detailed reasoning checkout out &lt;a href=&quot;/2015/02/01/mobile-ci-daemon-vs-agent&quot;&gt;this article&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins&quot;&gt;Jenkins Wiki&lt;/a&gt; offers a list of options for Jenkins installation but doesn’t mention Mac OS X. It mentions &lt;a href=&quot;https://www.docker.com/&quot;&gt;Docker&lt;/a&gt; though and I’ve heard nothing but good things about Docker. In this article I will stick with &lt;a href=&quot;http://brew.sh/&quot;&gt;Homebrew&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;You will need JDK to be &lt;a href=&quot;/mobile%20ci/2015/02/15/install-java-on-mac-os-x&quot;&gt;installed and configured on your Mac&lt;/a&gt; before proceeding.&lt;/p&gt;
+
+&lt;p&gt;To install run a simple shell command.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;brew install jenkins&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Jenkins will be installed to &lt;code&gt;usr/local&lt;/code&gt; and Homebrew will actually tell you right away how to turn it into a Launch Agent.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;To have launchd start jenkins at login:
+    ln -sfv /usr/local/opt/jenkins/*.plist ~/Library/LaunchAgents
+Then to load jenkins now:
+    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This recommends you to symlink Jenkins launch agent plist file to &lt;code&gt;~/Library/LaunchAgents&lt;/code&gt; but I would advise against it. As you will see next you will need to modify that file. That means if you ever upgrade Jenkins via Homebrew all your changes in plist will be lost. My recommendation is to copy it instead of making a symbolic link.&lt;/p&gt;
+
+&lt;p&gt;Even more, once installed via Homebrew I then delegate Jenkins upgrades to Jenkins itself. For this reason I pin Homebrew formula to prevent Homebrew from upgrading Jenkins files.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;brew pin jenkins&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now you also have manual control over Jenkins installation and can start/stop it from command line.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# start&lt;/span&gt;
+launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
+
+&lt;span class=&quot;c&quot;&gt;# stop&lt;/span&gt;
+launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;configure&quot;&gt;Configure&lt;/h2&gt;
+
+&lt;p&gt;To understand why you need to change plist try to run Jenkins server. Give it a go, create a couple of build projects that do some basics like checking out git repository and running simple build command. Very soon you should get an error message saying that Jenkins has ran out of memory. This seems to be a common issue with JVM and Mac OS X, &lt;a href=&quot;/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx&quot;&gt;Bamboo installations run into same problems&lt;/a&gt;. I’m not quite sure why default configuration doesn’t account for this, probably this is Mac specific and other operating systems are OK. Anyway, you need to modify default plist file for Launch Agent. Here’s what you need and might want to change.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;JVM Virtual Memory and Garbage Collection&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Tell JVM to use a 64-bit data model if available (&lt;code&gt;-d64&lt;/code&gt;).&lt;/li&gt;
+  &lt;li&gt;Set minimum and maximum heap size with &lt;code&gt;-Xms&lt;/code&gt; and &lt;code&gt;Xmx&lt;/code&gt; flags. 512 Mb works for me most of the time.&lt;/li&gt;
+  &lt;li&gt;Configure garbage collector, class unloading and permanent space.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-d64&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Xms512m&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Xmx512m&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- Use Concurrent GC--&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-XX:+UseConcMarkSweepGC&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-XX:+CMSClassUnloadingEnabled&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-XX:MaxPermSize=256m&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;HTTP Proxy&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;By far the largest source of issues and frustration, company proxy. Specify it using &lt;code&gt;-D&lt;/code&gt; option.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Dhttp.proxyHost=my-compnay-proxy-host.com.au&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Dhttp.proxyPort=8080&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Port and Prefix&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Run Jenkins on a custom port with custom prefix in url. This example uses default &lt;code&gt;8080&lt;/code&gt; port and &lt;code&gt;/jenkins&lt;/code&gt; prefix, so you can access your Jenkins dashboard like &lt;code&gt;http://yourhostname:8080/jenkins&lt;/code&gt; or ever &lt;code&gt;http://youthostname/jenkins&lt;/code&gt;. These arguments need to be passed to &lt;code&gt;jenkins.war&lt;/code&gt; which was installed by Homebrew to &lt;code&gt;/usr/local/opt/jenkins/libexec&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-jar&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;/usr/local/opt/jenkins/libexec/jenkins.war&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--httpListenAddress=127.0.0.1&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--httpPort=8080&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--prefix=/jenkins&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Run at Load&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Enable Run at Load option to start server automatically if machine reboots.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;RunAtLoad&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;true/&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Environment Variables&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;If any of the commands in this plist need environment variables this is how you can define them.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;EnvironmentVariables&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;HTTP_PROXY&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;http://my-compnay-proxy-host.com.au:8080&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Standard Output and Error&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;It is up to you to redirect stdout and stderr. While sounds like a good idea for logging I would advise agains redirecting stderr into a file. I once had to deal with 90 Gb log file created by Bamboo remote agent over a few months period.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;c&quot;&gt;&amp;lt;!--&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;  &amp;lt;key&amp;gt;StandardOutPath&amp;lt;/key&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;  &amp;lt;string&amp;gt;/Users/i4niac/.jenkins/log/output.log&amp;lt;/string&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;  --&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;StandardErrorPath&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;/Users/i4niac/.jenkins/log/error.log&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that Jenkins put its files in &lt;code&gt;.jenkins&lt;/code&gt; folder in your user’s home path. You also have to specify full paths when dealing with launch agent plists. Create &lt;code&gt;log&lt;/code&gt; folder if it’s not there yet.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Other&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;By default Jenkins enables security protocol for email. I have also faced an issue with &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/BitBucket+Plugin&quot;&gt;Bitbucket Plugin&lt;/a&gt; and had to set &lt;code&gt;preferIPv4Stack&lt;/code&gt; flag as a workaround. These are all flags for &lt;code&gt;java&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Dmail.smtp.starttls.enable=true&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Djava.net.preferIPv4Stack=true&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Not put it all together&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;&amp;lt;!DOCTYPE plist PUBLIC &amp;quot;-//Apple//DTD PLIST 1.0//EN&amp;quot; &amp;quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&amp;quot;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;plist&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;version=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;Label&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;homebrew.mxcl.jenkins&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;ProgramArguments&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;array&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;/usr/bin/java&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-server&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-d64&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Xms512m&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Xmx512m&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Dmail.smtp.starttls.enable=true&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- Use Concurrent GC--&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-XX:+UseConcMarkSweepGC&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-XX:+CMSClassUnloadingEnabled&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-XX:MaxPermSize=256m&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Djava.net.preferIPv4Stack=true&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Dhttp.proxyHost=my-compnay-proxy-host.com.au&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-Dhttp.proxyPort=8080&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;-jar&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;/usr/local/opt/jenkins/libexec/jenkins.war&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--httpListenAddress=127.0.0.1&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--httpPort=8080&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;--prefix=/jenkins&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/array&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;RunAtLoad&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;true/&amp;gt;&lt;/span&gt;
+
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;EnvironmentVariables&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+   &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;HTTP_PROXY&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;http://my-compnay-proxy-host.com.au:8080&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/plist&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now you have a reliable Jenkins server that runs 24/7 and performs stable CI tasks.&lt;/p&gt;
+
+&lt;h2 id=&quot;tips&quot;&gt;Tips&lt;/h2&gt;
+
+&lt;p&gt;To find out how exactly Jenkins was launched, grep active processes list.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;ps aux &lt;span class=&quot;p&quot;&gt;|&lt;/span&gt; grep java&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The output will tell you everything you need to know.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;jenkins   &lt;span class=&quot;m&quot;&gt;85&lt;/span&gt;   0.0  3.8  &lt;span class=&quot;m&quot;&gt;4633552&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;636852&lt;/span&gt;   ??  Ss   Tue02pm  20:11.30
+  /usr/bin/java
+    -Dfile.encoding&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;UTF-8
+    -XX:PermSize&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;256m -XX:MaxPermSize&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;512m
+    -Xms512m -Xmx512m
+    -Djava.io.tmpdir&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/Users/Shared/Jenkins/tmp
+    -Dhttps.proxyHost&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;my-compnay-proxy-host.com.au -Dhttps.proxyPort&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8080
+    -Dhttp.proxyHost&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;my-compnay-proxy-host.com.au -Dhttp.proxyPort&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8080
+    -jar /usr/local/opt/jenkins/libexec/jenkins.war
+      --prefix&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/jenkins
+      --httpPort&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8080&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;other-ways&quot;&gt;Other Ways&lt;/h2&gt;
+
+&lt;h3 id=&quot;jenkins-runner&quot;&gt;Jenkins Runner&lt;/h3&gt;
+
+&lt;p&gt;There are other ways to install and start Jenkins server, one of them is using &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+Runner&quot;&gt;jenkins.sh&lt;/a&gt; runner script. It is not bundled with Homebrew installation by default, you should download it manually as mentioned on the Jenkins Wiki page.&lt;/p&gt;
+
+&lt;p&gt;In this case all the configuration options are in &lt;code&gt;data/wrapper.conf&lt;/code&gt; file, you can check &lt;a href=&quot;https://github.com/mnadeem/JenkinsRunner/blob/master/conf/wrapper.conf&quot;&gt;default file&lt;/a&gt; and easily figure out where to add your custom options.&lt;/p&gt;
+
+&lt;p&gt;The runner shell script itself can be launched as Launch Agent or Launch Daemon. Overall this is just a higher level of configuration.&lt;/p&gt;
+
+&lt;h3 id=&quot;legacy-runner&quot;&gt;Legacy Runner&lt;/h3&gt;
+
+&lt;p&gt;Another approach I’ve seen is to use custom runner script. I am actually working with one right now but I suspect this is a legacy version of &lt;code&gt;jenkins.sh&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The main difference is that all configuration is stored in Mac OS X defaults and then read by the script like this.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;defaults &lt;span class=&quot;nb&quot;&gt;read&lt;/span&gt; /Library/Preferences/org.jenkins-ci&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Defaults are stored as plist and are read as a dictionary. An example output looks like this&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;heapSize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 512m&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&amp;quot;http.proxyHost&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;my-company-proxy-host.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&amp;quot;http.proxyPort&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8080&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;httpPort&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8080&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&amp;quot;https.proxyHost&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;my-company-proxy-host.com.au&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&amp;quot;https.proxyPort&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 8080&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;minHeapSize&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 256m&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;minPermGen&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 256m&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;permGen&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 512m&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;prefix&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;/jenkins&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;tmpdir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;/Users/Shared/Jenkins/tmp&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Using &lt;code&gt;[sudo] defaults write&lt;/code&gt; you can change Jenkins configuration.&lt;/p&gt;
+
+&lt;p&gt;Obviously this is less preferred way than using &lt;code&gt;wrapper.conf&lt;/code&gt;. Using OS X defaults leads to configuration which is non-reusable on other operating systems and can’t be easily put in SCM if needed.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;A short summary - install with Homebrew, configure as Launch Agent. To configure Jenkins for Mobile CI tasks you can read other articles in this blog.&lt;/p&gt;
+
+&lt;p&gt;The configuration is far from being final. You will have to install plugins, configure SSH keys for git repositories and perform multitude of other administrative tasks to bring your Jenkins CI box up to speed.&lt;/p&gt;
 </content>
  </entry>
  
  <entry>
-   <title>Bamboo Remote Agent</title>
-   <link href="http://mgrebenets.github.io/2015/02/01/bamboo-remote-agent"/>
+   <title>Bamboo Remote Agent on Mac OS X</title>
+   <link href="http://mgrebenets.github.io/mobile%20ci/2015/02/01/bamboo-remote-agent"/>
    <updated>2015-02-01T00:00:00+11:00</updated>
-   <id>http://mgrebenets.github.io/2015/02/01/bamboo-remote-agent</id>
+   <id>http://mgrebenets.github.io/mobile%20ci/2015/02/01/bamboo-remote-agent</id>
    <content type="html">
+&lt;p&gt;A short giude for installing and configuring Bamboo Remote Agent on Mac OS X.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;The starting point for an agent is a server, you should either have it configured for you or &lt;a href=&quot;/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx&quot;&gt;install yourself&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;TODO:link&quot;&gt;Atlassian documentation&lt;/a&gt; is always a good place to start. Next important thing is to have &lt;a href=&quot;/mobile%20ci/2015/02/15/install-java-on-mac-os-x&quot;&gt;Java installed&lt;/a&gt; on remote agent machine.&lt;/p&gt;
+
+&lt;h2 id=&quot;configure-server&quot;&gt;Configure Server&lt;/h2&gt;
+
+&lt;p&gt;You start by configuring server. Open Bamboo server dashboard in the browser and navigate to Bamboo Administration page (via Settings button in top right). Surely you have to be admin to get there.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/bamboo-settings.png&quot; alt=&quot;Bamboo Settings&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now select Agents on the left and click “Enable remote agent support”.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/bamboo-enable-remote-agents.png&quot; alt=&quot;Bamboo Enable Remote Agents&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You can click “Install remote agent” now.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/bamboo-install-remote-agent.png&quot; alt=&quot;Bamboo Install Remote Agent&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;configure-agent&quot;&gt;Configure Agent&lt;/h2&gt;
+
+&lt;p&gt;You are now looking at the page with further instructions. Just like &lt;a href=&quot;/mobile%20ci/2015/02/01/jenkins-remote-node&quot;&gt;Jenkins build agent&lt;/a&gt; Bamboo Remote Agent is a Java JAR file that needs to be downloaded to a target agent machine and then ran there.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/assets/images/bamboo-install-remote-agent-page.png&quot;&gt;Bamboo Install Remote Agssent&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Before you proceed you need to configure remote agent machine. Just like Bamboo server works well with a special user, remote agent will benefit from running under a designated user account. Create a Standard account from System Preference, in this example is will name it &lt;code&gt;bamboo-agent&lt;/code&gt; so this user’s home will be &lt;code&gt;/Users/bamboo-agent&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;===========&lt;/p&gt;
+
 &lt;p&gt;use these links
 https://confluence.atlassian.com/display/BAMBOO021/Running+Bamboo+behind+a+firewall+with+Remote+Agents+outside+the+firewall&lt;/p&gt;
 
@@ -225,6 +813,10 @@ how to work with simulator, reset it (via ios-sim old days, via xcrun since xcod
    <updated>2015-02-01T00:00:00+11:00</updated>
    <id>http://mgrebenets.github.io/2015/02/01/bamboo-group-agent</id>
    <content type="html">
+&lt;p&gt;TODO:&lt;/p&gt;
+
+&lt;!--more--&gt;
+
 &lt;p&gt;what is it for? why do you need to use it?
 example: a setup with server and agents in the cloud
 and self-hosted mac agent&lt;/p&gt;
@@ -249,9 +841,9 @@ this part locks your plan to a group agent&lt;/p&gt;
 
 &lt;p&gt;drawbacks:
 lock the entire plan, no way to lock on job basis
-with a typical ios plan, only build, unit test and some packaging/signing requires OSX (xcode)
+with a typical ios plan, only build, unit test and some packaging/signing requires OS X (xcode)
 all the rest (upload to hockey, testflight, etc., reporting, ) only needs build artifacts and network access
-depending on your plan only 20% to 50% os actual jobs need OSX,
+depending on your plan only 20% to 50% os actual jobs need OS X,
 since mac agent is a scarce resource you’d benefit from running all the other jobs on cloud agents
 but it’s not possible&lt;/p&gt;
 
@@ -259,7 +851,7 @@ but it’s not possible&lt;/p&gt;
 there isn’t much to be done
 the API (URL) that atlassian provides for plugin developers only allows filtering target agents for the plan
 there’s no granular control for jobs
-so just accept the reality and look for ways to optimize the non-OSX parts of the build plan&lt;/p&gt;
+so just accept the reality and look for ways to optimize the non-OS X parts of the build plan&lt;/p&gt;
 
 &lt;p&gt;another drawback: deployment projects
 describe the problem, provide the solution
@@ -268,11 +860,127 @@ add link to a custom group agent plugin build&lt;/p&gt;
  </entry>
  
  <entry>
-   <title>Bamboo CI Server on OSX</title>
-   <link href="http://mgrebenets.github.io/2015/02/01/bamboo-ci-server-on-osx"/>
+   <title>Bamboo CI Server on Mac OS X</title>
+   <link href="http://mgrebenets.github.io/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx"/>
    <updated>2015-02-01T00:00:00+11:00</updated>
-   <id>http://mgrebenets.github.io/2015/02/01/bamboo-ci-server-on-osx</id>
+   <id>http://mgrebenets.github.io/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx</id>
    <content type="html">
+&lt;p&gt;This article covers the details of installing a &lt;a href=&quot;https://www.atlassian.com/software/bamboo&quot;&gt;Bamboo&lt;/a&gt; CI Server on Mac OS X.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;install&quot;&gt;Install&lt;/h2&gt;
+
+&lt;p&gt;The preferred way to install Bamboo is using official &lt;a href=&quot;https://www.atlassian.com/software/bamboo/download?os=mac&quot;&gt;Mac OS X installer&lt;/a&gt;. Starting point for documentation is &lt;a href=&quot;https://confluence.atlassian.com/display/BAMBOO/Installing+Bamboo+on+Mac+OS+X&quot;&gt;official install guide&lt;/a&gt;. Follow installer steps using default values.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;This article assumes you are dealing with Bamboo version 5.2 and above. All examples are for version 5.7.2.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;To download tar-ball using command line run this command&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;wget http://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-5.7.2.tar.gz&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Bamboo needs Java to be &lt;a href=&quot;/mobile%20ci/2015/02/15/install-java-on-mac-os-x&quot;&gt;installed&lt;/a&gt;, recommended version are 1.6 or 1.7, I would advise to go with 1.7.&lt;/p&gt;
+
+&lt;p&gt;Make a new home for Bamboo. It could be &lt;code&gt;/Applications/Bamboo&lt;/code&gt; or &lt;code&gt;~/bamboo/bamboo-home&lt;/code&gt; or whatever you want. For this post I’ll stick with second option. It is often recommended to create a special &lt;code&gt;bamboo&lt;/code&gt; user and put all things in their home directory. To create a new user use System Preferences and create Standard user.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;su -u bamboo
+mkdir -p /Users/bamboo/bamboo-home&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that I switch user (&lt;code&gt;su&lt;/code&gt;) to work with Bamboo user’s files and folders. This way I stay away from possible permissions conflicts.&lt;/p&gt;
+
+&lt;p&gt;Once downloaded unzip the tar-ball and copy &lt;code&gt;atlassian-bamboo-5.7.2&lt;/code&gt; to bamboo user’s home folder. Rename it to just &lt;code&gt;bamboo&lt;/code&gt; to make it version agnostic. Use you super user privileges to do that. Next change ownsership to give bamboo user all the access rights.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# in /Users/bamboo/&lt;/span&gt;
+sudo chown -R bamboo bamboo&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Then as a bamboo user go inside that folder. This is referred as &lt;em&gt;installation directory&lt;/em&gt; and this is where you will install and run Bamboo from. Edit the file in &lt;code&gt;atlassian-bamboo/WEB-INF/classes/bamboo-init.properties&lt;/code&gt;. Uncomment the line with &lt;code&gt;bamboo.home&lt;/code&gt; and put the following.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;bamboo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Users&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bamboo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bamboo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;home&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is where Bamboo will put all the customizations and build plan details.&lt;/p&gt;
+
+&lt;p&gt;Now you should run &lt;code&gt;bin/start-bamboo.sh&lt;/code&gt;, again as bamboo user.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;su bamboo
+./bin/start-bamboo.sh&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Bamboo is now running &lt;a href=&quot;http://localhost:8085/&quot;&gt;http://localhost:8085/&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;configure&quot;&gt;Configure&lt;/h2&gt;
+
+&lt;p&gt;Next step is to configure Bamboo, heres &lt;a href=&quot;https://confluence.atlassian.com/display/BAMBOO/Running+the+Setup+Wizard&quot;&gt;official documentation&lt;/a&gt;. Recommended way is to use Setup Wizard which presents itself when you open &lt;a href=&quot;http://localhost:8085/&quot;&gt;http://localhost:8085/&lt;/a&gt; in the browser.&lt;/p&gt;
+
+&lt;p&gt;Start by getting a license. You can always get a 30 days free evaluation license from Atlassian.&lt;/p&gt;
+
+&lt;p&gt;Next select Custom Installation option. Have a look at Base URL, make sure the IP address is correct. Also this is a good moment to pause and double check that your future Bamboo server has a static IP address allocated. This will become really important when dealing with remote agents. Leave the rest unchanged and click Continue.&lt;/p&gt;
+
+&lt;p&gt;Select Embedded database option. It is recommended to use other DB setup for production system. I might refine the article later to include setup details for PostgreSQL DB.&lt;/p&gt;
+
+&lt;p&gt;Next choose to create a new Bamboo home, configure your username. Give it some time and you will be able to create your first build plan.&lt;/p&gt;
+
+&lt;h2 id=&quot;launch-agent&quot;&gt;Launch Agent&lt;/h2&gt;
+
+&lt;p&gt;Now it’s time to make sure Bamboo start automatically when build box restarts. As mentioned in &lt;a href=&quot;/2015/02/01/mobile-ci-daemon-vs-agent&quot;&gt;this article&lt;/a&gt; recommended way is to use Launch Agent. Start by enabling automatic login for bamboo user in System Preferences.&lt;/p&gt;
+
+&lt;p&gt;Next create &lt;code&gt;com.atlassian.bamboo.plist&lt;/code&gt; in &lt;code&gt;/Users/bamboo/Library/LaunchAgents&lt;/code&gt;. Do it as bamboo user to avoid messing up with permissions.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;&amp;lt;!DOCTYPE plist PUBLIC &amp;quot;-//Apple//DTD PLIST 1.0//EN&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;&amp;quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&amp;quot;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;plist&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;version=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;1.0&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;dict&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;Label&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;com.atlassian.bamboo&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;UserName&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;bamboo&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;ProgramArguments&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;array&amp;gt;&lt;/span&gt;
+          &lt;span class=&quot;nt&quot;&gt;&amp;lt;string&amp;gt;&lt;/span&gt;/Users/bamboo/bamboo/bin/start-babmoo.sh&lt;span class=&quot;nt&quot;&gt;&amp;lt;/string&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;/array&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;KeepAlive&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;true/&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;key&amp;gt;&lt;/span&gt;RunAtLoad&lt;span class=&quot;nt&quot;&gt;&amp;lt;/key&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;&amp;lt;true/&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/dict&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/plist&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Make sure you create few aliases to start and stop Bamboo server from command line.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;start-bamboo&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;/Users/bamboo/bamboo/bin/start-babmoo.sh&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;stop-bamboo&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;/Users/bamboo/bamboo/bin/stop-babmoo.sh&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;alias &lt;/span&gt;restart-bamboo&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;stop-bamboo &amp;amp; start-bamboo&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;troubleshooting&quot;&gt;Troubleshooting&lt;/h2&gt;
+
+&lt;p&gt;This section provides an example of issues you may run into while trying to fire up Bamboo.&lt;/p&gt;
+
+&lt;p&gt;For example, you start Bamboo and see this instead of dashboard.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/bamboo-bootstrap-failed.png&quot; alt=&quot;Bamboo Bootstrap Failed&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To find out the reason look into Bamboo logs, specifically in &lt;code&gt;/Users/bamboo/bomboo/logs/catalina.out&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;java.sql.SQLException: The database is already in use by another process: org.hsqldb.persist.NIOLockFile@340c5c3c&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/Users/bamboo/bamboo-home/database/defaultdb.lck, &lt;span class=&quot;nv&quot;&gt;exists&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;, &lt;span class=&quot;nv&quot;&gt;locked&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;, &lt;span class=&quot;nv&quot;&gt;valid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;, &lt;span class=&quot;nv&quot;&gt;fl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;null&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;: java.lang.Exception: checkHeartbeat&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;: lock file &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;/Users/bamboo/bamboo-home/database/defaultdb.lck&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; is presumably locked by another process.&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;OK, so database is presumably locked by another process. In my case it meant there was another Bamboo running already. Double check it then by running &lt;code&gt;ps&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;PID TTY           TIME CMD
+&lt;span class=&quot;m&quot;&gt;89838&lt;/span&gt; ttys002    0:00.02 bash
+&lt;span class=&quot;m&quot;&gt;89865&lt;/span&gt; ttys002    6:44.00 /Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home/bin/java -Djava.util.logging.config.file&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/Users/bamboo/bamboo/conf/logging.properties -Djava.util.logging.
+&lt;span class=&quot;m&quot;&gt;41644&lt;/span&gt; ttys010    0:00.03 bash
+&lt;span class=&quot;m&quot;&gt;41672&lt;/span&gt; ttys010    0:40.37 /Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home/bin/java -Djava.util.logging.config.file&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/Users/bamboo/bamboo/conf/logging.properties -Djava.util.logging.&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Indeed it is. I have another terminal tab open running bamboo user session and Bamboo server.&lt;/p&gt;
+
+&lt;p&gt;After I stop or kill all the instances I run it again and this time it works.&lt;/p&gt;
+
+&lt;p&gt;This is just one example of troubles, all of them will pretty much present themselves via the same starting error page. Another common case is database upgrade, you can run into this issue if using PostgreSQL and upgrade it via Homebrew, so it’s recommended to pin PostgreSQL instead.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;This will get you going with basic Bamboo CI server. There’s a number of additional administrative tasks yet to be done. Like configuring user access, integration with other Atlassian products, network configuration, plugins, capabilities and much more. I wouldn’t envy anyone who would have to deal with all those tasks. Companies that take CI seriously normally have Dev Support team keeping whole infrastructure running, not just Bamboo.&lt;/p&gt;
 </content>
  </entry>
  
@@ -292,18 +1000,18 @@ add link to a custom group agent plugin build&lt;/p&gt;
 
 &lt;p&gt;The advanced level of CI would include distributed build systems with multiple build nodes, support for automated unit and UI tests, running tests on physical devices, automatic deployment to TestFlight, Hockey App, Over the Air, and much more. It becomes not just mobile development, but spans into areas like DevOps and others. &lt;a href=&quot;https://codeascraft.com/2014/02/28/etsys-journey-to-continuous-integration-for-mobile-apps/&quot;&gt;Etsy’s blog post&lt;/a&gt; is a good example of where this path can take you.&lt;/p&gt;
 
-&lt;p&gt;If you decide to take mobile CI seriously, you have to pick a build server to start with.&lt;/p&gt;
+&lt;p&gt;If you decide to take mobile CI under your total control, you have to pick a build server to start with.&lt;/p&gt;
 
 &lt;p&gt;I personally have worked with Bamboo for 1.5 years and I’m dealing with Jenkins right now, so I have few insights and can give some comparison of the two.&lt;/p&gt;
 
 &lt;h2 id=&quot;setup--configuration&quot;&gt;Setup &amp;amp; Configuration&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;/2015/02/01/bamboo-ci-server-on-osx&quot;&gt;Bamboo installation&lt;/a&gt; and &lt;a href=&quot;/2015/02/01/jenkins-ci-server-on-osx&quot;&gt;Jenkins installation&lt;/a&gt; tasks are about the same in terms of time and knowledge required. While installing one of the two you’ll climb a certain learning curve which will help you heaps if you ever have to deal with second option.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx&quot;&gt;Bamboo installation&lt;/a&gt; and &lt;a href=&quot;/mobile%20ci/2015/02/01/jenkins-ci-server-on-osx&quot;&gt;Jenkins installation&lt;/a&gt; tasks are about the same in terms of time and knowledge required. While installing one of the two you’ll climb a certain learning curve which will help you heaps if you ever have to deal with second option.&lt;/p&gt;
 
 &lt;p&gt;Both are built using Java, both will need a database setup. Jenkins and Bamboo will setup and configure &lt;a href=&quot;http://en.wikipedia.org/wiki/MySQL&quot;&gt;MySQL&lt;/a&gt; by default. Bamboo, however, will recommend you to configure custom database like &lt;a href=&quot;http://en.wikipedia.org/wiki/PostgreSQL&quot;&gt;PostgreSQL&lt;/a&gt; for production environment.&lt;/p&gt;
 
 &lt;p&gt;Being Java applications both will require similar JVM configuration. Default configuration won’t really serve you well. You’ll experience out of memory issues as soon as you add a couple of basic build plans/projects.&lt;/p&gt;
 
-&lt;p&gt;And lot’s of other things are similar: configuration behind proxy, login vs non-login user (&lt;a href=&quot;/2015/02/01/mobile-ci-daemon-vs-agent&quot;&gt;Launch Agent vs Daemon&lt;/a&gt;), &lt;a href=&quot;/2015/02/01/mobile-ci--osx-keychain&quot;&gt;OSX Keychain&lt;/a&gt;, &lt;a href=&quot;/2015/02/01/mobile-ci--ios-simulator&quot;&gt;iOS Simulator&lt;/a&gt;, etc.&lt;/p&gt;
+&lt;p&gt;And lot’s of other things are similar: configuration behind proxy, login vs non-login user (&lt;a href=&quot;/2015/02/01/mobile-ci-daemon-vs-agent&quot;&gt;Launch Agent vs Daemon&lt;/a&gt;), &lt;a href=&quot;/2015/02/01/mobile-ci--osx-keychain&quot;&gt;OS X Keychain&lt;/a&gt;, &lt;a href=&quot;/2015/02/01/mobile-ci--ios-simulator&quot;&gt;iOS Simulator&lt;/a&gt;, etc.&lt;/p&gt;
 
 &lt;h2 id=&quot;gui&quot;&gt;GUI&lt;/h2&gt;
 &lt;p&gt;Obviously, this is not a comparison criteria at all. This criteria is as subjective as it could possibly be!&lt;/p&gt;
@@ -312,7 +1020,7 @@ add link to a custom group agent plugin build&lt;/p&gt;
 
 &lt;p&gt;With Jenkins there are ways to improve your day to day user experience. You can customize theme and even make your custom UI improvements, like adding “Build Now” button where you like it.&lt;/p&gt;
 
-&lt;p&gt;You should start by installing &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Simple+Theme+Plugin&quot;&gt;Simple Theme Plugin&lt;/a&gt; and then configure it with one of the available themes. Not all the themes will look good, it all depends on the Jenkins version you have and browser you use, etc. I tried a buch of them and ironically enough the only theme that looks good on our production CI box is called &lt;a href=&quot;https://github.com/djonsson/jenkins-atlassian-theme&quot;&gt;“Atlassian”&lt;/a&gt;. But I’m dealing with slightly outdated Jenkins version, you could get better results with up to date Jenkins.&lt;/p&gt;
+&lt;p&gt;You should start by installing &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Simple+Theme+Plugin&quot;&gt;Simple Theme Plugin&lt;/a&gt; and then configure it with one of the available themes. Not all the themes will look good, it all depends on the Jenkins version you have and browser you use, etc. I tried a bunch of them and ironically enough the only theme that looks good on our production CI box is called &lt;a href=&quot;https://github.com/djonsson/jenkins-atlassian-theme&quot;&gt;“Atlassian”&lt;/a&gt;. But I’m dealing with slightly outdated Jenkins version, you could get better results with up to date Jenkins.&lt;/p&gt;
 
 &lt;p&gt;There’s multitude of &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Plugins&quot;&gt;UI, List View and Page Decorator plugins&lt;/a&gt; available for Jenikns. Some of them must be good and help you customize you Jenkins look &amp;amp; feel and functionality.&lt;/p&gt;
 
@@ -331,7 +1039,7 @@ add link to a custom group agent plugin build&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Publish HTML&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;If you ever used &lt;a href=&quot;/2015/02/08/clang-static-analyzer&quot;&gt;Clang Static Analyzer&lt;/a&gt; for your iOS projects, you know then that there’s no proper reporing plugin for this task. You end up with HTML report that needs to be published and made available in build project/plan summary.&lt;/p&gt;
+&lt;p&gt;If you ever used &lt;a href=&quot;/2015/02/08/clang-static-analyzer&quot;&gt;Clang Static Analyzer&lt;/a&gt; for your iOS projects, you know then that there’s no proper reporting plugin for this task. You end up with HTML report that needs to be published and made available in build project/plan summary.&lt;/p&gt;
 
 &lt;p&gt;With Bamboo you create a new &lt;a href=&quot;https://confluence.atlassian.com/display/BAMBOO/Sharing+artifacts&quot;&gt;Shared Artifact&lt;/a&gt;, with Jenkins you use &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin&quot;&gt;HTML Publisher plugin&lt;/a&gt;.&lt;/p&gt;
 
@@ -349,13 +1057,21 @@ add link to a custom group agent plugin build&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Static Analyzers Reports&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;/2015/02/08/oclint&quot;&gt;OCLint&lt;/a&gt; is amazing tool to run another round of static analysis on your code and detect vast number of issues as well as to enforce coding guidelines. OCLint can produce output compatible with &lt;a href=&quot;http://pmd.sourceforge.net/&quot;&gt;PMD&lt;/a&gt; output format. So it can then be processed by &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/PMD+Plugin&quot;&gt;Jenkins PMD Plugin&lt;/a&gt;. You end up with browsable report with issues grouped by priority, category and other criteria. You can navigate all the way down to the line of code causing the warning. Once again, you can configure threshold values to mark builds with lots of warnings as failed.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;/mobile%20ci/2015/02/08/oclint&quot;&gt;OCLint&lt;/a&gt; is amazing tool to run another round of static analysis on your code and detect vast number of issues as well as to enforce coding guidelines. OCLint can produce output compatible with &lt;a href=&quot;http://pmd.sourceforge.net/&quot;&gt;PMD&lt;/a&gt; output format. So it can then be processed by &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/PMD+Plugin&quot;&gt;Jenkins PMD Plugin&lt;/a&gt;. You end up with browsable report with issues grouped by priority, category and other criteria. You can navigate all the way down to the line of code causing the warning. Once again, you can configure threshold values to mark builds with lots of warnings as failed.&lt;/p&gt;
 
 &lt;p&gt;In fact, the same reporting plugin should be able to pick up output of Clang Static Analyzer which I mentioned before. However I couldn’t figure out the way to make Clang Static Analyzer to spit out correct XML file.&lt;/p&gt;
 
-&lt;p&gt;With Bamboo, unfortunatelly, all you have is publishing HTML report via shared artifact.&lt;/p&gt;
+&lt;p&gt;With Bamboo, unfortunately, all you have is publishing HTML report via shared artifact.&lt;/p&gt;
 
 &lt;p&gt;P.S. I’m a big fan of Swift programming language, but one thing makes me a bit sad. It will take some time before we get tools like OCLint available for Swift.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Warnings&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;If you run CI tasks such as build, test, analyze and lint, often you don’t want you build project/plan to stop immediately if it encounters an error, for example test error. You still want your reporting tasks to run and pick up those errors and generate reports for them. This often leads to a problem where you have compilation error but the build is marked as passing. Preferred way to avoid this issue is to have a reporting task which will pick up all the errors and mark build as failed if needed.&lt;/p&gt;
+
+&lt;p&gt;Jenkins has &lt;a href=&quot;https://wiki.jenkins-ci.org/display/JENKINS/Warnings+Plugin&quot;&gt;Warnings plugin&lt;/a&gt; for that. It will scan build logs and detect warnings and errors generated by compiler, and it includes support for clang so xcodebuild is well covered. All you need is to configure thresholds and fail builds if there were compile errors. Supported by Job DSL as well.&lt;/p&gt;
+
+&lt;p&gt;I don’t know about Bamboo plugin to do the same job. I remember myself few months ago grepping test logs for errors and then marking builds as failed by doing something like &lt;code&gt;exit 1&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Functional Tests&lt;/em&gt;&lt;/p&gt;
 
@@ -617,15 +1333,15 @@ This plugin is very powerful but of all the things it does not create branches f
 &lt;h2 id=&quot;mac-support&quot;&gt;Mac Support&lt;/h2&gt;
 &lt;p&gt;Right, this whole comparison is focusing on Mobile CI after all, meaning you have to deal with one of the most popular mobile platforms these days - that is iOS.&lt;/p&gt;
 
-&lt;p&gt;To build an iOS app you must have Xcode, which can run only on OSX (unless you want to follow the path of certain insanity and make it work on other OS).&lt;/p&gt;
+&lt;p&gt;To build an iOS app you must have Xcode, which can run only on OS X (unless you want to follow the path of certain insanity and make it work on other OS).&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Hackintosh&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;Not a very good idea I’d say. The company does iOS development and wants to go with Hackintosh to setup OSX build server. Really?&lt;/p&gt;
+&lt;p&gt;Not a very good idea I’d say. The company does iOS development and wants to go with Hackintosh to setup OS X build server. Really?&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Cloud (aka OnDemand)&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;Could be a really good option, but not with industry giants like AWS. AWS or alike is where you’d go if using Bamboo OnDemand feature. I can find posts as old as 2011 discussing this issue: &lt;a href=&quot;https://answers.atlassian.com/questions/22655/bamboo-mac-agent&quot;&gt;one&lt;/a&gt;, &lt;a href=&quot;https://jira.atlassian.com/browse/BAM-11870&quot;&gt;two&lt;/a&gt;. Apple doesn’t make it easy to run virtual OSX instances to the extent that none of the big cloud providers are brave enough to provide official support for this feature. These days you can go with one of the many Mac Mini colocation services. You either rent a Mac hardware or even provide your own.&lt;/p&gt;
+&lt;p&gt;Could be a really good option, but not with industry giants like AWS. AWS or alike is where you’d go if using Bamboo OnDemand feature. I can find posts as old as 2011 discussing this issue: &lt;a href=&quot;https://answers.atlassian.com/questions/22655/bamboo-mac-agent&quot;&gt;one&lt;/a&gt;, &lt;a href=&quot;https://jira.atlassian.com/browse/BAM-11870&quot;&gt;two&lt;/a&gt;. Apple doesn’t make it easy to run virtual OS X instances to the extent that none of the big cloud providers are brave enough to provide official support for this feature. These days you can go with one of the many Mac Mini colocation services. You either rent a Mac hardware or even provide your own.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Self-hosted&lt;/em&gt;&lt;/p&gt;
 
@@ -633,14 +1349,14 @@ This plugin is very powerful but of all the things it does not create branches f
 
 &lt;p&gt;Whenever you are using self-hosting or remote hosting, you end up dealing with native hardware. I find that Mac Minis with maximized CPU, RAM, and SSD storage are perfect candidates for iOS CI box. The more you have the better.&lt;/p&gt;
 
-&lt;p&gt;Next step is to install remote agent/node and get it running. As I mentioned already, installing &lt;a href=&quot;/2015/02/01/bamboo-remote-agent&quot;&gt;remote agent for Bamboo&lt;/a&gt; is around the same complexity as installing &lt;a href=&quot;/mobile%20ci/2015/02/01/jenkins-remote-node&quot;&gt;remote node for Jenkins&lt;/a&gt;. The problems start popping up when you begin using them.&lt;/p&gt;
+&lt;p&gt;Next step is to install remote agent/node and get it running. As I mentioned already, installing &lt;a href=&quot;/mobile%20ci/2015/02/01/bamboo-remote-agent&quot;&gt;remote agent for Bamboo&lt;/a&gt; is around the same complexity as installing &lt;a href=&quot;/mobile%20ci/2015/02/01/jenkins-remote-node&quot;&gt;remote node for Jenkins&lt;/a&gt;. The problems start popping up when you begin using them.&lt;/p&gt;
 
 &lt;h3 id=&quot;bamboo-remote-agent&quot;&gt;Bamboo Remote Agent&lt;/h3&gt;
 &lt;p&gt;Things you definitely need to know in regards to Bamboo remote agent.&lt;/p&gt;
 
-&lt;p&gt;[The rumor has it that] Atlassian are using Mac OSX to develop their products, including Bamboo, but OSX is never ever listed as &lt;em&gt;officially&lt;/em&gt; supported. Indeed, why would you choose to run your JIRA, Stash, Bamboo, whatever, on OSX server? Hopefully with increasing demand for iOS CI Atlassian will put a bit higher priority on fixing Bamboo issues for OSX, and there’s plenty btw.&lt;/p&gt;
+&lt;p&gt;[The rumor has it that] Atlassian are using Mac OS X to develop their products, including Bamboo, but OS X is never ever listed as &lt;em&gt;officially&lt;/em&gt; supported. Indeed, why would you choose to run your JIRA, Stash, Bamboo, whatever, on OS X server? Hopefully with increasing demand for iOS CI Atlassian will put a bit higher priority on fixing Bamboo issues for OS X, and there’s plenty btw.&lt;/p&gt;
 
-&lt;p&gt;Before you even start using remote agent on OSX, you have to experience a bit of pain &lt;a href=&quot;/2015/02/01/bamboo-remote-agent&quot;&gt;when trying to set it up&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Before you even start using remote agent on OS X, you have to experience a bit of pain &lt;a href=&quot;/mobile%20ci/2015/02/01/bamboo-remote-agent&quot;&gt;when trying to set it up&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Major and the most important group of issues is related to &lt;strong&gt;Artifacts Sharing&lt;/strong&gt;.&lt;/p&gt;
 
@@ -668,7 +1384,7 @@ This plugin is very powerful but of all the things it does not create branches f
 
 &lt;p&gt;Read the &lt;a href=&quot;/mobile%20ci/2015/02/01/jenkins-remote-node&quot;&gt;Jenkins Remote Node installation post&lt;/a&gt; to get initial overview.&lt;/p&gt;
 
-&lt;p&gt;As you can see, there are common problems related to running SSH sessions as non-login user and others. I personally ended up running remote node as OSX Launch Daemon. This works, but is not ideal.&lt;/p&gt;
+&lt;p&gt;As you can see, there are common problems related to running SSH sessions as non-login user and others. I personally ended up running remote node as OS X Launch Daemon. This works, but is not ideal.&lt;/p&gt;
 
 &lt;p&gt;I have nothing yet to say about artifact copy speed from slave to master in regards to Jenkins setup, but stay tuned and/or post a comment if you have any knowledge on the matter.&lt;/p&gt;
 
@@ -678,7 +1394,7 @@ This plugin is very powerful but of all the things it does not create branches f
 
 &lt;p&gt;I wrote one post about building Android - &lt;a href=&quot;/android/2014/05/29/build-android-in-the-cloud&quot;&gt;Build Android in The Cloud&lt;/a&gt; which already provides some details.&lt;/p&gt;
 
-&lt;p&gt;In regards to Bamboo vs Jenkins comparison, almost everything I mentioned for iOS applies to Android, except the very big and troublesome Mac OSX part. You can, and you should build Android on Linux systems, and that’s exactly what AWS instances are running on! It means that if you have 25 build agents/nodes in the cloud, all 25 of them can be used to build Android projects.&lt;/p&gt;
+&lt;p&gt;In regards to Bamboo vs Jenkins comparison, almost everything I mentioned for iOS applies to Android, except the very big and troublesome Mac OS X part. You can, and you should build Android on Linux systems, and that’s exactly what AWS instances are running on! It means that if you have 25 build agents/nodes in the cloud, all 25 of them can be used to build Android projects.&lt;/p&gt;
 
 &lt;p&gt;I had experience with building Android projects and running Calabash UI Automation tests using Bamboo OnDemand setup hosted in AWS cloud. It worked (and what I was last told it still works) flawless and scalability of AWS really pays back. Despite the fact that building Android project was way more slower than building similar iOS project, that wasn’t really a concern given the number of resources available to do the job.&lt;/p&gt;
 
@@ -961,7 +1677,7 @@ Accompanied by &lt;a href=&quot;https://bitbucket.org/i4niac/flappy-boo&quot;&gt
  </entry>
  
  <entry>
-   <title>Shark 2 for iOS/OSX</title>
+   <title>Shark 2 for iOS/OS X</title>
    <link href="http://mgrebenets.github.io/references/2014/06/05/shark-2-for-ios"/>
    <updated>2014-06-05T00:00:00+10:00</updated>
    <id>http://mgrebenets.github.io/references/2014/06/05/shark-2-for-ios</id>
@@ -991,7 +1707,7 @@ Accompanied by &lt;a href=&quot;https://bitbucket.org/i4niac/flappy-boo&quot;&gt
 &lt;p&gt;Jump directly to &lt;a href=&quot;#tldr&quot;&gt;Summary&lt;/a&gt; if just want to grab the end result.&lt;/p&gt;
 
 &lt;h2 id=&quot;why-bother&quot;&gt;Why Bother?&lt;/h2&gt;
-&lt;p&gt;Same question as one would as for using &lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Homebrew on OSX&lt;/a&gt;. And same answer again - Automation.&lt;/p&gt;
+&lt;p&gt;Same question as one would as for using &lt;a href=&quot;/atlassian/2014/05/30/atlassian-cli-homebrew&quot;&gt;Homebrew on OS X&lt;/a&gt;. And same answer again - Automation.&lt;/p&gt;
 
 &lt;p&gt;Let’s assume you already use Atlassian CLI Client for number of build tasks, like automatically updating JIRA tickets, Confluence pages, Stash pull requests, etc.&lt;/p&gt;
 
@@ -1242,7 +1958,7 @@ Note the use of &lt;code&gt;noarch&lt;/code&gt; here for architecture. We are wo
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;make rpm&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;p&gt;I ran it on Fedora 20 as well on a custom Linux distribution running in AWS cloud. Since the package does not depend on architecture, you could in theory build it on OSX machine, but it’s not what I would recommend, getting proper &lt;code&gt;rpmbuild&lt;/code&gt; port configured is not something you enjory very much.&lt;/p&gt;
+&lt;p&gt;I ran it on Fedora 20 as well on a custom Linux distribution running in AWS cloud. Since the package does not depend on architecture, you could in theory build it on OS X machine, but it’s not what I would recommend, getting proper &lt;code&gt;rpmbuild&lt;/code&gt; port configured is not something you enjory very much.&lt;/p&gt;
 
 &lt;h2 id=&quot;install-rpm&quot;&gt;Install RPM&lt;/h2&gt;
 
@@ -1367,7 +2083,7 @@ openssl sha1 atlassian-cli-3.9.0-distribution.zip
 &lt;p&gt;Our job is to cleanup first, then patch and rename some scripts and finally move the whole bunch to &lt;code&gt;/usr/local&lt;/code&gt;. &lt;code&gt;/usr/local&lt;/code&gt; is also called &lt;em&gt;prefix&lt;/em&gt;, this is the location where Homebrew installs all packages, additionally there’s a special &lt;code&gt;prefix&lt;/code&gt; variable available in the formula.&lt;/p&gt;
 
 &lt;h4 id=&quot;cleanup&quot;&gt;Cleanup&lt;/h4&gt;
-&lt;p&gt;So let’s cleanup. Since we are installing on OSX, we don’t need all the Windows stuff.&lt;/p&gt;
+&lt;p&gt;So let’s cleanup. Since we are installing on OS X, we don’t need all the Windows stuff.&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# Delete Windows batch scripts&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;*.bat&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;

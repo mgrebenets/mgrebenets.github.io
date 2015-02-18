@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="author" content="Maksym Grebenets" />
-    <title>Bamboo Remote Agent</title>
+    <title>Bamboo Remote Agent on Mac OS X</title>
 
     <link rel="stylesheet" href="/assets/themes/dinky/css/styles.css">
     <link rel="stylesheet" href="/assets/themes/dinky/css/pygment_trac.css">
@@ -111,9 +111,41 @@
       <section>
       
 <section>
-  <h1>Bamboo Remote Agent</h1>
+  <h1>Bamboo Remote Agent on Mac OS X</h1>
 
   
+<p>A short giude for installing and configuring Bamboo Remote Agent on Mac OS X.</p>
+
+<!--more-->
+
+<p>The starting point for an agent is a server, you should either have it configured for you or <a href="/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx">install yourself</a>.</p>
+
+<p><a href="TODO:link">Atlassian documentation</a> is always a good place to start. Next important thing is to have <a href="/mobile%20ci/2015/02/15/install-java-on-mac-os-x">Java installed</a> on remote agent machine.</p>
+
+<h2 id="configure-server">Configure Server</h2>
+
+<p>You start by configuring server. Open Bamboo server dashboard in the browser and navigate to Bamboo Administration page (via Settings button in top right). Surely you have to be admin to get there.</p>
+
+<p><img src="/assets/images/bamboo-settings.png" alt="Bamboo Settings" /></p>
+
+<p>Now select Agents on the left and click “Enable remote agent support”.</p>
+
+<p><img src="/assets/images/bamboo-enable-remote-agents.png" alt="Bamboo Enable Remote Agents" /></p>
+
+<p>You can click “Install remote agent” now.</p>
+
+<p><img src="/assets/images/bamboo-install-remote-agent.png" alt="Bamboo Install Remote Agent" /></p>
+
+<h2 id="configure-agent">Configure Agent</h2>
+
+<p>You are now looking at the page with further instructions. Just like <a href="/mobile%20ci/2015/02/01/jenkins-remote-node">Jenkins build agent</a> Bamboo Remote Agent is a Java JAR file that needs to be downloaded to a target agent machine and then ran there.</p>
+
+<p><a href="/assets/images/bamboo-install-remote-agent-page.png">Bamboo Install Remote Agssent</a></p>
+
+<p>Before you proceed you need to configure remote agent machine. Just like Bamboo server works well with a special user, remote agent will benefit from running under a designated user account. Create a Standard account from System Preference, in this example is will name it <code>bamboo-agent</code> so this user’s home will be <code>/Users/bamboo-agent</code>.</p>
+
+<p>===========</p>
+
 <p>use these links
 https://confluence.atlassian.com/display/BAMBOO021/Running+Bamboo+behind+a+firewall+with+Remote+Agents+outside+the+firewall</p>
 

@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="author" content="Maksym Grebenets" />
+    <title>Install Java on Mac OS X</title>
+
+    <link rel="stylesheet" href="/assets/themes/dinky/css/styles.css">
+    <link rel="stylesheet" href="/assets/themes/dinky/css/pygment_trac.css">
+    <script src="/assets/themes/dinky/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header"><a href="/">NSBogan</a></h1>
+        <p class="header">mobile ios android xcode automation calabash cucumber</p>
+        <ul>
+          
+          
+          
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+        </ul>
+        
+        
+        <div class="misc vcard">
+          <h4>about</h4>
+          <ul>
+            
+            <li class="contact"><address><span class="author fn n">Maksym Grebenets</span> - <span class="fn email">mgrebenets@gmail.com</span></address></li>
+            
+            
+            <li class="github"><a href="http://github.com/mgrebenets/" rel="me">github.com/mgrebenets</a></li>
+            
+            
+            <li class="twitter"><a href="http://twitter.com/mgrebenets/" rel="me">twitter.com/mgrebenets</a></li>
+            
+            
+            
+            
+            
+          </ul>
+        </div><!-- misc -->
+        
+      </header>
+
+      <section>
+      
+<section>
+  <h1>Install Java on Mac OS X</h1>
+
+  
+<p>A short how-to for installing and configuring Java Development Kit on Mac OS X.</p>
+
+<!--more-->
+
+<p>Java is core technology used by CI servers like <a href="/mobile%20ci/2015/02/01/jenkins-ci-server-on-osx">Jenkins</a>, <a href="/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx">Bamboo</a> and others. It is also used by <a href="/atlassian/2014/05/29/atlassian-cli">Atlassian CLI Client</a>. In fact installing and configuring JDK is such a common task that it deserves its own post.</p>
+
+<h2 id="java-version">Java Version</h2>
+
+<p>Select JDK version which you need: <a href="http://support.apple.com/kb/DL1572">1.6</a>, <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html">1.7</a> or <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html">1.8</a>. Better install all of them, you never know what you might need one day.</p>
+
+<p>I find that for most applications I’m using 1.7, rarely 1.6 for some outdated and unsupported application. These days more and more applications are updated to work with 1.8 without issues.</p>
+
+<h2 id="java-home">Java Home</h2>
+
+<p>Lots of applications if not all expect <code>JAVA_HOME</code> environment variable to be set. This tells them where is the Java Virtual Machine (JVM) located. I would recommend to update your <code>~/.bash_profile</code> and add something like this:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Default Java Home</span>
+<span class="o">[[</span> -z <span class="s2">&quot;$JAVA_VERSION&quot;</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">JAVA_VERSION</span><span class="o">=</span>1.7
+<span class="o">[[</span> -s /usr/libexec/java_home <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="k">$(</span>/usr/libexec/java_home -v <span class="nv">$JAVA_VERSION</span><span class="k">)</span></code></pre></div>
+
+<p>This is an over-devensive version. It can safely run on OS other than Mac, but will not set <code>JAVA_HOME</code> in that case. It uses OS X specific <code>java_home</code> executable found in <code>/usr/libexec</code>. A very convenient utility to get JVM path for Java installation. Try <code>-V</code> to get a list of all JVMs installed.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">/usr/libexec/java_home -V
+
+<span class="c"># sample output</span>
+Matching Java Virtual Machines <span class="o">(</span>4<span class="o">)</span>:
+    1.8.0_25, x86_64:	<span class="s2">&quot;Java SE 8&quot;</span>	/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home
+    1.7.0_72, x86_64:	<span class="s2">&quot;Java SE 7&quot;</span>	/Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home
+    1.6.0_65-b14-466.1, x86_64:	<span class="s2">&quot;Java SE 6&quot;</span>	/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+    1.6.0_65-b14-466.1, i386:	<span class="s2">&quot;Java SE 6&quot;</span>	/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
+
+/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home</code></pre></div>
+
+<p>If you are using shell other than bash, include the same in your shell’s version of .bash_profile or even source .bash_profile.</p>
+
+
+  
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+</section>
+
+
+      </section>
+
+      <footer>
+      <p><small>Hosted on <a href="http://pages.github.com/">GitHub Pages</a> using the <a href="https://github.com/sodabrew/theme-dinky">Dinky theme</a> for <a href="http://jekyllbootstrap.com/">Jekyll Bootstrap</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
+

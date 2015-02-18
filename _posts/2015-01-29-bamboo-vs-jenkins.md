@@ -17,7 +17,7 @@ You can see all levels of mobile CI these days. Some would still install builds 
 
 The advanced level of CI would include distributed build systems with multiple build nodes, support for automated unit and UI tests, running tests on physical devices, automatic deployment to TestFlight, Hockey App, Over the Air, and much more. It becomes not just mobile development, but spans into areas like DevOps and others. [Etsy's blog post](https://codeascraft.com/2014/02/28/etsys-journey-to-continuous-integration-for-mobile-apps/) is a good example of where this path can take you.
 
-If you decide to take mobile CI seriously, you have to pick a build server to start with.
+If you decide to take mobile CI under your total control, you have to pick a build server to start with.
 
 I personally have worked with Bamboo for 1.5 years and I'm dealing with Jenkins right now, so I have few insights and can give some comparison of the two.
 
@@ -29,7 +29,7 @@ Both are built using Java, both will need a database setup. Jenkins and Bamboo w
 
 Being Java applications both will require similar JVM configuration. Default configuration won't really serve you well. You'll experience out of memory issues as soon as you add a couple of basic build plans/projects.
 
-And lot's of other things are similar: configuration behind proxy, login vs non-login user ([Launch Agent vs Daemon]({% post_url 2015-02-01-mobile-ci-daemon-vs-agent %})), [OSX Keychain]({% post_url 2015-02-01-mobile-ci--osx-keychain %}), [iOS Simulator]({% post_url 2015-02-01-mobile-ci--ios-simulator %}), etc.
+And lot's of other things are similar: configuration behind proxy, login vs non-login user ([Launch Agent vs Daemon]({% post_url 2015-02-01-mobile-ci-daemon-vs-agent %})), [OS X Keychain]({% post_url 2015-02-01-mobile-ci--osx-keychain %}), [iOS Simulator]({% post_url 2015-02-01-mobile-ci--ios-simulator %}), etc.
 
 ## GUI
 Obviously, this is not a comparison criteria at all. This criteria is as subjective as it could possibly be!
@@ -38,7 +38,7 @@ Out of the box Bamboo UI looks much better than Jenkins version.
 
 With Jenkins there are ways to improve your day to day user experience. You can customize theme and even make your custom UI improvements, like adding "Build Now" button where you like it.
 
-You should start by installing [Simple Theme Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Simple+Theme+Plugin) and then configure it with one of the available themes. Not all the themes will look good, it all depends on the Jenkins version you have and browser you use, etc. I tried a buch of them and ironically enough the only theme that looks good on our production CI box is called ["Atlassian"](https://github.com/djonsson/jenkins-atlassian-theme). But I'm dealing with slightly outdated Jenkins version, you could get better results with up to date Jenkins.
+You should start by installing [Simple Theme Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Simple+Theme+Plugin) and then configure it with one of the available themes. Not all the themes will look good, it all depends on the Jenkins version you have and browser you use, etc. I tried a bunch of them and ironically enough the only theme that looks good on our production CI box is called ["Atlassian"](https://github.com/djonsson/jenkins-atlassian-theme). But I'm dealing with slightly outdated Jenkins version, you could get better results with up to date Jenkins.
 
 There's multitude of [UI, List View and Page Decorator plugins](https://wiki.jenkins-ci.org/display/JENKINS/Plugins) available for Jenikns. Some of them must be good and help you customize you Jenkins look & feel and functionality.
 
@@ -57,7 +57,7 @@ Jenkins features **127** plugins just for reporting, that's almost as much as Ba
 
 _Publish HTML_
 
-If you ever used [Clang Static Analyzer]({% post_url 2015-02-08-clang-static-analyzer %}) for your iOS projects, you know then that there's no proper reporing plugin for this task. You end up with HTML report that needs to be published and made available in build project/plan summary.
+If you ever used [Clang Static Analyzer]({% post_url 2015-02-08-clang-static-analyzer %}) for your iOS projects, you know then that there's no proper reporting plugin for this task. You end up with HTML report that needs to be published and made available in build project/plan summary.
 
 With Bamboo you create a new [Shared Artifact](https://confluence.atlassian.com/display/BAMBOO/Sharing+artifacts), with Jenkins you use [HTML Publisher plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin).
 
@@ -79,9 +79,17 @@ _Static Analyzers Reports_
 
 In fact, the same reporting plugin should be able to pick up output of Clang Static Analyzer which I mentioned before. However I couldn't figure out the way to make Clang Static Analyzer to spit out correct XML file.
 
-With Bamboo, unfortunatelly, all you have is publishing HTML report via shared artifact.
+With Bamboo, unfortunately, all you have is publishing HTML report via shared artifact.
 
 P.S. I'm a big fan of Swift programming language, but one thing makes me a bit sad. It will take some time before we get tools like OCLint available for Swift.
+
+_Warnings_
+
+If you run CI tasks such as build, test, analyze and lint, often you don't want you build project/plan to stop immediately if it encounters an error, for example test error. You still want your reporting tasks to run and pick up those errors and generate reports for them. This often leads to a problem where you have compilation error but the build is marked as passing. Preferred way to avoid this issue is to have a reporting task which will pick up all the errors and mark build as failed if needed.
+
+Jenkins has [Warnings plugin](https://wiki.jenkins-ci.org/display/JENKINS/Warnings+Plugin) for that. It will scan build logs and detect warnings and errors generated by compiler, and it includes support for clang so xcodebuild is well covered. All you need is to configure thresholds and fail builds if there were compile errors. Supported by Job DSL as well.
+
+I don't know about Bamboo plugin to do the same job. I remember myself few months ago grepping test logs for errors and then marking builds as failed by doing something like `exit 1`.
 
 _Functional Tests_
 
@@ -327,15 +335,15 @@ Why the server is in the cloud and the agent/node is not? - you'd ask. Well, tha
 ## Mac Support
 Right, this whole comparison is focusing on Mobile CI after all, meaning you have to deal with one of the most popular mobile platforms these days - that is iOS.
 
-To build an iOS app you must have Xcode, which can run only on OSX (unless you want to follow the path of certain insanity and make it work on other OS).
+To build an iOS app you must have Xcode, which can run only on OS X (unless you want to follow the path of certain insanity and make it work on other OS).
 
 _Hackintosh_
 
-Not a very good idea I'd say. The company does iOS development and wants to go with Hackintosh to setup OSX build server. Really?
+Not a very good idea I'd say. The company does iOS development and wants to go with Hackintosh to setup OS X build server. Really?
 
 _Cloud (aka OnDemand)_
 
-Could be a really good option, but not with industry giants like AWS. AWS or alike is where you'd go if using Bamboo OnDemand feature. I can find posts as old as 2011 discussing this issue: [one](https://answers.atlassian.com/questions/22655/bamboo-mac-agent), [two](https://jira.atlassian.com/browse/BAM-11870). Apple doesn't make it easy to run virtual OSX instances to the extent that none of the big cloud providers are brave enough to provide official support for this feature. These days you can go with one of the many Mac Mini colocation services. You either rent a Mac hardware or even provide your own.
+Could be a really good option, but not with industry giants like AWS. AWS or alike is where you'd go if using Bamboo OnDemand feature. I can find posts as old as 2011 discussing this issue: [one](https://answers.atlassian.com/questions/22655/bamboo-mac-agent), [two](https://jira.atlassian.com/browse/BAM-11870). Apple doesn't make it easy to run virtual OS X instances to the extent that none of the big cloud providers are brave enough to provide official support for this feature. These days you can go with one of the many Mac Mini colocation services. You either rent a Mac hardware or even provide your own.
 
 _Self-hosted_
 
@@ -348,9 +356,9 @@ Next step is to install remote agent/node and get it running. As I mentioned alr
 ### Bamboo Remote Agent
 Things you definitely need to know in regards to Bamboo remote agent.
 
-[The rumor has it that] Atlassian are using Mac OSX to develop their products, including Bamboo, but OSX is never ever listed as _officially_ supported. Indeed, why would you choose to run your JIRA, Stash, Bamboo, whatever, on OSX server? Hopefully with increasing demand for iOS CI Atlassian will put a bit higher priority on fixing Bamboo issues for OSX, and there's plenty btw.
+[The rumor has it that] Atlassian are using Mac OS X to develop their products, including Bamboo, but OS X is never ever listed as _officially_ supported. Indeed, why would you choose to run your JIRA, Stash, Bamboo, whatever, on OS X server? Hopefully with increasing demand for iOS CI Atlassian will put a bit higher priority on fixing Bamboo issues for OS X, and there's plenty btw.
 
-Before you even start using remote agent on OSX, you have to experience a bit of pain [when trying to set it up]({% post_url 2015-02-01-bamboo-remote-agent%}).
+Before you even start using remote agent on OS X, you have to experience a bit of pain [when trying to set it up]({% post_url 2015-02-01-bamboo-remote-agent%}).
 
 Major and the most important group of issues is related to **Artifacts Sharing**.
 
@@ -378,7 +386,7 @@ When I faced this problem I ended up sharing artifacts via Amazon S3 bucket. Thi
 
 Read the [Jenkins Remote Node installation post]({% post_url 2015-02-01-jenkins-remote-node %}) to get initial overview.
 
-As you can see, there are common problems related to running SSH sessions as non-login user and others. I personally ended up running remote node as OSX Launch Daemon. This works, but is not ideal.
+As you can see, there are common problems related to running SSH sessions as non-login user and others. I personally ended up running remote node as OS X Launch Daemon. This works, but is not ideal.
 
 I have nothing yet to say about artifact copy speed from slave to master in regards to Jenkins setup, but stay tuned and/or post a comment if you have any knowledge on the matter.
 
@@ -388,7 +396,7 @@ I wanted to mention Android in this last section, after all it's Mobile too.
 
 I wrote one post about building Android - [Build Android in The Cloud]({% post_url 2014-05-29-build-android-in-the-cloud %}) which already provides some details.
 
-In regards to Bamboo vs Jenkins comparison, almost everything I mentioned for iOS applies to Android, except the very big and troublesome Mac OSX part. You can, and you should build Android on Linux systems, and that's exactly what AWS instances are running on! It means that if you have 25 build agents/nodes in the cloud, all 25 of them can be used to build Android projects.
+In regards to Bamboo vs Jenkins comparison, almost everything I mentioned for iOS applies to Android, except the very big and troublesome Mac OS X part. You can, and you should build Android on Linux systems, and that's exactly what AWS instances are running on! It means that if you have 25 build agents/nodes in the cloud, all 25 of them can be used to build Android projects.
 
 I had experience with building Android projects and running Calabash UI Automation tests using Bamboo OnDemand setup hosted in AWS cloud. It worked (and what I was last told it still works) flawless and scalability of AWS really pays back. Despite the fact that building Android project was way more slower than building similar iOS project, that wasn't really a concern given the number of resources available to do the job.
 

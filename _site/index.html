@@ -129,62 +129,98 @@
 <ul>
   
     <li>
-      <a href="/2015/02/08/oclint">OCLint</a>
+      <a href="/mobile%20ci/2015/02/15/install-java-on-mac-os-x">Install Java on Mac OS X</a>
       
+<p>A short how-to for installing and configuring Java Development Kit on Mac OS X.</p>
+
+
+    </li>
+  
+    <li>
+      <a href="/mobile%20ci/2015/02/15/cocoapods-for-enterprise">CocoaPods for Enterprise</a>
+      
+<p>A practical example of using CocoaPods for enterprise projects.</p>
+
+
+    </li>
+  
+    <li>
+      <a href="/mobile%20ci/2015/02/08/oclint">Mobile CI - OCLint</a>
+      
+<p><a href="http://oclint.org/">OCLint</a> is a fantastic static code analysis tool for improving quality and reducing defects by inspecting C, C++ and Objective-C code.</p>
+
 
     </li>
   
     <li>
       <a href="/2015/02/08/mobile-ci---unit-tests">Mobile CI - Unit Tests</a>
       
+<p>TODO:</p>
+
 
     </li>
   
     <li>
       <a href="/2015/02/08/mobile-ci---makefiles">Mobile CI - Makefiles</a>
       
+<p>TODO:</p>
+
 
     </li>
   
     <li>
       <a href="/2015/02/08/code-coverage-for-ios">Code Coverage for iOS</a>
       
+<p>TODO:</p>
+
 
     </li>
   
     <li>
       <a href="/2015/02/08/clang-static-analyzer">Clang Static Analyzer</a>
       
+<p>TODO:</p>
+
 
     </li>
   
     <li>
       <a href="/2015/02/08/bitbucket-branches--job-dsl">Bitbucket Branches &amp; Job DSL</a>
       
+<p>TODO:</p>
+
 
     </li>
   
     <li>
-      <a href="/2015/02/01/xcode-derived-data">Xcode Derived Data</a>
+      <a href="/mobile%20ci/2015/02/01/xcode-derived-data">Xcode Derived Data</a>
       
+<p>What is Xcode Derived Data and why is it important?</p>
+
 
     </li>
   
     <li>
       <a href="/2015/02/01/mobile-ci-daemon-vs-agent">Mobile CI Daemon vs Agent</a>
       
+<p>TODO:</p>
+
 
     </li>
   
     <li>
-      <a href="/2015/02/01/mobile-ci--osx-keychain">Mobile CI &amp; OSX Keychain</a>
+      <a href="/2015/02/01/mobile-ci--osx-keychain">Mobile CI &amp; Mac OS X Keychain</a>
       
+<p>TODO:</p>
+
 
     </li>
   
     <li>
       <a href="/2015/02/01/mobile-ci--ios-simulator">Mobile CI &amp; iOS Simulator</a>
       
+<p>TODO:</p>
+
 
     </li>
   
@@ -197,46 +233,17 @@
     </li>
   
     <li>
-      <a href="/2015/02/01/jenkins-ci-server-on-osx">Jenkins CI Server on OSX</a>
+      <a href="/mobile%20ci/2015/02/01/jenkins-ci-server-on-osx">Jenkins CI Server on Mac OS X</a>
       
+<p>A guide for setting up a Jenkins CI server on Mac OS X machine.</p>
+
 
     </li>
   
     <li>
-      <a href="/2015/02/01/bamboo-remote-agent">Bamboo Remote Agent</a>
+      <a href="/mobile%20ci/2015/02/01/bamboo-remote-agent">Bamboo Remote Agent on Mac OS X</a>
       
-<p>use these links
-https://confluence.atlassian.com/display/BAMBOO021/Running+Bamboo+behind+a+firewall+with+Remote+Agents+outside+the+firewall</p>
-
-<p>why it can’t sit in the cloud
-https://answers.atlassian.com/questions/22655/bamboo-mac-agent</p>
-
-<p>how to get the jar
-how to configure it’s launch
-how to make it a launch agent (and why not launch daemon)
-how to configure plist, what are other options around that
-what’s the purpose of .sh runner script and how it relates to jar</p>
-
-<p>fails to get fingerprint and other stuff</p>
-
-<p>put all the notes about failover url
-it must have a host name or ip when both are running in local environment</p>
-
-<p>it must have an ip (hostname won’t work) when server is outside your network (e.g. aws cloud)</p>
-
-<p>how to enable logging and use it for debugging problems</p>
-
-<p>keychain: might be good as a separate note
-how to unlock keychain for it (all the keys)
-how to unlock keychain as part of build scripts (might be good as a separate note)</p>
-
-<p>simulator: separate note
-how to enable dev mode on the machine (and why)
-how to work with simulator, reset it (via ios-sim old days, via xcrun since xcode 6)</p>
-
-<p>derived data - separate and very short note</p>
-
-<p>note on the Docker with the link I saw once</p>
+<p>A short giude for installing and configuring Bamboo Remote Agent on Mac OS X.</p>
 
 
     </li>
@@ -244,52 +251,16 @@ how to work with simulator, reset it (via ios-sim old days, via xcrun since xcod
     <li>
       <a href="/2015/02/01/bamboo-group-agent">Bamboo Group Agent</a>
       
-<p>what is it for? why do you need to use it?
-example: a setup with server and agents in the cloud
-and self-hosted mac agent</p>
-
-<p>most plans will expect default capabilities because all the agents are same (cloned)
-so there’s no need to define those special capabilities most of the time
-so you have a swarm of build plans with no capabilities
-and any of those will be more than happy to jump on your mac agent</p>
-
-<p>solution:
-a - tell other devs to fix their plans - unreal, most plans were created ages ago and it’s just difficult to carry such work trying to orchestrate so many other peeps
-a.a - fix them yourself - hah!</p>
-
-<p>b - use group agent
-group agent marks the agent as part  of a group
-only plans belonging to this group can run on this agent
-you list groups separated by comma when configuring it
-this part prevents all other build plans from using group agent</p>
-
-<p>when creating plans you mark them as requiring build agent
-this part locks your plan to a group agent</p>
-
-<p>drawbacks:
-lock the entire plan, no way to lock on job basis
-with a typical ios plan, only build, unit test and some packaging/signing requires OSX (xcode)
-all the rest (upload to hockey, testflight, etc., reporting, ) only needs build artifacts and network access
-depending on your plan only 20% to 50% os actual jobs need OSX,
-since mac agent is a scarce resource you’d benefit from running all the other jobs on cloud agents
-but it’s not possible</p>
-
-<p>reason:
-there isn’t much to be done
-the API (URL) that atlassian provides for plugin developers only allows filtering target agents for the plan
-there’s no granular control for jobs
-so just accept the reality and look for ways to optimize the non-OSX parts of the build plan</p>
-
-<p>another drawback: deployment projects
-describe the problem, provide the solution
-add link to a custom group agent plugin build</p>
+<p>TODO:</p>
 
 
     </li>
   
     <li>
-      <a href="/2015/02/01/bamboo-ci-server-on-osx">Bamboo CI Server on OSX</a>
+      <a href="/mobile%20ci/2015/02/01/bamboo-ci-server-on-osx">Bamboo CI Server on Mac OS X</a>
       
+<p>This article covers the details of installing a <a href="https://www.atlassian.com/software/bamboo">Bamboo</a> CI Server on Mac OS X.</p>
+
 
     </li>
   
@@ -327,7 +298,7 @@ Accompanied by <a href="https://bitbucket.org/i4niac/flappy-boo">Flappy Boo</a> 
     </li>
   
     <li>
-      <a href="/references/2014/06/05/shark-2-for-ios">Shark 2 for iOS/OSX</a>
+      <a href="/references/2014/06/05/shark-2-for-ios">Shark 2 for iOS/OS X</a>
       
 <p>SHARK provides libraries for the design of adaptive systems, including methods for linear and nonlinear optimization (e.g., evolutionary and gradient-based algorithms), kernel-based algorithms and neural networks, and other machine learning techniques.</p>
 

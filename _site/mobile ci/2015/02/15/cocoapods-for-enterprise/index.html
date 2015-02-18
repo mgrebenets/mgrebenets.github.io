@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="author" content="Maksym Grebenets" />
+    <title>CocoaPods for Enterprise</title>
+
+    <link rel="stylesheet" href="/assets/themes/dinky/css/styles.css">
+    <link rel="stylesheet" href="/assets/themes/dinky/css/pygment_trac.css">
+    <script src="/assets/themes/dinky/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header"><a href="/">NSBogan</a></h1>
+        <p class="header">mobile ios android xcode automation calabash cucumber</p>
+        <ul>
+          
+          
+          
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+        </ul>
+        
+        
+        <div class="misc vcard">
+          <h4>about</h4>
+          <ul>
+            
+            <li class="contact"><address><span class="author fn n">Maksym Grebenets</span> - <span class="fn email">mgrebenets@gmail.com</span></address></li>
+            
+            
+            <li class="github"><a href="http://github.com/mgrebenets/" rel="me">github.com/mgrebenets</a></li>
+            
+            
+            <li class="twitter"><a href="http://twitter.com/mgrebenets/" rel="me">twitter.com/mgrebenets</a></li>
+            
+            
+            
+            
+            
+          </ul>
+        </div><!-- misc -->
+        
+      </header>
+
+      <section>
+      
+<section>
+  <h1>CocoaPods for Enterprise</h1>
+
+  
+<p>A practical example of using CocoaPods for enterprise projects.</p>
+
+<!--more-->
+
+<p>The “Enterpise” definition isn’t that clear and is not something standard. I will define it as follows.</p>
+
+<ul>
+  <li>Enterprise is a company that builds more that one app on the same platform.</li>
+  <li>Has a large number of in-house libraries and modules.</li>
+  <li>Has a rather complex project configuration.</li>
+</ul>
+
+<p>The challenge is to adopt CocoaPods for such projects. This is actually more of a case-study than success story of adopting CocoaPods.</p>
+
+<h2 id="xcconfig">xcconfig</h2>
+
+<p>One thing that “complex” project setup means is extensive use of xcconfig files. The problem is that CocoaPods generates it’s own xcconfigs and expects them to be applied to project target. If it detects existing xcconfigs it displays a warning in the end of generation step. Solution is to follow the advise and include Pods xcconfig in the very last xcconfig file which is applied to a target.</p>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="c1">// Pods</span>
+<span class="cp">#include &quot;Pods/Target Support Files/Pods/Pods.debug.xcconfig&quot;</span></code></pre></div>
+
+<p>Make sure you do that for all targets and all configurations.</p>
+
+<h2 id="inherited">$(inherited)</h2>
+
+<p>This is next issue which is <a href="https://github.com/CocoaPods/CocoaPods/issues/1761">known to CocoaPods users</a>.</p>
+
+<p>The problem is that CocoaPods assumes it’s the only thing in the world using xcconfigs. So it never ever uses <code>$(inherited)</code> thus it doesn’t pick up any of the previous definitions when included into other xcconfigs.</p>
+
+<p>One of the solutions is to patch Pods xcconfig files as part of <code>pod upate</code> or <code>pod install</code> command. This is what post-install hooks are for. Consider this example</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Podfile for Alfred</span>
+<span class="n">source</span> <span class="s1">&#39;https://github.com/CocoaPods/Specs.git&#39;</span>
+
+<span class="n">platform</span> <span class="ss">:ios</span><span class="p">,</span> <span class="s1">&#39;7.0&#39;</span>
+
+<span class="n">link_with</span> <span class="s1">&#39;BT&#39;</span>
+<span class="n">pod</span> <span class="s1">&#39;Facebook-iOS-SDK&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 3.20.0&#39;</span>
+
+<span class="n">post_install</span> <span class="k">do</span> <span class="o">|</span><span class="n">installer</span><span class="o">|</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Running post install hooks&quot;</span>
+    <span class="nb">puts</span> <span class="s2">&quot;Patching Pods xcconfig files&quot;</span>
+    <span class="n">workDir</span> <span class="o">=</span> <span class="no">Dir</span><span class="o">.</span><span class="n">pwd</span>
+    <span class="n">installer</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">target</span><span class="o">|</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">build_configurations</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+            <span class="n">xcconfigFilename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">workDir</span><span class="si">}</span><span class="s2">/Pods/Target Support Files/Pods/Pods.</span><span class="si">#{</span><span class="n">config</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">downcase</span><span class="si">}</span><span class="s2">.xcconfig&quot;</span>
+            <span class="n">xcconfig</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">xcconfigFilename</span><span class="p">)</span>
+            <span class="c1"># insert $(inherited) for HEADER_SEARCH_PATHS and OTHER_LDFLAGS, make sure there&#39;s only one occurrence</span>
+            <span class="n">patchedXcconfig</span> <span class="o">=</span> <span class="n">xcconfig</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/HEADER_SEARCH_PATHS = (?&lt;first&gt;[^\$])/</span><span class="p">,</span> <span class="s1">&#39;HEADER_SEARCH_PATHS = $(inherited) \k&lt;first&gt;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">gsub</span><span class="p">(</span><span class="sr">/OTHER_LDFLAGS = (?&lt;first&gt;[^\$])/</span><span class="p">,</span> <span class="s1">&#39;OTHER_LDFLAGS = $(inherited) \k&lt;first&gt;&#39;</span><span class="p">)</span>
+            <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">xcconfigFilename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">file</span><span class="o">|</span> <span class="n">file</span> <span class="o">&lt;&lt;</span> <span class="n">patchedXcconfig</span> <span class="p">}</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>The <code>post_install</code> hook iterates through all targets, figures out the full path to generated Pods xcconfig and patches it by prepending <code>$(inherited)</code> for all occurrences of <code>HEADER_SEARCH_PATHS</code> and <code>OTHER_LDFLAGS</code>.</p>
+
+<h2 id="git-submodules-and-proxy">Git Submodules and Proxy</h2>
+
+<p>This another issue that may happen in “enterprise” environment, especially if proxy is involved. CocoaPods is not able to checkout pods with submodules. An example of a pod with such problems is <a href="http://stackoverflow.com/questions/25953246/facebook-ios-sdk-installation-via-cocoapods">Facebook SDK</a>.</p>
+
+<p>To avoid this problem in the first place I would recommend to use pods with static frameworks instead of those that clone whole source base. Well, not for all pods, but this is often useful for 3rd party SDKs that don’t update often. This is what pods like Flurry, Crashlytics and others do. For some reason Facebook doesn’t have official podspec for framework only, but nothing stops you from creating one yourself and host it in-house.</p>
+
+<p>If you have to have those submodules, use the following git trick:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">git config --global url.https://github.com/.insteadOf git://github.com/</code></pre></div>
+
+<p>See discussions on <a href="http://stackoverflow.com/questions/1722807/git-convert-git-urls-to-http-urls">StackOverflow</a> and <a href="https://coderwall.com/p/sitezg/force-git-to-clone-with-https-instead-of-git-urls">this post</a>. This command will modify your <code>.gitconfig</code> by adding this line</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>url <span class="s2">&quot;https://&quot;</span><span class="o">]</span>       <span class="nv">insteadOf</span> <span class="o">=</span> git://</code></pre></div>
+
+<p>This will solve submodule issue and is much easier than other workarounds like messing up with proxy stuff and tools like <code>socat</code>.</p>
+
+<h2 id="git-submodules-for-internal-components">Git Submodules for Internal Components</h2>
+
+<p>Another blocker for migration is all those internal libraries you already use as submodules in your project. You still want to be able to change their code right inside submodule directory and work with git in-place. With pure CocoaPods approach this is not possible since all your changes will be reset on next <code>pod update</code>.</p>
+
+<p>However, there’s a beatufil work-around that allows you to benefit from both worlds (submodules and pods). Here’s <a href="http://albertodebortoli.github.io/blog/2014/03/11/cocoapods-working-with-internal-pods/">a great article</a> on the matter.</p>
+
+<p>The idea is to use so called <em>Development Pods</em>. That means in your Podfile you specify the path to a submodule directory which has podspec file. This way CocoaPods ignores version information in podspec and uses latest files from submodule directory to generate pods. You get all the benefits of working with submodules code directly and then get all the flexibility of CocoaPods approach.</p>
+
+<h2 id="build-problems">Build Problems</h2>
+
+<p>Final paragraph is related to building projects with <code>xcodebuild</code> from command line. This is what happens on CI box after all.</p>
+
+<p>If you try to run your old scripts which use custom configuration build directory you may run into link errors with Xcode not being able to find library file for Pods (<code>libPods.a</code>). Tools like <code>xctool</code> have this problem fixed, but I recall earlier version of <code>xctool</code> being prone to the same problem.</p>
+
+<p>The solution is twofold.</p>
+
+<ul>
+  <li>If specifying custom <code>CONFIGURATION_BUILD_DIR</code> then make it an <strong>absolute</strong> path</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Bad</span>
+<span class="nv">CONFIGURATION_BUILD_DIR</span><span class="o">=</span>build
+<span class="c"># Good</span>
+<span class="nv">CONFIGURATION_BUILD_DIR</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/build</code></pre></div>
+
+<ul>
+  <li>If overriding <code>CONFIGURATION_BUILD_DIR</code> you <strong>must</strong> also specify <code>OBJROOT</code>, <code>SYMROOT</code> and <code>DSTROOT</code> and make sure all those are <strong>absolute</strong> paths as well</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># example</span>
+<span class="nv">OBJROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/build <span class="nv">SYMROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/build <span class="nv">DSTROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/build</code></pre></div>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Example of complete build command</span>
+xcodebuild clean build <span class="se">\</span>
+  -workspace Sandbox-ObjC.xcworkspace <span class="se">\</span>
+  -scheme Sandbox-ObjC <span class="se">\</span>
+  -configuration Release <span class="se">\</span>
+  <span class="nv">CONFIGURATION_BUILD_DIR</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/build <span class="se">\</span>
+  <span class="nv">OBJROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/build <span class="se">\</span>
+  <span class="nv">SYMROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/build <span class="se">\</span>
+  <span class="nv">DSTROOT</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/build</code></pre></div>
+
+
+
+  
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+</section>
+
+
+      </section>
+
+      <footer>
+      <p><small>Hosted on <a href="http://pages.github.com/">GitHub Pages</a> using the <a href="https://github.com/sodabrew/theme-dinky">Dinky theme</a> for <a href="http://jekyllbootstrap.com/">Jekyll Bootstrap</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
+

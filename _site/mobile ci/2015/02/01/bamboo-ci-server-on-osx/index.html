@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="author" content="Maksym Grebenets" />
+    <title>Bamboo CI Server on Mac OS X</title>
+
+    <link rel="stylesheet" href="/assets/themes/dinky/css/styles.css">
+    <link rel="stylesheet" href="/assets/themes/dinky/css/pygment_trac.css">
+    <script src="/assets/themes/dinky/js/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header"><a href="/">NSBogan</a></h1>
+        <p class="header">mobile ios android xcode automation calabash cucumber</p>
+        <ul>
+          
+          
+          
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+        </ul>
+        
+        
+        <div class="misc vcard">
+          <h4>about</h4>
+          <ul>
+            
+            <li class="contact"><address><span class="author fn n">Maksym Grebenets</span> - <span class="fn email">mgrebenets@gmail.com</span></address></li>
+            
+            
+            <li class="github"><a href="http://github.com/mgrebenets/" rel="me">github.com/mgrebenets</a></li>
+            
+            
+            <li class="twitter"><a href="http://twitter.com/mgrebenets/" rel="me">twitter.com/mgrebenets</a></li>
+            
+            
+            
+            
+            
+          </ul>
+        </div><!-- misc -->
+        
+      </header>
+
+      <section>
+      
+<section>
+  <h1>Bamboo CI Server on Mac OS X</h1>
+
+  
+<p>This article covers the details of installing a <a href="https://www.atlassian.com/software/bamboo">Bamboo</a> CI Server on Mac OS X.</p>
+
+<!--more-->
+
+<h2 id="install">Install</h2>
+
+<p>The preferred way to install Bamboo is using official <a href="https://www.atlassian.com/software/bamboo/download?os=mac">Mac OS X installer</a>. Starting point for documentation is <a href="https://confluence.atlassian.com/display/BAMBOO/Installing+Bamboo+on+Mac+OS+X">official install guide</a>. Follow installer steps using default values.</p>
+
+<blockquote>
+  <p>This article assumes you are dealing with Bamboo version 5.2 and above. All examples are for version 5.7.2.</p>
+</blockquote>
+
+<p>To download tar-ball using command line run this command</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">wget http://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-5.7.2.tar.gz</code></pre></div>
+
+<p>Bamboo needs Java to be <a href="/mobile%20ci/2015/02/15/install-java-on-mac-os-x">installed</a>, recommended version are 1.6 or 1.7, I would advise to go with 1.7.</p>
+
+<p>Make a new home for Bamboo. It could be <code>/Applications/Bamboo</code> or <code>~/bamboo/bamboo-home</code> or whatever you want. For this post I’ll stick with second option. It is often recommended to create a special <code>bamboo</code> user and put all things in their home directory. To create a new user use System Preferences and create Standard user.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">su -u bamboo
+mkdir -p /Users/bamboo/bamboo-home</code></pre></div>
+
+<p>Note that I switch user (<code>su</code>) to work with Bamboo user’s files and folders. This way I stay away from possible permissions conflicts.</p>
+
+<p>Once downloaded unzip the tar-ball and copy <code>atlassian-bamboo-5.7.2</code> to bamboo user’s home folder. Rename it to just <code>bamboo</code> to make it version agnostic. Use you super user privileges to do that. Next change ownsership to give bamboo user all the access rights.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># in /Users/bamboo/</span>
+sudo chown -R bamboo bamboo</code></pre></div>
+
+<p>Then as a bamboo user go inside that folder. This is referred as <em>installation directory</em> and this is where you will install and run Bamboo from. Edit the file in <code>atlassian-bamboo/WEB-INF/classes/bamboo-init.properties</code>. Uncomment the line with <code>bamboo.home</code> and put the following.</p>
+
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">bamboo</span><span class="o">.</span><span class="na">home</span><span class="o">=/</span><span class="n">Users</span><span class="o">/</span><span class="n">bamboo</span><span class="o">/</span><span class="n">bamboo</span><span class="o">-</span><span class="n">home</span></code></pre></div>
+
+<p>This is where Bamboo will put all the customizations and build plan details.</p>
+
+<p>Now you should run <code>bin/start-bamboo.sh</code>, again as bamboo user.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">su bamboo
+./bin/start-bamboo.sh</code></pre></div>
+
+<p>Bamboo is now running <a href="http://localhost:8085/">http://localhost:8085/</a>.</p>
+
+<h2 id="configure">Configure</h2>
+
+<p>Next step is to configure Bamboo, heres <a href="https://confluence.atlassian.com/display/BAMBOO/Running+the+Setup+Wizard">official documentation</a>. Recommended way is to use Setup Wizard which presents itself when you open <a href="http://localhost:8085/">http://localhost:8085/</a> in the browser.</p>
+
+<p>Start by getting a license. You can always get a 30 days free evaluation license from Atlassian.</p>
+
+<p>Next select Custom Installation option. Have a look at Base URL, make sure the IP address is correct. Also this is a good moment to pause and double check that your future Bamboo server has a static IP address allocated. This will become really important when dealing with remote agents. Leave the rest unchanged and click Continue.</p>
+
+<p>Select Embedded database option. It is recommended to use other DB setup for production system. I might refine the article later to include setup details for PostgreSQL DB.</p>
+
+<p>Next choose to create a new Bamboo home, configure your username. Give it some time and you will be able to create your first build plan.</p>
+
+<h2 id="launch-agent">Launch Agent</h2>
+
+<p>Now it’s time to make sure Bamboo start automatically when build box restarts. As mentioned in <a href="/2015/02/01/mobile-ci-daemon-vs-agent">this article</a> recommended way is to use Launch Agent. Start by enabling automatic login for bamboo user in System Preferences.</p>
+
+<p>Next create <code>com.atlassian.bamboo.plist</code> in <code>/Users/bamboo/Library/LaunchAgents</code>. Do it as bamboo user to avoid messing up with permissions.</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="cp">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot;</span>
+<span class="cp">&quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span>
+<span class="nt">&lt;plist</span> <span class="na">version=</span><span class="s">&quot;1.0&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;dict&gt;</span>
+        <span class="nt">&lt;key&gt;</span>Label<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;string&gt;</span>com.atlassian.bamboo<span class="nt">&lt;/string&gt;</span>
+        <span class="nt">&lt;key&gt;</span>UserName<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;string&gt;</span>bamboo<span class="nt">&lt;/string&gt;</span>
+        <span class="nt">&lt;key&gt;</span>ProgramArguments<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;array&gt;</span>
+          <span class="nt">&lt;string&gt;</span>/Users/bamboo/bamboo/bin/start-babmoo.sh<span class="nt">&lt;/string&gt;</span>
+        <span class="nt">&lt;/array&gt;</span>
+        <span class="nt">&lt;key&gt;</span>KeepAlive<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;true/&gt;</span>
+        <span class="nt">&lt;key&gt;</span>RunAtLoad<span class="nt">&lt;/key&gt;</span>
+        <span class="nt">&lt;true/&gt;</span>
+    <span class="nt">&lt;/dict&gt;</span>
+<span class="nt">&lt;/plist&gt;</span></code></pre></div>
+
+<p>Make sure you create few aliases to start and stop Bamboo server from command line.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">alias </span>start-bamboo<span class="o">=</span><span class="s2">&quot;/Users/bamboo/bamboo/bin/start-babmoo.sh&quot;</span>
+<span class="nb">alias </span>stop-bamboo<span class="o">=</span><span class="s2">&quot;/Users/bamboo/bamboo/bin/stop-babmoo.sh&quot;</span>
+<span class="nb">alias </span>restart-bamboo<span class="o">=</span><span class="s2">&quot;stop-bamboo &amp; start-bamboo&quot;</span></code></pre></div>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<p>This section provides an example of issues you may run into while trying to fire up Bamboo.</p>
+
+<p>For example, you start Bamboo and see this instead of dashboard.</p>
+
+<p><img src="/assets/images/bamboo-bootstrap-failed.png" alt="Bamboo Bootstrap Failed" /></p>
+
+<p>To find out the reason look into Bamboo logs, specifically in <code>/Users/bamboo/bomboo/logs/catalina.out</code>.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">java.sql.SQLException: The database is already in use by another process: org.hsqldb.persist.NIOLockFile@340c5c3c<span class="o">[</span><span class="nv">file</span> <span class="o">=</span>/Users/bamboo/bamboo-home/database/defaultdb.lck, <span class="nv">exists</span><span class="o">=</span><span class="nb">true</span>, <span class="nv">locked</span><span class="o">=</span><span class="nb">false</span>, <span class="nv">valid</span><span class="o">=</span><span class="nb">false</span>, <span class="nv">fl</span> <span class="o">=</span>null<span class="o">]</span>: java.lang.Exception: checkHeartbeat<span class="o">()</span>: lock file <span class="o">[</span>/Users/bamboo/bamboo-home/database/defaultdb.lck<span class="o">]</span> is presumably locked by another process.</code></pre></div>
+
+<p>OK, so database is presumably locked by another process. In my case it meant there was another Bamboo running already. Double check it then by running <code>ps</code>.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">PID TTY           TIME CMD
+<span class="m">89838</span> ttys002    0:00.02 bash
+<span class="m">89865</span> ttys002    6:44.00 /Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home/bin/java -Djava.util.logging.config.file<span class="o">=</span>/Users/bamboo/bamboo/conf/logging.properties -Djava.util.logging.
+<span class="m">41644</span> ttys010    0:00.03 bash
+<span class="m">41672</span> ttys010    0:40.37 /Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home/bin/java -Djava.util.logging.config.file<span class="o">=</span>/Users/bamboo/bamboo/conf/logging.properties -Djava.util.logging.</code></pre></div>
+
+<p>Indeed it is. I have another terminal tab open running bamboo user session and Bamboo server.</p>
+
+<p>After I stop or kill all the instances I run it again and this time it works.</p>
+
+<p>This is just one example of troubles, all of them will pretty much present themselves via the same starting error page. Another common case is database upgrade, you can run into this issue if using PostgreSQL and upgrade it via Homebrew, so it’s recommended to pin PostgreSQL instead.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>This will get you going with basic Bamboo CI server. There’s a number of additional administrative tasks yet to be done. Like configuring user access, integration with other Atlassian products, network configuration, plugins, capabilities and much more. I wouldn’t envy anyone who would have to deal with all those tasks. Companies that take CI seriously normally have Dev Support team keeping whole infrastructure running, not just Bamboo.</p>
+
+
+  
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_developer = 1;
+    var disqus_shortname = 'mgrebenets'; // required: replace example with your forum shortname
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+</section>
+
+
+      </section>
+
+      <footer>
+      <p><small>Hosted on <a href="http://pages.github.com/">GitHub Pages</a> using the <a href="https://github.com/sodabrew/theme-dinky">Dinky theme</a> for <a href="http://jekyllbootstrap.com/">Jekyll Bootstrap</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
+

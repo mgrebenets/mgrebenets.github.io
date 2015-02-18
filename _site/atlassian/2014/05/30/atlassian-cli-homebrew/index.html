@@ -208,7 +208,7 @@ openssl sha1 atlassian-cli-3.9.0-distribution.zip
 <p>Our job is to cleanup first, then patch and rename some scripts and finally move the whole bunch to <code>/usr/local</code>. <code>/usr/local</code> is also called <em>prefix</em>, this is the location where Homebrew installs all packages, additionally there’s a special <code>prefix</code> variable available in the formula.</p>
 
 <h4 id="cleanup">Cleanup</h4>
-<p>So let’s cleanup. Since we are installing on OSX, we don’t need all the Windows stuff.</p>
+<p>So let’s cleanup. Since we are installing on OS X, we don’t need all the Windows stuff.</p>
 
 <div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Delete Windows batch scripts</span>
 <span class="n">rm</span> <span class="no">Dir</span><span class="o">[</span><span class="s2">&quot;*.bat&quot;</span><span class="o">]</span></code></pre></div>
