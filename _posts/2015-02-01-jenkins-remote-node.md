@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Jenkins Remote Node"
-description: "Setup and Configure Jenkins Remote Node"
+title: "Jenkins Remote Node on Mac OS X"
+description: "Setup and Configure Jenkins Remote Node on Mac OS X"
 category: Mobile CI
 tags: [mobile, ci, jenkins, remote, agent, slave, node]
 ---
