@@ -238,7 +238,6 @@ Defaults are stored as plist and are read as a dictionary. An example output loo
     heapSize = 512m;
     "http.proxyHost" = "my-company-proxy-host.com.au";
     "http.proxyPort" = 8080;
-    httpPort = 8080;
     "https.proxyHost" = "my-company-proxy-host.com.au";
     "https.proxyPort" = 8080;
     minHeapSize = 256m;
