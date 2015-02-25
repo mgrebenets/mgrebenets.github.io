@@ -93,6 +93,8 @@ scan-buld -k -v -v \
   xcodebuild clean build -project MyProject.xcodeproj -target MyTarget -configuration Debug
 {% endhighlight %}
 
+There are dozens of other options you can use to customize `scan-build`, try `scan-build -h` to see all of them.
+
 ## CI
 
 I've already touched this topic in my [Jenkins vs Bamboo]({% post_url 2015-01-29-bamboo-vs-jenkins %}) comparison. For both CI servers your best option is to publish clang static analyzer reports as HTML page. Analyzer warnings and errors will also be picked up by [Warnings plugin](https://wiki.jenkins-ci.org/display/JENKINS/Warnings+Plugin) in case of Jenkins, and you are up to some grepping or other voodoo if you are dealing with Bamboo.
