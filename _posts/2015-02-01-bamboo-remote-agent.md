@@ -249,7 +249,6 @@ From this moment on you need to configure your remote agent's Mac to be able to 
 
 You can find useful information in these articles
 
-- [iOS Simulator]({% post_url 2015-02-01-mobile-ci--ios-simulator %})
 - [Mac OS X Keychain]({% post_url 2015-02-01-mobile-ci--osx-keychain %})
 - [Xcode Derived Data]({% post_url 2015-02-01-xcode-derived-data %})
 
