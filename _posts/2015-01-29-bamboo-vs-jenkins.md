@@ -63,7 +63,7 @@ With Bamboo you create a new [Shared Artifact](https://confluence.atlassian.com/
 
 _Unit Tests_
 
-Of course you run [unit tests]({% post_url 2015-02-08-mobile-ci---unit-tests %}) as part of your CI, don't you? In that case you are well covered by reporting plugin on both Bamboo and Jenkins. Jenkins plugin also includes trending graphs, which is nice.
+Of course you run unit tests as part of your CI, don't you? In that case you are well covered by reporting plugin on both Bamboo and Jenkins. Jenkins plugin also includes trending graphs, which is nice.
 
 _Cobertura Code Coverage_
 
