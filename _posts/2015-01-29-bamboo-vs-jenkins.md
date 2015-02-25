@@ -29,7 +29,7 @@ Both are built using Java, both will need a database setup. Jenkins and Bamboo w
 
 Being Java applications both will require similar JVM configuration. Default configuration won't really serve you well. You'll experience out of memory issues as soon as you add a couple of basic build plans/projects.
 
-And lot's of other things are similar: configuration behind proxy, login vs non-login user ([Launch Agent vs Daemon]({% post_url 2015-02-01-mobile-ci-daemon-vs-agent %})), [OS X Keychain]({% post_url 2015-02-01-mobile-ci--osx-keychain %}), [iOS Simulator]({% post_url 2015-02-01-mobile-ci--ios-simulator %}), etc.
+And lot's of other things are similar: configuration behind proxy, login vs non-login user ([Launch Agent vs Daemon]({% post_url 2015-02-01-mobile-ci-daemon-vs-agent %})), OS X Keychain, iOS Simulator, etc.
 
 ## GUI
 Obviously, this is not a comparison criteria at all. This criteria is as subjective as it could possibly be!

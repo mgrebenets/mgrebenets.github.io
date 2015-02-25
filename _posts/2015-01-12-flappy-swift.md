@@ -14,4 +14,3 @@ Accompanied by [Flappy Boo](https://bitbucket.org/i4niac/flappy-boo) written in 
 
 ![Flappy Swift](https://bitbucket.org/i4niac/flappy-swift/raw/master/Assets/FlappySwift.png)
 ![Flappy Boo](https://bitbucket.org/i4niac/flappy-boo/raw/master/Assets/FlappyBoo.png)
-

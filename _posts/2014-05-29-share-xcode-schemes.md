@@ -204,4 +204,3 @@ chmod +x share_schemes.rb
 
 ### P.S.
 [Related thread](http://stackoverflow.com/questions/14368938/xcodebuild-says-does-not-contain-scheme) on StackOverflow.
-

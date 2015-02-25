@@ -243,16 +243,9 @@ If you agent sits in corporate network and server is in the outer world (e.g. EC
 
 To answer your question why Mac agent can be in the Cloud as well, see bits of my rant in [Bamboo vs Jenkins]({% post_url 2015-01-29-bamboo-vs-jenkins %}) and [this discussion](https://answers.atlassian.com/questions/22655/bamboo-mac-agent).
 
-## Further Agent Configuration
+## Summary
 
 From this moment on you need to configure your remote agent's Mac to be able to run Xcode builds and tests, as well as other CI tasks.
-
-You can find useful information in these articles
-
-- [Mac OS X Keychain]({% post_url 2015-02-01-mobile-ci--osx-keychain %})
-- [Xcode Derived Data]({% post_url 2015-02-01-xcode-derived-data %})
-
-## Summary
 
 This is _one of_ the ways to configure and run Bamboo remote agent.
 
