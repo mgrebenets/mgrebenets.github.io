@@ -31,13 +31,13 @@ The Apple's article recommends to create a separate configuration and set the fo
 - Instrument Program Flow (`GCC_INSTRUMENT_PROGRAM_FLOW_ARCS`)
   - This is required to get `.gcda` files.
 
-I have also specified the GCC settings names so you'd know how to enable this flags when building from command line or when using xcconfigs. The benefit of building from command line is that you don't have to create new configuration in the project, instead you can customize existing Debug configuration.
+I have also specified the GCC settings names so you'd know how to enable these flags when building from command line or when using xcconfigs. The benefit of building from command line is that you don't have to create new configuration in the project, instead you can customize existing Debug configuration.
 
 {% highlight bash %}
 xcodebuild test -project MyProject.xcodeproj -scheme MyScheme \
   -configuration Debug \
   -sdk iphonesimulator8.1 \
-  -destination "OS=8.1,name=iPad Retina" \
+  -destination OS=8.1,name="iPad Retina" \
   GCC_GENERATE_DEBUGGING_SYMBOLS=YES \
   GCC_GENERATE_TEST_COVERAGE_FILES=YES \
   GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES
@@ -54,8 +54,13 @@ I am using swizzling as well, but swizzle `tearDown` method of `XCTestCase`. Thi
 {% highlight objective-c %}
 #ifdef ENABLE_GCOV_FLUSH
 
-#import <XCTest/XCTest.h> // @import XCTest; for iOS 7 and up.
-#import <objc/runtime.h>
+@import XCTest;
+@import ObjectiveC.runtime;
+
+// If you have to build for versions below iOS 7.0, use this code instead
+// #import <XCTest/XCTest.h>
+// #import <objc/runtime.h>
+
 
 extern void __gcov_flush();
 
@@ -90,6 +95,7 @@ OK, so now you can add this file to your Xcode project. There are ways to automa
 {% highlight bash %}
 xcodebuild test -project MyProject.xcodeproj -scheme MyScheme \
   -configuration Debug \
+  CONFIGURATION_BUILD_DIR=build \
   -sdk iphonesimulator8.1 \
   -destination "OS=8.1,name=iPad Retina" \
   GCC_GENERATE_DEBUGGING_SYMBOLS=YES \
@@ -99,9 +105,9 @@ xcodebuild test -project MyProject.xcodeproj -scheme MyScheme \
   | tee test.log
 {% endhighlight %}
 
-Note that I'm redefining preprocessor definitions to enable `ENABLE_GCOV_FLUSH` and also want to reuse those already defined in Xcode project, that's why I reuse them and escape `$` sign for that. I'm also capturing logs in `test.log` for further processing.
+Note that I'm redefining preprocessor definitions to enable `ENABLE_GCOV_FLUSH` and also want to reuse those already defined in Xcode project, that's why I refer to them with help of escaping `$` sign. I'm also capturing logs in `test.log` for further processing.
 
-This has nothing to do with coverage reports, but you need to capture test results in a report format that most CI servers would understand. You can use [ocunit2junit](https://github.com/ciryon/OCUnit2JUnit) to convert OCUnit (now XCTest) report to [JUnit](http://junit.org/) format.
+This paragraph has nothing to do with coverage reports, but you need to capture test results in a report format that most CI servers would understand. You can use [ocunit2junit](https://github.com/ciryon/OCUnit2JUnit) to convert OCUnit (now XCTest) report to [JUnit](http://junit.org/) format.
 
 {% highlight bash %}
 # install
@@ -111,7 +117,7 @@ This has nothing to do with coverage reports, but you need to capture test resul
 cat test.log | ocunit2junit
 {% endhighlight %}
 
-Default output is in `test-reports` directory, point your CI report tasks to this location to pick up XML and generate test reports.
+Default output is in `test-reports` directory, point your CI report plugin to this location to pick up XML and generate test reports.
 
 If you are OK with using something other than `xcodebuild`, check out [Facebook's `xctool`](https://github.com/facebook/xctool). It has few options to help you get test reports without the need of `ocunit2junit`.
 
@@ -124,7 +130,7 @@ sudo -E easy_install pip
 pip install gcovr
 {% endhighlight %}
 
-Use `-E` option to tell `easy_install` to pick up current user's environment variables such as `HTTP_PROXY` while running as super user.
+Use `-E` option to tell `easy_install` to pick up current user's environment variables such as `HTTP_PROXY` while running as super user. Don't bother with this option if you can run `easy_install` as a non-sudoer, e.g. when you have custom Python installation.
 
 Use `-x` or `--xml` to generate XML report. `gcovr` has issues with generating HTML reports, we'll have to use another tool for the job later.
 
@@ -140,7 +146,7 @@ gcovr \
     --object-directory=${BUILD_DIR} -x > ${COVERAGE_REPORT}
 {% endhighlight %}
 
-This example also demonstrates the use of filter and exclude options to filter unwanted files from reports.
+This example also demonstrates the use of filter and exclude options to filter unwanted files from reports. `BUILD_DIR` points to the directory you defined with help of `CONFIGURATION_BUILD_DIR` when running the tests.
 
 The XML output is enough for CI tasks, but to have a sneak peek at readable HTML results on your computer you'll end up nowhere with `gcovr`. The tool to help at this time is [lcov](http://ltp.sourceforge.net/coverage/lcov.php).
 
@@ -159,7 +165,7 @@ lcov --remove ${LCOV_EXCLUDE} --output-file ${LCOV_INFO}
 genhtml ${LCOV_INFO} --output-directory ${LCOV_REPORTS_DIR}
 {% endhighlight %}
 
-Here again another use of exclude option to filter out unwanted results. `genhtml` is bundled with `lcov` installation. More documentation on `lcov` can be [found here](https://wiki.documentfoundation.org/Development/Lcov).
+Here you can see another use of exclude option to filter out unwanted results. `genhtml` is bundled with `lcov` installation. More documentation on `lcov` can be [found here](https://wiki.documentfoundation.org/Development/Lcov).
 
 ## Summary
 
