@@ -47,7 +47,7 @@ If you've just ran this command you will be surprised to find no `.gcda` files a
 
 > Set the UIApplicationExitsOnSuspend key to YES in your Info.plist file and send your running application to the background by pressing the home button.
 
-This is very un-automatic and very un-CI, Apple. [This readme](https://github.com/leroymattingly/XCode5gcovPatch) provides a list of other options. Well, the first one is again reacting to the event of app entering background, which is not good. The second option uses method swizzling and swizzles `tearDown` method of `XCTest` class. This way `GCOV` data will be flushed when _all_ the test cases are completed.
+This is very un-automatic and very un-CI, Apple. [This readme](https://github.com/leroymattingly/XCode5gcovPatch) provides a list of other options. Well, the first one is reacting to the event of app entering background, which is not good. The second option uses method swizzling and swizzles `tearDown` method of `XCTest` class. This way `GCOV` data will be flushed when _all_ the test cases are completed.
 
 I am using swizzling as well, but swizzle `tearDown` method of `XCTestCase`. This way data is flushed every time a test case finishes.
 
