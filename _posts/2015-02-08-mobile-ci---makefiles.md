@@ -11,19 +11,19 @@ A look at Xcode projects from another angle, trying to build things on another l
 
 <!--more-->
 
-When I started with iOS development, not much really existed in my noob view outside the Xcode IDE. For quite a while Xcode used to be my whole universe. I could go through the whole app life cycle from first line of code all the way to uploading it to AppStore, all of that in Xcode (except minor detour to iTunes Connect web interface). At some point my universe had to expand and I learned about basics of internal Xcode project structure, Xcode workspaces, `xcconfig` files, custom build phases and so on. Eventually I got out of the metaphorical Solar system (XCode IDE) and dived into the black void of terminal window and command line interface.
+When I started with iOS development, not much really existed in my noob view outside the Xcode IDE. For quite a while Xcode used to be my whole universe. I could go through the whole app life cycle from first line of code all the way to uploading it to AppStore, all of that in Xcode (except minor detour to iTunes Connect web interface). At some point my universe had to expand and I learned about basics of internal Xcode project structure, Xcode workspaces, `xcconfig` files, custom build phases and so on. Eventually I got out of the metaphorical Solar system (Xcode IDE) and dived into the black void of terminal window and command line interface.
 
 ## Xcode Limits
 
-In this article I will try to show you other ways to build Xcode projects. There's nothing bad with Xcode projects as such. As I mentioned before, you can have quite an elaborate configuration with multiple targets, schemes, cross-target dependencies. You can include and build sub-projects, define custom build phases such as running shell scripts. Then finally you can use `xcconfig` files to take out project settings out of XML format and control them in plain text.
+In this article I will try to show you other ways to build Xcode projects. There's nothing bad with Xcode projects as such. As I mentioned before, you can have quite an elaborate configuration with multiple targets, schemes, cross-target dependencies. You can include and build sub-projects, define custom build phases such as running shell scripts. Then finally you can use _xcconfig_ files to take out project settings out of XML format and control them in plain text.
 
 With all that goodness you will eventually get to the limits of what Xcode project can do. Here are some examples.
 
 [CocoaPods](http://cocoapods.org/). You have to get out of your "comfort zone" and run `pod install` and `pod setup` from command line to get Xcode project all set up. Though you could create a custom target with a shell script pre-build phase to do just that.
 
-If you have a lot of post-build phases with shell scripts, you probably want some of those to be executed only when you really need it. Have you ever seen hundreds of dSYMs uploaded to [Crashlytics](https://try.crashlytics.com/) because that small shell script phase was executed each time a developer would hit `Cmd + B`? That's just one example. You'd start tailoring that shell script with some ifs to get around the problem.
+If you have a lot of post-build phases with shell scripts, you probably want some of those to be executed only when you really need it. Have you ever seen hundreds of dSYMs uploaded to [Crashlytics](https://try.crashlytics.com/) because that small shell script phase was executed each time a developer would hit `Cmd + B`? That's just one example.
 
-No matter how sophisticated your `xcconfig` use is, you'll eventually want to build an app overriding some of build settings from command line. That's often the case in CI setup, where you want to build with another provisioning profile, sign with another signing identity, etc. Going into the code and changing `xcconfig` manually doesn't work for CI and it's too manual. Having dozens of targets with `xcconfig`s that differ in one or two lines is another not so pleasant experience.
+No matter how sophisticated your is your use of _xcconfigs_, you'll eventually want to build an app overriding some of build settings from command line. That's often the case in CI setup, where you want to build with another provisioning profile, sign with another signing identity, etc. Going into the code and changing _xcconfig_ manually doesn't work for CI and it's too manual. Having dozens of targets with _xcconfigs_ that differ in one or two lines is another not so pleasant experience.
 
 Back to shell scripts as custom build phases. Given that you have half a dozen of those, you will want to reuse them for other projects as well. Does copy-paste feel right? It should not and that's yet another reason to see how building iOS projects can be taken to the next level.
 
@@ -31,13 +31,13 @@ Back to shell scripts as custom build phases. Given that you have half a dozen o
 
 The answer, well, one of the answers, is [make](http://en.wikipedia.org/wiki/Make_%28software%29) utility and [makefiles](http://en.wikipedia.org/wiki/Makefile).
 
-`make` is a build automation tool. It automatically builds programs and libraries from source code by reading files called **makefiles** which specify how to derive the target program. Phew, that's enough of Wiki copy-paste. `make` was initially release in 1977! That's years before I myself was "released" so to say. By ways of evolution and inheritance `make` is a part Mac OS X by default, so why not trying to use it for something good.
+`make` is a build automation tool. It automatically builds programs and libraries from source code by reading files called **makefiles** which specify how to derive the target program. Phew, that's enough of Wiki copy-paste. `make` was initially released in 1977! That's years before I myself was "released" so to say. By ways of evolution and inheritance `make` is a part Mac OS X by default, so why not trying to use it for something good?
 
 ## Makefile
 
-So `make` is using makefiles, which contain so called _recipes_ often referred to as _targets_, a set of instructions for building the app, library, or whatever you are up to. Does `make clean` sound familiar now?
+`make` is using makefiles, which contain so called _recipes_ often referred to as _targets_, a set of instructions for building the app, library, or whatever you are up to. Does `make clean` sound familiar now?
 
-Makefile syntax is similar to shell syntax, but not exactly the same. The fact that you can use shell commands in makefile target makes it a bit more confusing.
+Makefile syntax is similar to shell syntax, but not exactly the same. The fact that you can use shell commands in makefile makes it a bit more confusing.
 
 ### Basic Recipes
 
@@ -67,13 +67,13 @@ help:
   @echo "help - display this message"
 {% endhighlight %}
 
-Let's see what's going on here. `all` is the default target which is executed when you just run `make`. Here you can see how target _dependencies_ can be used. `all` is dependent on `help` and `help` is just printing information about all available targets. Other than causing `help` to run `all` doesn't do anything else.
+Let's see what's going on here. `all` is the default target which is executed when you just run `make`. Here you can see how target _dependencies_ can be used. `all` is dependent on `help` and `help` is just printing information about all available targets. Other than causing `help` to run, `all` doesn't do anything else.
 
-Another trick - phony targets, those are all listed using special `.PHONY` target. Using phony targets is the way you can tell `make` utility to build those targets each time. By default `make` is smart and checks for any changes since last build and does nothing if it detects no changes. In this case I don't want that behavior, that's why I use phony targets.
+Another trick - phony targets, those are all listed as dependencies for a special `.PHONY` target. Using phony targets is the way you can tell `make` utility to build those targets each time. By default `make` is smart and checks for any changes since last build and does nothing if it detects no changes. In this case I don't want that behavior, that's why I use phony targets.
 
-The `clean` target cleans Xcode project using `xcodebuild` under the hood. It also removes the `build` folder. The actual recipe for `clean` is a number of shell commands. By default `make` will print out all the executed commands to stdout. The use of `@` as in `@echo` will remote the "echo Cleaning up..." line form stdout and you will see only the "Cleaning up..." message. Another nice thing is that just like with shell you can use `\` to split single command into multiple lines.
+The `clean` target cleans Xcode project using `xcodebuild` under the hood. It also removes the `build` folder. The actual recipe for `clean` is a number of shell commands. By default `make` will print out all the executed commands to stdout. The use of `@` as in `@echo` will remove the "echo Cleaning up..." line form stdout and you will see only the "Cleaning up..." message. Another nice thing is that just like with shell you can use `\` to split single command into multiple lines.
 
-This example also features the use of variables in a makefile. You might have noticed that it's less strict than the shell syntax, e.g. it allows use of spaces for assignment operation. Using `$()` you can reference variables, shell-like `${}` is also a valid syntax, as well as not using `()` or `{}`, but I'd recommend using one of those all the time. Having `$PROJECT` resolved as `$P`ROJECT is not the easiest thing to figure out. Try running `make clean` to see how it works. `make` lets you override variables from command line.
+This example also features the use of variables in a makefile. You might have noticed that it's less strict than the shell syntax, e.g. it allows use of spaces for assignment operation. Using `$()` you can reference variables, shell-like `${}` is also a valid syntax, as well as not using `()` or `{}`, but I'd recommend sticking with `$()` all the time. Having `$PROJECT` resolved as `$P` `ROJECT` is not the easiest thing to figure out. Try running `make clean` to see how it works. `make` lets you override variables from command line.
 
 {% highlight bash %}
 make clean SCHEME=MyOtherScheme
@@ -128,6 +128,8 @@ test:
 
 Well, to be honest, this doesn't look like the best example in the world, but still it demonstrates the use of functions. You can pack some reusable code into the function, then call functions from functions and eventually gain benefit from this approach. Interestingly enough, when it comes to calling functions makefiles do not tolerate spaces, as you can see I put no spaces after `,` when passing arguments. Arguments are positional and not named, you have to refer to them with `$(1)`, `$(2)` and so on. You can still use `@` to filter out extra output from stdout.
 
+To call a function you use `$(call function-name,arg1,arg2,...)` syntax.
+
 ### Shell Commands
 
 When writing code outside of target recipe, you can call shell commands using `shell` keyword.
@@ -144,7 +146,7 @@ Here's more advanced example, that demonstrates nesting of shell commands.
 CLANG_ANALYZER = $(shell dirname $$(which scan-build))/bin/clang-check
 {% endhighlight %}
 
-Note how I have to escape `$` with another `$` when capturing results of `which` command, that's because single `$` sign is part of makefile syntax.
+Note how I have to escape `$` with another `$` when capturing results of `which` command, that's because single `$` is part of makefile syntax and will try to resolve `$(which scan-biuild)` as makefile but not shell expression.
 
 An example for shell for-loop.
 
@@ -158,7 +160,7 @@ for-loop:
   done)
 {% endhighlight %}
 
-This code will loop through all files with `.h`, `.m` or `.mm` extensions. Again notice the use of double `$$` for referring to shell variables vs single `$` for makefile variables. The `@(...)` is used to wrap the whole expression and prevent it from showing up in stdout. It also demoes the use of multiple line scripts. Here's an example of a one-liner for-loop.
+This code will loop through all files with `.h`, `.m` or `.mm` extensions. Again notice the use of double `$$` for referring to shell variables vs single `$` for makefile variables. The `@(...)` is used to wrap the whole expression and prevent it from showing up in stdout. It also demoes the use of multiline scripts. Here's an example of a one-liner for-loop.
 
 {% highlight makefile %}
 BUILD_DIR = build
@@ -167,11 +169,11 @@ one-liner-for-loop:
   for f in $(shell find . -name $(BUILD_DIR)); do echo Removing $${f} ...; rm -rf $${f}; done
 {% endhighlight %}
 
-In general, any shell script will work, just don't forget to escape `$`s properly and keep an eye for makefile/shell mixed code.
+In general, any shell script will work, just don't forget to escape `$`s properly and keep an eye for makefile/shell syntax differences.
 
 ### Flow Control
 
-You have already seen that it's possible all shell flow control operators in the recipe. If you want that level of control outside the recipe, you can use makefile's own flow control operators.
+You have already seen that it's possible to use all shell flow control operators in the recipe. If you want that level of control outside the recipe, you can use makefile's own flow control operators.
 
 For example, a basic if-block.
 
@@ -207,10 +209,10 @@ check-ruby-syntax:
     )
 {% endhighlight %}
 
-This example is from a bit different Ruby world. It iterates through a list of platforms (linux, mac and windows), then for each platform it iterates through all `*.rb` files it can find. For each file it sets the shell environment variable `PLATFORM` and runs ruby syntax check command (`ruby -wc`) writing errors and warnings to the log file.
+This example is from a bit different world of Ruby. It iterates through a list of platforms (linux, mac and windows), then for each platform it iterates through all `.rb` files it can find. For each file it sets the shell environment variable `PLATFORM` and runs Ruby syntax check command (`ruby -wc`) writing errors and warnings to the log file.
 
 
-One more makefile command worth mentioning is `eval`. It can be used inside the recipe to assign new value to makefile variables, for example
+One more makefile command worth mentioning is `eval`. It can be used inside the recipe to assign new value to makefile variable, for example
 
 {% highlight makefile %}
 MAKEFILE_VAR = 0
@@ -223,7 +225,7 @@ Of course you can use more complex expressions, e.g. assign a result of some fun
 
 ### Includes and Reuse
 
-If rich DSL syntax wasn't enough, you can get another level of reuse from makefiles. You can include them to each other just plain old C header files.
+If rich DSL syntax wasn't enough, you can get another level of reuse from makefiles. You can include them to each other just like good old C header files.
 
 Consider this example
 
@@ -271,9 +273,9 @@ ci: clean build test analyze lint deploy
   echo "Running CI target ..."
 {% endhighlight %}
 
-All what is left to do is to collect reports. The beauty of this approach is that you don't have to open Jenkins/Bamboo/Team City/Whatever UI to modify the build job each time. Your whole build configuration is a code now and you make changes as part of project repository, that means all changes are tracked in VCS.
+All what is left to do is to collect reports. The beauty of this approach is that you don't have to open Jenkins/Bamboo/Team City/Whatever UI to modify the build job each time. Your whole build configuration is a code now and you make changes inside the project repository, that means all changes are tracked in version control system and can be reviewed.
 
-Even more, if multiple projects share the same structure, you can move build configuration into a common makefile and make it available on CI as part of Ruby gem, for example. There are certain tradeoffs if you do it this way. The latest version of common makefile has to be backwards compatible with all the projects. I have successfully applied this approach building 21 libraries with one common makefile.
+Even more, if multiple projects share the same structure, you can move build configuration into a common makefile and make it available on CI box as part of Ruby gem, for example. There are certain tradeoffs if you do it this way. The latest version of common makefile has to be backwards compatible with all the projects. I have successfully applied this approach building 21 libraries with one common makefile, so it's something that can be done.
 
 ## Summary
 

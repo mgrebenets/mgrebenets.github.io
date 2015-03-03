@@ -21,7 +21,7 @@ I find that for most applications I'm using 1.7, rarely 1.6 for some outdated an
 
 ## Java Home
 
-Lots of applications if not all expect `JAVA_HOME` environment variable to be set. This tells them where is the Java Virtual Machine (JVM) located. I would recommend to update your `~/.bash_profile` and add something like this:
+Lots of applications, if not all, expect `JAVA_HOME` environment variable to be set. This tells them where the Java Virtual Machine (JVM) is located. I would recommend to update your `~/.bash_profile` and add something like this:
 
 {% highlight bash %}
 # Default Java Home
@@ -44,4 +44,4 @@ Matching Java Virtual Machines (4):
 /Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home
 {% endhighlight %}
 
-If you are using shell other than bash, include the same in your shell's version of .bash_profile or even source .bash_profile.
+If you are using shell other than bash, include the same in your shell's version of `.bash_profile` or source it directly with `source .bash_profile`.

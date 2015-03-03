@@ -31,7 +31,7 @@ The Apple's article recommends to create a separate configuration and set the fo
 - Instrument Program Flow (`GCC_INSTRUMENT_PROGRAM_FLOW_ARCS`)
   - This is required to get `.gcda` files.
 
-I have also specified the GCC settings names so you'd know how to enable these flags when building from command line or when using xcconfigs. The benefit of building from command line is that you don't have to create new configuration in the project, instead you can customize existing Debug configuration.
+I have also specified the GCC settings names so you'd know how to enable these flags when building from command line or when using _xcconfigs_. The benefit of building from command line is that you don't have to create new configuration in the project, instead you can customize existing _Debug_ configuration.
 
 {% highlight bash %}
 xcodebuild test -project MyProject.xcodeproj -scheme MyScheme \

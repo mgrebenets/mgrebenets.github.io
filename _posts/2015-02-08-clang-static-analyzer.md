@@ -19,7 +19,7 @@ You may have used it already since a specific and stable build of clang static a
 xcodebuild analyze -project MyProject.xcodeproj -scheme MyScheme
 {% endhighlight %}
 
-Time to answer your question "Why not using bundled analyzer then?". I can give two reasons. First is that latest static analyzer build can have some fixes and new features, though some of those will be experimental. The second reason is more important for me, that is generating reports. Well, Xcode does generate compelling reports so to say. It highlights all the problems with those nice arrows and messages. However, the only way to look at those is in IDE itself. Most likely somewhere in configuration build directory one can dig out analyzer results and convert them to HTML or other report format. Standalone clang static analyzer makes report generation task much easier, and report are important for CI.
+Time to answer your question "Why not using bundled analyzer then?". I can give two reasons. First is that latest static analyzer build can have some fixes and new features, though some of those will be experimental. The second reason is more important for me, that is generating reports. Well, Xcode does generate compelling reports so to say. It highlights all the problems with those nice arrows and messages. However, the only way to look at those is in IDE itself. Most likely somewhere in configuration build directory one can dig out analyzer results and convert them to HTML or other report format. Standalone clang static analyzer makes report generation task much easier, and reports are important for CI.
 
 ## Installation
 
@@ -61,15 +61,19 @@ The basic usage is supposed to be as simple as this
 scan-buld -k -v -v xcodebuild clean build -project MyProject.xcodeproj -scheme MyScheme -configuration Debug
 {% endhighlight %}
 
-But in practice I find it not working as advertised if your project has custom build configuration and specifies a lot of warning flags. In those cases I find that falling back to clang static analyzer bundled with Xcode is more robust option.
+But in practice it doesn't always find the static analyzer this way. One way to avoid this problem is to specify clang static analyzer bundled with Xcode. Another option is to give it a full path to `clang-check`
 
 {% highlight bash %}
-# build a scheme
+# use analyzer bundled with xcode
 scan-buld -k -v -v --use-analyzer Xcode \
   xcodebuild clean build -project MyProject.xcodeproj -scheme MyScheme -configuration Debug
-{% endhighlight %}
 
-Like I said, I'm after reports most of the time, so not using some cutting edge analyzer features is OK with regards to the goals I have to achieve.
+# use path to clang-check executable
+CLANG_CHECK=$(dirname $(which scan-build))/bin/clang-check
+
+scan-buld -k -v -v --use-analyzer ${CLANG_CHECK} \
+  xcodebuild clean build -project MyProject.xcodeproj -scheme MyScheme -configuration Debug
+{% endhighlight %}
 
 Another note is that using `-scheme` will require code signing in the end. Try switching to `-target` if that is a problem, otherwise explicitly specify `CODE_SIGN_IDENTIFY` to `xcodebuild`.
 

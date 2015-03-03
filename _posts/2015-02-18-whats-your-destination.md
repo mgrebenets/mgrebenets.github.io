@@ -21,7 +21,7 @@ The -destination option takes as its argument a destination specifier describing
 
 By the way, pay a closer attention to the last sentence. It's a really nice feature, for example with single command you can run tests on multiple simulators.
 
-One of the keys supported is "platform" and there are 3 options: "OS X", "iOS" and "iOS Simulator". Let's get more details on the last two. iOS and iOS Simulator platforms both require a "name" and "OS" keys to specify device name and iOS version. The question is "How to get list of all names and OS versions?". There are many way to do that.
+One of the keys supported is "platform" and there are 3 options: "OS X", "iOS" and "iOS Simulator". Let's get more details on the last two. iOS and iOS Simulator platforms both require a "name" and "OS" keys to specify device name and iOS version. The question is "How to get list of all names and OS versions?". There are many ways to do that.
 
 ## Instruments
 
