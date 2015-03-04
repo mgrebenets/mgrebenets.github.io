@@ -33,9 +33,9 @@ You can click "Install remote agent" now.
 
 You are now looking at the page with further instructions. Just like [Jenkins build agent]({% post_url 2015-02-01-jenkins-remote-node %}) Bamboo Remote Agent is a Java JAR file that needs to be downloaded to a target agent machine and then ran there.
 
-[Bamboo Install Remote Agent]({{ site.url }}/assets/images/bamboo-install-remote-agent-page.png)
+![Bamboo Install Remote Agent]({{ site.url }}/assets/images/bamboo-install-remote-agent-page.png)
 
-Before you proceed you need to configure remote agent machine. Just like Bamboo server works well with a special user, remote agent will benefit from running under a designated user account. Create a Standard account from System Preferences, in this example we will name it `bambooagent` so this user's home will be `/Users/bambooagent`. To make the whole process easier from now one I am assuming that you are currently logged in as bamboo-agent user.
+Before you proceed you need to configure remote agent machine. Just like Bamboo server works well with a special user, remote agent will benefit from running under a designated user account. Create a Standard account from System Preferences, in this example we will name it `bambooagent` so this user's home will be `/Users/bambooagent`. To make the whole process easier from now on I am assuming that you are currently logged in as bamboo-agent user.
 
 ![Bamboo Create Bamboo Agent User]({{ site.url }}/assets/images/create-bamboo-agent-user.png)
 
@@ -49,7 +49,7 @@ mkdir bamboo-agent
 mkdir bamboo-agent-home
 {% endhighlight %}
 
-Installation directory is where you need to put agent JAR file and then this JAR will download other require files and keep them in installation directory. Updates will occur in this directory as well.
+Installation directory is where you need to put agent JAR file and then this JAR will download other required files and keep them in installation directory. Updates will occur in this directory as well.
 
 Home directory is the location for all the build jobs metadata, intermediate build files, artifacts and so on.
 
@@ -101,7 +101,7 @@ Note the highlighted parts. First the fact that Broker URI uses an IP address (_
 
 If you change `localhost` to `127.0.0.1` the results will be the same, that's because Broker URI is part of Bamboo server configuration and has to be set manually.
 
-> This is where I have add a note that I'm trying this on the train with no internet connection, so basically my laptop is offline. I also have `HTTP_PROXY` environment variable set, so no wonder agent can't resolve Broker URI with an IP address (even after I unset `HTTP_PROXY` variable).
+> This is where I have to add a note that I'm trying this on the train with no internet connection, so basically my laptop is offline. I also have `HTTP_PROXY` environment variable set, so no wonder agent can't resolve Broker URI with an IP address (even after I unset `HTTP_PROXY` variable).
 
 Anyway, let's figure out what is that Broker URI and where it can be changed. For that open Bamboo server dashboard, navigate to Administration page and find "General configuration" menu on the left in "SYSTEM" category.
 
@@ -211,7 +211,7 @@ alias stop-bamboo-agent="launchctl stop com.atlassian.bamboo-agent"
 alias restart-bamboo-agent="stop-bamboo-agent & start-bamboo-agent"
 {% endhighlight %}
 
-You may have noticed that there are no arguments for proxy, Java home and other settings. That's because all this settings can be set in `/Users/bambooagent/bamboo-agent-home/conf/wrapper.conf`.
+You may have noticed that there are no arguments for proxy, Java home and other settings. That's because all these settings can be set in `/Users/bambooagent/bamboo-agent-home/conf/wrapper.conf`.
 
 {% highlight java %}
 # The Bamboo Agent home configuration file
@@ -235,13 +235,13 @@ wrapper.java.additional.4=-Dhttp.proxyPort=8080
 # and so on...
 {% endhighlight %}
 
-Using `wrapper.conf` is preferred over jamming this arguments in launch agent plist.
+Using `wrapper.conf` is preferred over jamming these arguments in launch agent plist.
 
 ## Firewall
 
-If you agent sits in corporate network and server is in the outer world (e.g. EC2 cloud), you will face a bitter firewall issues. Have a look at official [Atlassian documentation](https://confluence.atlassian.com/display/BAMBOO021/Running+Bamboo+behind+a+firewall+with+Remote+Agents+outside+the+firewall). Ports number **8085** and **54663** (unless you specified different numbers) are used for bi-directional communication agent and the server. Best practice is to open these ports both ways. While lower port numbers are usually open, ports like 54663 need an exclusion rules configured in your company firewall. From experience this task can be either hard or impossible. Did you ever have that feeling that Network team is an extra layer or red tape and are there not to help you but to do the opposite? Welcome to the club then :).
+If you agent sits in corporate network and server is in the outer world (e.g. EC2 cloud), you will face some nasty firewall issues. Have a look at official [Atlassian documentation](https://confluence.atlassian.com/display/BAMBOO021/Running+Bamboo+behind+a+firewall+with+Remote+Agents+outside+the+firewall). Ports number **8085** and **54663** (unless you specified different numbers) are used for bi-directional communication between agent and the server. Best practice is to open these ports in both directions. While lower port numbers are usually open, ports like 54663 need an exclusion rules configured in your company firewall. From experience this task can be either hard or impossible. Did you ever have that feeling that Network team is an extra layer or red tape and are there not to help you but to do the opposite? Welcome to the club then :).
 
-To answer your question why Mac agent can be in the Cloud as well, see bits of my rant in [Bamboo vs Jenkins]({% post_url 2015-01-29-bamboo-vs-jenkins %}) and [this discussion](https://answers.atlassian.com/questions/22655/bamboo-mac-agent).
+To answer your question why Mac agent cannot be in the Cloud as well, see bits of my rant in [Bamboo vs Jenkins]({% post_url 2015-01-29-bamboo-vs-jenkins %}) and [this discussion](https://answers.atlassian.com/questions/22655/bamboo-mac-agent).
 
 ## Summary
 

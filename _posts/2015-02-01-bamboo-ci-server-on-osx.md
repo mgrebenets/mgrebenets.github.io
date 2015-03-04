@@ -23,7 +23,7 @@ To download tar-ball using command line run this command
 wget http://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-5.7.2.tar.gz
 {% endhighlight %}
 
-Bamboo needs Java to be [installed]({% post_url 2015-02-15-install-java-on-mac-os-x %}), recommended version are 1.6 or 1.7, I would advise to go with 1.7.
+Bamboo needs Java to be [installed]({% post_url 2015-02-15-install-java-on-mac-os-x %}), recommended versions are 1.6 or 1.7, I would advise to go with 1.7.
 
 Make a new home for Bamboo. It could be `/Applications/Bamboo` or `~/bamboo/bamboo-home` or whatever you want. For this post I'll stick with second option. It is often recommended to create a special `bamboo` user and put all things in their home directory. To create a new user use System Preferences and create Standard user.
 
@@ -32,16 +32,11 @@ su -u bamboo
 mkdir -p /Users/bamboo/bamboo-home
 {% endhighlight %}
 
-Note that I switch user (`su`) to work with Bamboo user's files and folders. This way I stay away from possible permissions conflicts.
+Note that I switch user (`su`) to work with Bamboo user's files and folders. This way I stay away from possible permissions conflicts. You could login as bamboo user instead. In any case, the rest of the article **assumes you are operating as bamboo user**.
 
-Once downloaded unzip the tar-ball and copy `atlassian-bamboo-5.7.2` to bamboo user's home folder. Rename it to just `bamboo` to make it version agnostic. Use you super user privileges to do that. Next change ownsership to give bamboo user all the access rights.
+Once downloaded unzip the tar-ball and copy `atlassian-bamboo-5.7.2` to bamboo user's home folder. Rename it to just `bamboo` to make it version agnostic.
 
-{% highlight bash %}
-# in /Users/bamboo/
-sudo chown -R bamboo bamboo
-{% endhighlight %}
-
-Then as a bamboo user go inside that folder. This is referred as _installation directory_ and this is where you will install and run Bamboo from. Edit the file in `atlassian-bamboo/WEB-INF/classes/bamboo-init.properties`. Uncomment the line with `bamboo.home` and put the following.
+Then go inside that folder. This is referred as _installation directory_ and this is where you will install and run Bamboo from. Edit the file in `atlassian-bamboo/WEB-INF/classes/bamboo-init.properties`. Uncomment the line with `bamboo.home` and put the following.
 
 {% highlight java %}
 bamboo.home=/Users/bamboo/bamboo-home
@@ -49,14 +44,13 @@ bamboo.home=/Users/bamboo/bamboo-home
 
 This is where Bamboo will put all the customizations and build plan details.
 
-Now you should run `bin/start-bamboo.sh`, again as bamboo user.
+Now you should run `bin/start-bamboo.sh`.
 
 {% highlight bash %}
-su bamboo
 ./bin/start-bamboo.sh
 {% endhighlight %}
 
-Bamboo is now running [http://localhost:8085/](http://localhost:8085/).
+Bamboo is now running on [http://localhost:8085/](http://localhost:8085/).
 
 ## Configure
 
@@ -66,15 +60,15 @@ Start by getting a license. You can always get a 30 days free evaluation license
 
 Next select Custom Installation option. Have a look at Base URL, make sure the IP address is correct. Also this is a good moment to pause and double check that your future Bamboo server has a static IP address allocated. This will become really important when dealing with remote agents. Leave the rest unchanged and click Continue.
 
-Select Embedded database option. It is recommended to use other DB setup for production system. I might refine the article later to include setup details for PostgreSQL DB.
+Select Embedded database option. It is recommended to use other DB setup for production system. I might refine the article later to include setup details for PostgreSQL database.
 
-Next choose to create a new Bamboo home, configure your username. Give it some time and you will be able to create your first build plan.
+Next, choose to create a new Bamboo home, configure your username. Give it some time and you will be able to create your first build plan.
 
 ## Launch Agent
 
 Now it's time to make sure Bamboo start automatically when build box restarts. As mentioned in [this article]({% post_url  2015-02-01-mobile-ci-daemon-vs-agent %}) recommended way is to use Launch Agent. Start by enabling automatic login for bamboo user in System Preferences.
 
-Next create `com.atlassian.bamboo.plist` in `/Users/bamboo/Library/LaunchAgents`. Do it as bamboo user to avoid messing up with permissions.
+Next create `com.atlassian.bamboo.plist` in `/Users/bamboo/Library/LaunchAgents`.
 
 {% highlight xml %}
 <?xml version="1.0" encoding="UTF-8"?>
@@ -114,7 +108,7 @@ For example, you start Bamboo and see this instead of dashboard.
 
 ![Bamboo Bootstrap Failed]({{ site.url }}/assets/images/bamboo-bootstrap-failed.png)
 
-To find out the reason look into Bamboo logs, specifically in `/Users/bamboo/bomboo/logs/catalina.out`.
+To find out the reason look into Bamboo logs, specifically in `/Users/bamboo/bamboo/logs/catalina.out`.
 
 {% highlight bash %}
 java.sql.SQLException: The database is already in use by another process: org.hsqldb.persist.NIOLockFile@340c5c3c[file =/Users/bamboo/bamboo-home/database/defaultdb.lck, exists=true, locked=false, valid=false, fl =null]: java.lang.Exception: checkHeartbeat(): lock file [/Users/bamboo/bamboo-home/database/defaultdb.lck] is presumably locked by another process.

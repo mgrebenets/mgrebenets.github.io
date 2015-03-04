@@ -62,7 +62,7 @@ iPhone 6 Plus (8.1 Simulator) [E574C367-1BAA-4F9F-BB92-BD5F6BAB1226]
 
 Another option is to use `xcrun simctl`, which is a new addition to Xcode 6. In fact, `simctl` looks like a very promising tool that allows you to create, boot, launch and then shutdown and destroy iOS simulators on the fly, and provides commands to install and launch specific apps. If you ever used [Genymotion](https://www.genymotion.com/#!/) you might have created Android simulators using [VirtualBox](https://www.virtualbox.org/) command line utility, Apple works towards the same flexibility with `simctl`.
 
-In cotext of this article, to see a list of available devices, run this command
+In context of this article, to see a list of available devices, run this command
 
 {% highlight bash %}
 xcrun simctl list

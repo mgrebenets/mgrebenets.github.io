@@ -17,6 +17,16 @@ Comparison of Mac OS X Launch Daemon and Launch Agent in regards to Mobile CI.
 
 Here's the table with brief comparison.
 
+<style>
+table:nth-of-type(1) {
+    display:table;
+    width:100%;
+}
+table:nth-of-type(1) th:nth-of-type(2) {
+    width:30%;
+}
+</style>
+
 |  | Daemon | Agent |
 |---|:---:|:---:|
 | Launch Time | System start | User login |
@@ -25,6 +35,8 @@ Here's the table with brief comparison.
 | Login Keychain | No | Yes |
 | iOS Simulator | No | Yes |
 | Provisioning Profiles | No | Yes |
+
+<br/>
 
 Let's analyze each criteria in more detail.
 
@@ -52,7 +64,7 @@ Last but not least is the ability to use iOS Simulator. Unit tests are essential
 
 _Provisioning Profiles_
 
-iOS Provisioning Profiles are normally managed by Xcode and located in `~/Library/MobileDevice/Provisioning Profiles` in the home folder of a _login_ user who installed Xcode on the system. When you pass provisioning profile UUID to `xcodebuild` command it looks the profile in that folder. So if you run `xcodebuild` as non-login user the lookup will fail and you will be forced to specify full path to provisioning profile.
+iOS Provisioning Profiles are normally managed by Xcode and located in `~/Library/MobileDevice/Provisioning Profiles` in the home folder of a _login_ user who installed Xcode on the system. When you pass provisioning profile UUID to `xcodebuild` command it looks for the profile in that folder. So if you run `xcodebuild` as non-login user the lookup will fail and you will be forced to specify full path to provisioning profile.
 
 One of the solutions is to create a symlink like this.
 
@@ -82,7 +94,7 @@ Drawbacks:
 - No Keychain
 - Can't run unit tests (iOS Simulator)
 - Can't launch any GUI apps (e.g. [Genymotion](https://www.genymotion.com/) for Android)
-- Potential file permission issues when running alongside another build agent
+- Potential file permission issues when running alongside another build agents
 - Can't easily access Provisioning Profiles
 
 I would advise to avoid using Launch Daemons for Mobile CI servers or build agents at all costs.
