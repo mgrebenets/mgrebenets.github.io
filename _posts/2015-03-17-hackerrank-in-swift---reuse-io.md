@@ -25,13 +25,13 @@ let b: Int = readLn()
 println(a + b)
 {% endhighlight %}
 
-If you try to run `solve-me-first.swift` with makefile created in the article mentioned before, you'll get nowhere. Swift compiler has no idea where to look for `readLn` methods, so it can't interpret this script file alone. We have to build a Swift Module for `StdIO.swift` and then link it with out main Swift file.
+If you try to run `solve-me-first.swift` with makefile created in the article mentioned before, you'll get nowhere. Swift compiler has no idea where to look for `readLn` methods, so it can't interpret this script file alone. We have to build a Swift Module for `StdIO.swift` and then link it with our main Swift file.
 
 Check out [this](http://railsware.com/blog/2014/06/26/creation-of-pure-swift-module/) and [this](http://stackoverflow.com/questions/25860471/xcrun-swift-on-command-line-generate-unknown0-error-could-not-load-shared-l) link to find out more about building a Swift module. I'll just provide a summary here. Once a Swift Module for `StdIO.swift` is built, it will consist of 3 files:
 
 - `StdIO.swiftmodule` - public interface and definitions. An analogue of header files from Objective-C world.
 - `StdIO.swiftdoc` - documentation.
-- `libStdIO.dylib` - a shared (dynamic library). That's actually a binary that has all the code. There's a way to build a static (`.a`) library as well.
+- `libStdIO.dylib` - a shared (aka dynamic) library. That's actually a binary that has all all your code compiled, much alike dynamic library for C, C++, Objective-C and so on. There's a way to build a static (`.a`) library as well.
 
 In general, Swift Module can include more than one Swift file. It just so happens that we have only one. To build a module you need to run this command
 
@@ -150,11 +150,11 @@ First we declare 3 variables: `SELF_DIR`, `BUILD_DIR` and `OSX_SDK`.
 - `BUILD_DIR` is the place to put build output. Don't forget to put it in your `.gitignore` and remove it as part of `clean` target.
 - `OSX_SDK` is the path to current Mac OS X SDK.
 
-One important note is the use of `:=` instead of just `=` when assigning values to the variables. If right side of assignment is one of the makefile functions, like `shell` to execute shell command, or `dir`, then each time you reference a variable, for example `$(OSX_SDK)`, the shell command will be executed. If the command is expensive, this will slow down execution of your makefile targets. Using `:=` ensures that variable is assigned a value only when initialized and when referenced later on, will use that initial value.
+One important note is the use of `:=` instead of just `=` when assigning values to the variables. If right side of assignment is one of the makefile functions, like `shell` to execute shell command, or `dir`, then each time you reference a variable, for example `$(OSX_SDK)`, the shell command will be executed. If the command is expensive, this will slow down execution of your makefile targets. Using `:=` ensures that variable is assigned a value only when initialized, when it's reference later on it uses that initial value.
 
 Next block declares group of variables used as a reference to Swift executables, StdIO module and library name.
 
-Then there are 2 variables and 2 functions realted to test cases configuration. To get more details about `tc-path` function, check out [previous post]({% post_url 2015-03-16-hackerrank-in-swift---makefiles %}). Declaring targets as phony is something that's explained in that article as well.
+Then there are 2 variables and 2 functions related to test cases configuration. To get more details about `tc-path` function, check out [previous post]({% post_url 2015-03-16-hackerrank-in-swift---makefiles %}). Declaring targets as phony is something that's explained in that article as well.
 
 Finally, the `%.swift` target runs all the compile commands. This code is almost identical to the shell code we had before, with minor differences.
 
@@ -211,4 +211,6 @@ alias hrrun="make -f ${HACKER_RANK_HOME}/Makefile"
 alias hrrunc="make -f ${HACKER_RANK_HOME}/Makefile COMPILE=YES"
 {% endhighlight %}
 
-Grab the latest version of [Makefile](https://github.com/mgrebenets/hackerrank/blob/master/Makefile) for your reference.
+## Summary
+
+You can now do the same thing for Haskell, Python, C, C++, Java or any other language that support compilation. Grab the latest version of [Makefile](https://github.com/mgrebenets/hackerrank/blob/master/Makefile) for your reference, and happy HackerRanking!
