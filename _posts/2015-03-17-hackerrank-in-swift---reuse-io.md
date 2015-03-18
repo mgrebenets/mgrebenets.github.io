@@ -13,7 +13,7 @@ Reuse Swift IO code for multiple [HackerRank](https://hackerrank.com) assignment
 
 If you have read [this article]({% post_url 2015-03-15-hackerrank-in-swift---io %}), you have probably noticed that code to read from stdin must be copied to each assignment file. Even though you need to copy-paste entire solution to HackerRank web site, this goes against [DRY](http://en.wikipedia.org/wiki/Don%27t_repeat_yourself) principle. In this post I'll explain how you can keep all stdin code in one file and use it to run code for assignments.
 
-Start by grabbing Swift code, you can use [this file](https://raw.githubusercontent.com/mgrebenets/hackerrank/master/StdIO.swift) for example. Put it in a file, name it `StdIO.swift` and put it in the root of your HackerRank folder alongside the makefile from [this post]({% post_url 2015-03-16-hackerrank-in-swift---makefiles %}) (you'll need that makefile later on).
+Start by grabbing Swift code, you can use [this file](https://github.com/mgrebenets/hackerrank/blob/master/StdIO.swift) for example. Put it in a file, name it `StdIO.swift` and put it in the root of your HackerRank folder alongside the makefile from [this post]({% post_url 2015-03-16-hackerrank-in-swift---makefiles %}) (you'll need that makefile later on).
 
 ## Swift Module
 
@@ -215,4 +215,4 @@ alias hrrun="make -f ${HACKER_RANK_HOME}/Makefile"
 alias hrrunc="make -f ${HACKER_RANK_HOME}/Makefile COMPILE=YES"
 {% endhighlight %}
 
-Grab the latest version of [Makefile](https://raw.githubusercontent.com/mgrebenets/hackerrank/master/Makefile) for your reference.
+Grab the latest version of [Makefile](https://github.com/mgrebenets/hackerrank/blob/master/Makefile) for your reference.
