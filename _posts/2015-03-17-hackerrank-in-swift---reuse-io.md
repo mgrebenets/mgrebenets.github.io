@@ -20,11 +20,9 @@ Start by grabbing Swift code, you can use [this file](https://github.com/mgreben
 For next step you should have 2 files. A `StdIO.swift` file created earlier and, say, `solve-me-first.swift` for the [warmup assignment](https://www.hackerrank.com/challenges/solve-me-first).
 
 {% highlight swift %}
-public func solveMeFirst() {
-    let a: Int = readLn()
-    let b: Int = readLn()
-    println(a + b)
-}
+let a: Int = readLn()
+let b: Int = readLn()
+println(a + b)
 {% endhighlight %}
 
 If you try to run `solve-me-first.swift` with makefile created in the article mentioned before, you'll get nowhere. Swift compiler has no idea where to look for `readLn` methods, so it can't interpret this script file alone. We have to build a Swift Module for `StdIO.swift` and then link it with out main Swift file.
@@ -62,11 +60,9 @@ That's great, the module is ready. Next step is to link it with your main Swift 
 # This line is new, import StdIO module
 import StdIO
 
-public func solveMeFirst() {
-    let a: Int = readLn()
-    let b: Int = readLn()
-    println(a + b)
-}
+let a: Int = readLn()
+let b: Int = readLn()
+println(a + b)
 {% endhighlight %}
 
 Now it's time to link the two and run the code. This time we can use `swift` command.
