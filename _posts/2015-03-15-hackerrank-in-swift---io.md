@@ -59,6 +59,8 @@ You've probably heard lots of things about Swift. Among all the things, one very
 
 > An important note. This code _will not_ work properly with actual Unicode input. Anything outside of standard ASCII table will be rendered as some gibberish. Obviously `getchar` is not up for the job of reading unicode characters. However, on HackerRank you would never get non-ASCII input (at least for assignments that I saw), so this function does perfect job for its targeted application area.
 
+Another side note, the code is using Swift version 1.1. If you try to compile it with 1.2 it will fail because `countElements` has been removed and replaced with just `count`. To have the code that compiles with both versions, just remove the `countElements(buf) < Int.max` part altogether. You will never hit this limit with HackerRank anyway.
+
 ## Read Line
 
 Now when you can get a line, next thing you will want is to convert that line into something else. For example, if the line is just one integer, you would like to convert into a value of `Int` type. It it's a list of integers (space- or comma-, or whatever- separated), you would obviously want to convert it to `Array<Int>` or `[Int]`. And so on and so forth.
@@ -66,6 +68,8 @@ Now when you can get a line, next thing you will want is to convert that line in
 I am actually inspired by Haskell here. It has a core `getLine` function to get a line as string, then it also has `readLn` method, which doesn't just get the line, but also allows converting it into a value of desired type.
 
 {% highlight haskell %}
+-- Haskell
+
 -- Read a line and convert to IO Int
 n <- readLn :: IO Int
 
@@ -171,7 +175,7 @@ The conditions for `if`s are actually a valid Swift code, though they don't look
 
 What you could do next, is to try to come up with a protocol which `T` would conform to. Pack all these initializers inside the protocol, and then much more; and probably this path of generic functional madness would take you somewhere after all. But look at this from another angle: even if you succeed in making this generic function to compile and work, you effectively have implementations of each and every separate functions sitting right there, each in its own if-clause. So what's the point then?
 
-My personal takeaway from this exercise is: do not complicate things. Just think of a group of N different `readLn` functions as some single abstract generic function. After all, when you use it in code, that's exactly how it looks and works.
+My personal takeaway from this exercise is: do not overcomplicate things. Just think of a group of N different `readLn` functions as some single abstract generic function. After all, when you use it in code, that's exactly how it looks and works.
 
 ## Use
 
@@ -221,4 +225,4 @@ Now, if you are one of fresh functional programming converts, you might frown at
 
 ## Summary
 
-You now have a handy stdin Swift library to get you going with most of assignments. In one of the future posts I will come up with a way to reuse this code and keep it in a separate file, this will require some use of Swift compiler and makefiles, so stay tuned.
+You now have a handy stdin Swift library to get you going with most of assignments. If you are not a big fan of copy-pasting these functions each time, check out my other posts about [HackerRank makefiles]({% post_url 2015-03-16-hackerrank-in-swift---makefiles %}) and [reusing Swift IO library]({% post_url 2015-03-17-hackerrank-in-swift---reuse-io %}).
