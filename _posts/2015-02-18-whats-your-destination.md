@@ -114,7 +114,8 @@ To get more details just run `xcrun simctl list -h` to get help on `list` comman
 Finally, to get the most detailed output, ask `xcodebuild` itself. It is not really documented and doesn't look like a proper approach, but it works. The idea is to give `xcodebuild` invalid key-value pair in destination specifier and wait until it complains about it offering a list of valid options in return.
 
 {% highlight bash %}
-xcodebuild test -project MyProject.xcodeproj -scheme MyScheme -destination "name=NoSuchName"
+xcodebuild test -project MyProject.xcodeproj -scheme MyScheme \
+    -destination "name=NoSuchName" -destination-timeout 1
 {% endhighlight %}
 
 The output is
@@ -154,6 +155,8 @@ xcodebuild: error: Unable to find a destination matching the provided destinatio
     { platform:iOS, id:5dc0e5a8a9f7c0af1feea4bfa13860c9e61350d6, name:Maksym's iPhone }
 {% endhighlight %}
 
+Thanks [Tor Arne](https://disqus.com/by/disqus_ToXiGZRJLc/) for pointing out `-destination-timeout` option in the comments. Without this option `xcodebuild` will take way too long to figure out that destination doesn't exist.
+
 ## Back to Destination
 
 Now that last output from `xcodebuild` is much better than anything else. It gives you all the key-value pairs as is, no additional guesswork involved. You get the "platform", "OS" and "name" keys, and as a bonus you get an undocumented "id" key. Give it a try and see that it actually works.
@@ -162,4 +165,4 @@ Now that last output from `xcodebuild` is much better than anything else. It giv
 xcodebuild test -project MyProject.xcodeproj -scheme MyScheme -destination "id=E574C367-1BAA-4F9F-BB92-BD5F6BAB1226"
 {% endhighlight %}
 
-It's a bit annoying that it takes a while for `xcodebuild` to figure out that you've given it an invalid key-value pair, but still you can adopt this approach as part of CI workflow automation and grep all key-value pairs from `xcodebuild` output.
+You can adopt this approach as part of CI workflow automation and grep all key-value pairs from `xcodebuild` output.
