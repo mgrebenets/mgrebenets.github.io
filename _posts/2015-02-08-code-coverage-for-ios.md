@@ -34,10 +34,13 @@ The Apple's article recommends to create a separate configuration and set the fo
 I have also specified the GCC settings names so you'd know how to enable these flags when building from command line or when using _xcconfigs_. The benefit of building from command line is that you don't have to create new configuration in the project, instead you can customize existing _Debug_ configuration.
 
 {% highlight bash %}
+# Make sure tests are run against latest OS at all times
+export OS=$(xcrun --sdk iphonesimulator --show-sdk-platform-version)
+
 xcodebuild test -project MyProject.xcodeproj -scheme MyScheme \
   -configuration Debug \
-  -sdk iphonesimulator8.1 \
-  -destination OS=8.1,name="iPad Retina" \
+  -sdk iphonesimulator${OS} \
+  -destination OS=${OS},name="iPad Retina" \
   GCC_GENERATE_DEBUGGING_SYMBOLS=YES \
   GCC_GENERATE_TEST_COVERAGE_FILES=YES \
   GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES
@@ -93,11 +96,13 @@ Note that I don't have a header file. There's no need for it since you are not g
 OK, so now you can add this file to your Xcode project. There are ways to automate this injection as well, e.g. using [xcodeproj Ruby gem](https://github.com/CocoaPods/Xcodeproj). I plan to have a write up about it some time later. Anyway, you can now run your tests and have `.gcno` and `.gcda` files at your disposal.
 
 {% highlight bash %}
+export OS=$(xcrun --sdk iphonesimulator --show-sdk-platform-version)
+
 xcodebuild test -project MyProject.xcodeproj -scheme MyScheme \
   -configuration Debug \
   CONFIGURATION_BUILD_DIR=build \
-  -sdk iphonesimulator8.1 \
-  -destination "OS=8.1,name=iPad Retina" \
+  -sdk iphonesimulator${OS} \
+  -destination "OS=${OS},name=iPad Retina" \
   GCC_GENERATE_DEBUGGING_SYMBOLS=YES \
   GCC_GENERATE_TEST_COVERAGE_FILES=YES \
   GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES \
@@ -119,7 +124,21 @@ cat test.log | ocunit2junit
 
 Default output is in `test-reports` directory, point your CI report plugin to this location to pick up XML and generate test reports.
 
-If you are OK with using something other than `xcodebuild`, check out [Facebook's `xctool`](https://github.com/facebook/xctool). It has few options to help you get test reports without the need of `ocunit2junit`.
+Another option is [xcpretty](https://github.com/supermarin/xcpretty) tool, which is yet another Ruby gem.
+{% highlight bash %}
+# install
+[sudo] gem intall xcpretty
+
+# generate JUnit XML reports (default location is build/reports directory)
+cat test.log | xcpretty --report junit --color
+
+# generate HTML reports (default location is build/reports directory)
+cat test.log | xcpretty --report html --color
+{% endhighlight %}
+
+Note that you don't have to re-run the tests. All that the tool needs is build log.
+
+If you are OK with using something other than `xcodebuild`, check out [Facebook's `xctool`](https://github.com/facebook/xctool). It has few options to help you get test reports without the need of extra gems. It also supports parallel execution of tests, so definitely worth a look.
 
 ## Report
 
@@ -148,7 +167,7 @@ gcovr \
 
 This example also demonstrates the use of filter and exclude options to filter unwanted files from reports. `BUILD_DIR` points to the directory you defined with help of `CONFIGURATION_BUILD_DIR` when running the tests.
 
-The XML output is enough for CI tasks, but to have a sneak peek at readable HTML results on your computer you'll end up nowhere with `gcovr`. The tool to help at this time is [lcov](http://ltp.sourceforge.net/coverage/lcov.php).
+The XML output is enough for CI tasks, but to have a sneak peek at readable HTML results on your computer you'll end up nowhere with `gcovr`, the tool has a bug (unless it got fixed already). The tool to help at this time is [lcov](http://ltp.sourceforge.net/coverage/lcov.php).
 
 {% highlight bash %}
 # install
@@ -165,7 +184,7 @@ lcov --remove ${LCOV_EXCLUDE} --output-file ${LCOV_INFO}
 genhtml ${LCOV_INFO} --output-directory ${LCOV_REPORTS_DIR}
 {% endhighlight %}
 
-Here you can see another use of exclude option to filter out unwanted results. `genhtml` is bundled with `lcov` installation. More documentation on `lcov` can be [found here](https://wiki.documentfoundation.org/Development/Lcov).
+Here you can see another use of exclude option to filter out unwanted results. `genhtml` is bundled with `lcov` installation. More documentation on `lcov` can be [found here](https://wiki.documentfoundation.org/Development/Lcov). You now have browsable coverate report in `lcov-reports` directory.
 
 ## Summary
 
