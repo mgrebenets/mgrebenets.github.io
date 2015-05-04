@@ -87,6 +87,8 @@ Let's talk about each option separately.
     - Once again, instead of specifying current folder as `.`, I'm using full path. That will be explained later.
 - `-module-link-name <name>` - well, it expects a name of the module to link with.
 
+> Actually, this is a bit of a cheat. This second command does not compile the code, but interprets it while linking with existing module. There is a way to use Swift compiler here as well, you can find the reference in the end of this post.
+
 OK, so run this command and you should get a (high) `5` as output. Replace the name of the test case file and the name of Swift file and you can run code for any other assignment. But that is too verbose. It should be automated with...
 
 ## Makefile
