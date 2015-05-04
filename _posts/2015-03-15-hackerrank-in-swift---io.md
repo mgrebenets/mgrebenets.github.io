@@ -42,7 +42,7 @@ public func getLine() -> String {
     var buf = String()
     var c = getchar()
     // 10 is ascii code for newline
-    while c != EOF && c != 10 && countElements(buf) < Int.max {
+    while c != EOF && c != 10 {
         buf.append(UnicodeScalar(UInt32(c)))
         c = getchar()
     }
@@ -54,14 +54,12 @@ The code is straightforward.
 
 - Declare `buf` variable used to accumulate the result string.
 - Declare `c` variable used to read next character from stdin with `getchar`
-- Loop until reach the end of file (`EOF`), or newline (ASCII code `10`) or, which is very unlikely, until reading more characters that we can handle (`Int.max`)
+- Loop until reach the end of file (`EOF`), or newline (ASCII code `10`)
     - On each iteration append newly read character to the accumulator string
 
 You've probably heard lots of things about Swift. Among all the things, one very important feature is its interoperability with Objective-C and C languages. This small code snippet isn't a 100% "pure" Swift code. First of all, it's using [getchar](http://www.opensource.apple.com/source/gcc/gcc-926/libio/stdio/getchar.c) function from C Standard Library made available via `Foundation` framework import. No worries though, all these APIs are toll-free bridged to Swift. This also explains a chain of initializers / type-casts when appending new character to accumulator string. `getchar()` returns ASCII code of the character of `Int32` type. The thing is that Swift's [String](http://swiftdoc.org/type/String/) is not your good old ASCII null-teminated C string, it is actually a collection of [Unicode scalars](https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language/StringsAndCharacters.html). Bear in mind, that _collection_ isn't just a figure of speech, it actually means that `String` type conforms to [CollectionType](http://swiftdoc.org/protocol/CollectionType/) protocol. Anyway, to create an instance of [UnicodeScalar](http://swiftdoc.org/type/UnicodeScalar/) you need to have a value of `UInt32` type, hence the conversion of `c` to `UInt32`.
 
 > An important note. This code _will not_ work properly with actual Unicode input. Anything outside of standard ASCII table will be rendered as some gibberish. Obviously `getchar` is not up for the job of reading unicode characters. However, on HackerRank you would never get non-ASCII input (at least for assignments that I saw), so this function does perfect job for its targeted application area.
-
-Another side note, the code is using Swift version 1.1. If you try to compile it with 1.2 it will fail because `countElements` has been removed and replaced with just `count`. To have the code that compiles with both versions, just remove the `countElements(buf) < Int.max` part altogether. You will never hit this limit with HackerRank anyway.
 
 ## Read Line
 
