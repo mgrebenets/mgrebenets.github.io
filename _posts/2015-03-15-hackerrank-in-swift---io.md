@@ -15,6 +15,8 @@ A way to read standard input for [HackerRank](https://hackerrank.com) assignment
 
 For all those who follows Swift programming language closely, it is now [supported by HackerRank](https://www.hackerrank.com/environment). So if you are desperate to write some Swift code and don't have any real projects to apply it, HackerRank might be an excellent place to do just that.
 
+> Well, Swift support with HackerRank has been on and off lately. Few months after I wrote this post Swift 1.2 was released, few days later it disappeared from HackerRank. Probably they have problems catching up with Swift development schedule. In any case you can still solve the problems in Swift and then submit them in bulk once HackerRank engineers get it working.
+
 Most (if not all) of the assignments require reading data from standard input. The format is usually like this.
 
 {% highlight bash %}
