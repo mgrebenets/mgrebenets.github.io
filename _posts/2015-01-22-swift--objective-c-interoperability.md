@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Swift & Objective-C Interoperability"
-description: "A practical manifestation of Swift & Objective-C interoperability problems"
+title: "Swift and Objective-C Interoperability"
+description: "A practical manifestation of Swift and Objective-C interoperability problems"
 category: Swift
 tags: [swift, ios, apple, objc]
 ---

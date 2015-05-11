@@ -20,7 +20,7 @@ author :
   email : mgrebenets@gmail.com
   github : mgrebenets
   twitter : mgrebenets
-  feedburner : mgrebenets@gmail.com
+  feedburner : nsbogan
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt
@@ -132,4 +132,3 @@ JB :
   # and include your custom code. Your custom file must be defined at:
   #   ./_includes/custom/[HELPER]
   # where [HELPER] is the name of the helper you are overriding.
-

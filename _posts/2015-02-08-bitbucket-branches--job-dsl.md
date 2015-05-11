@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Bitbucket Branches & Jenkins Job DSL"
+title: "Bitbucket Branches and Jenkins Job DSL"
 description: "Job DSL example for working with Bitbucket branches"
 category: Mobile CI
 tags: [dsl, jenkins, mobile, ci, git, bitbucket]
