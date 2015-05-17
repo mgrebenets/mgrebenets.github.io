@@ -59,6 +59,8 @@ So what's going on here?
 
 The very first time you use a given combination of Apple ID and Team ID you will be asked for a password. Fastlane will safely store your password in keychain and you will not have to type it in anymore (well, until the moment you change it, of course). So for CI setup you will have to use Sigh (or any other tool from Fastlane) at least once for each developer account, to have the password stored, and from that moment on all CI scripts will be able to work without user intervention required.
 
+> A side note in regards to Team ID. For some reason the real ID is very obscure and doesn't match the one you would see in Member Center. Luckily, you can run Sigh with wrong Team ID and it will output the list of all correct IDs.
+
 # Parse Profile
 
 Another step towards total automation is to include profile download as part of CI job. Usually all CI jobs expect latest provisioning profiles to be installed on the box. CI is either using UUID explicitly, expects profile to have a specific file name or delegates profile lookup task to Xcode. With Sigh you can simplify this bit immensely. Each CI job will make sure the latest profile is downloaded and installed, and named the way it should be named.
