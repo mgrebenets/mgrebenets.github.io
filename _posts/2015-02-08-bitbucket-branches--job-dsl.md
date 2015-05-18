@@ -26,7 +26,7 @@ def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
 branches.each {
     def branchName = it.name
     job {
-        name "${project}-${branchName}".replaceAll('/','-')
+        name "${project}-${branchName}".replaceAll('/', '-')
         scm {
             git("git://github.com/${project}.git", branchName)
         }
@@ -56,32 +56,32 @@ String repository = "flappy-swift"
 String branchesUrl = [baseUrl, version, "repositories", organization, repository, "branches"].join("/")
 {% endhighlight %}
 
-Next we need to convert this string to `URL` hit it and parse the output. But before we do that, we have to set Authorization header for HTTPS authentication with username and password. The username and password should be Base64 encoded.
+Next we need to convert this string to `URL`, hit it and parse the output. But before we do that, we have to set Authorization header for HTTPS authentication with username and password. The username and password should be Base64 encoded.
 
 {% highlight groovy %}
 String username = "i4niac"
 String password = "mypassword"
 
-// create authorization header using Base64 encoding
+// Create authorization header using Base64 encoding
 String userpass = username + ":" + password;
 String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
 
-// create URL
+// Create URL
 URL url = branchesUrl.toURL()
 
-// open connection
+// Open connection
 URLConnection connection = url.openConnection()
 
-// set authorization header
+// Set authorization header
 connection.setRequestProperty ("Authorization", basicAuth)
 
-// open input stream
+// Open input stream
 InputStream inputStream = connection.getInputStream()
 
-// get JSON output
+// Get JSON output
 def branchesJson = new groovy.json.JsonSlurper().parseText(inputStream.text)
 
-// close the stream
+// Close the stream
 inputStream.close()
 
 {% endhighlight %}
@@ -144,20 +144,20 @@ import java.text.SimpleDateFormat
 import groovy.time.TimeCategory
 
 // Note: no def or type used to declare this variables!
-// list with names of major branches
+// List with names of major branches
 majorBranches = ["master", "development", "release"]
-// list with valid branch prefixes
+// List with valid branch prefixes
 validBranchPrefixes = ["feature", "bugfix", "hotfix"]
-// all valid prefixes
+// All valid prefixes
 allValidPrefixes = majorBranches + validBranchPrefixes
 
-// check if the branch is a valid branch
+// Check if the branch is a valid branch
 Boolean isValidBranch(String name) {
     String prefix = name.split("/")[0]
     prefix in allValidPrefixes
 }
 
-// check if the branch is not too old
+// Check if the branch is not too old
 Boolean isUpToDateBranch(String branch, Date date) {
     // major branches are considered as always up to date
     if (branch in majorBranches) {
@@ -171,14 +171,14 @@ Boolean isUpToDateBranch(String branch, Date date) {
     }
 }
 
-// iterate through branches JSON
+// Iterate through branches JSON
 branchesJson.each { branchName, details ->
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     Date lastModified = dateFormat.parse(details["timestamp"])
 
-    // check if branch name and age are valid
+    // Check if branch name and age are valid
     if (isValidBranch(branchName) && isUpToDateBranch(branchName, lastModified)) {
-        // branch is valid, create the job for it
+        // Branch is valid, create the job for it
         println "Valid branch: ${branchName}"
 
         // Configure the job
