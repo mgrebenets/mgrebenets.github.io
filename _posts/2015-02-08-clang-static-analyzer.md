@@ -13,7 +13,7 @@ A brief post about [Clang Static Analyzer](http://clang-analyzer.llvm.org/).
 
 Clang Static Analyzer is a source code analysis tool that finds bugs in C, C++, and Objective-C programs. Yep, no Swift yet.
 
-You may have used it already since a specific and stable build of clang static analyzer comes bundled with Xcode installation. It's `⇧⌘B` (Shift + Command + B) shortcut in Xcode or `analyze` action when building from command line.
+You may have used it already since a specific and stable build of clang static analyzer comes bundled with Xcode installation. It's `⌘⇧B` (Command + Shift + B) shortcut in Xcode or `analyze` action when building from command line.
 
 {% highlight bash %}
 xcodebuild analyze -project MyProject.xcodeproj -scheme MyScheme
@@ -28,16 +28,16 @@ Unlike [OCLint]({% post_url 2015-02-08-oclint %}) Clang Static Analyzer is not a
 Get the tar-ball and unzip it, then move or copy to `/usr/local` and update the path in your shell profile (`.bash_profile` in this example).
 
 {% highlight bash %}
-# get the tarball
+# Get the tarball
 wget http://clang-analyzer.llvm.org/downloads/checker-276.tar.bz2
 
-# tar xzf (extract zee filez)
+# Untar - xzf (extract zee filez)
 tar xzf checker-276.tar.bz2
 
-# move to /usr/local (aka install)
+# Move to /usr/local (aka install)
 mv checker-276 /usr/local/llvm-checker
 
-# put these lines in shell profile (e.g. .bash_profile)
+# Put these lines in shell profile (e.g. .bash_profile)
 # Clang Static Analyzer
 LLVM_CHECKER_HOME=/usr/local/llvm-checker
 export PATH=$LLVM_CHECKER_HOME:$PATH
@@ -57,29 +57,29 @@ I'm more interested in running it from command line and generating reports for C
 The basic usage is supposed to be as simple as this
 
 {% highlight bash %}
-# build a scheme
-scan-buld -k -v -v xcodebuild clean build -project MyProject.xcodeproj -scheme MyScheme -configuration Debug
+# Build a scheme
+scan-build -k -v -v xcodebuild clean build -project MyProject.xcodeproj -scheme MyScheme -configuration Debug
 {% endhighlight %}
 
 But in practice it doesn't always find the static analyzer this way. One way to avoid this problem is to specify clang static analyzer bundled with Xcode. Another option is to give it a full path to `clang-check`
 
 {% highlight bash %}
-# use analyzer bundled with xcode
-scan-buld -k -v -v --use-analyzer Xcode \
+# Use analyzer bundled with xcode
+scan-build -k -v -v --use-analyzer Xcode \
   xcodebuild clean build -project MyProject.xcodeproj -scheme MyScheme -configuration Debug
 
-# use path to clang-check executable
+# Use path to clang-check executable
 CLANG_CHECK=$(dirname $(which scan-build))/bin/clang-check
 
-scan-buld -k -v -v --use-analyzer ${CLANG_CHECK} \
+scan-build -k -v -v --use-analyzer ${CLANG_CHECK} \
   xcodebuild clean build -project MyProject.xcodeproj -scheme MyScheme -configuration Debug
 {% endhighlight %}
 
 Another note is that using `-scheme` will require code signing in the end. Try switching to `-target` if that is a problem, otherwise explicitly specify `CODE_SIGN_IDENTIFY` to `xcodebuild`.
 
 {% highlight bash %}
-# build a scheme
-scan-buld -k -v -v --use-analyzer Xcode \
+# Build a target
+scan-build -k -v -v --use-analyzer Xcode \
   xcodebuild clean build -project MyProject.xcodeproj -target MyTarget -configuration Debug
 {% endhighlight %}
 
@@ -88,10 +88,10 @@ scan-buld -k -v -v --use-analyzer Xcode \
 Use `-o` (output) option to specify output directory for reports.
 
 {% highlight bash %}
-# build a scheme
 mkdir -p clang-reports
 
-scan-buld -k -v -v \
+# Build a target
+scan-build -k -v -v \
   --use-analyzer Xcode \
   -o clang-reports \
   xcodebuild clean build -project MyProject.xcodeproj -target MyTarget -configuration Debug
