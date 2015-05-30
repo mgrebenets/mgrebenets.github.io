@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Fix Objective-C import statements
+# Replace all system framework imports of #import <Path/Path.h> type with @import Path;
+
+# TODO: add usual log, usage and arg parsing
+
+# Temp directory
+TMP_DIR=$(mktemp -dt "XXXXXXXX")
+
+# log
+log () {
+	[[ -n "$VERBOSE" ]] && echo -e "$@"
+}
+
+# usage
+usage () {
+	echo "usage: $(basename $0) [-v|--verbose] [-i|--inplace] FILE_PATH [-o|--output OUTPUT_PATH]" 1>&2
+	echo "usage: $(basename $0) -h|--help" 1>&2
+	echo "Options:" 1>&2
+	echo -e "\tFILE_PATH\t\t\tPath to the source file." 1>&2
+	echo -e "\t-i, --inplace\t\t\tInplace edit (modify source file). By default output is written to stdout." 1>&2
+	echo -e "\t-o, --output OUTPUT_PATH\tSave output to given file path." 1>&2
+	echo -e "\t-v, --verbose\t\t\tVerbose output." 1>&2
+	echo -e "\t-h, --help\t\t\tDisplay this message." 1>&2
+
+	exit 2
+}
+
+# parse args
+while [ "$1" != "" ]; do
+	case $1 in
+		-i | --inplace )
+			INPLACE="YES"
+			;;
+		-o | --output )
+			shift
+			OUTPUT_PATH="$1"
+			;;
+	    -v | --verbose )
+	        VERBOSE="YES"
+	        ;;
+		-h | --help )
+			usage
+			;;
+		* )
+			# only one expected
+			[[ -n "${FILE_PATH}" ]] && echo "Only one source file path expected!" && usage
+			FILE_PATH="$1"
+			;;
+	esac
+
+	# next arg
+	shift
+done
+
+# File path is mandatory
+[[ -z "${FILE_PATH}" ]] && echo "File path is required!" && usage
+
+# Can't have inplace and output path
+[[ -n "${INPLACE}" && -n "${OUTPUT_PATH}" ]] && echo "Can't specify inplace and output path options at the same time!" && usage
+
+# Get the list of all system frameworks
+# Same as here: https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/iPhoneOSTechOverview/iPhoneOSFrameworks/iPhoneOSFrameworks.html
+LIBS=$(ls $(xcrun --sdk iphoneos --show-sdk-path)/System/Library/Frameworks | grep .framework)
+
+# Collect all library components and combine into oring regex
+for lib in ${LIBS}; do
+    BASE_NAME=${lib/.framework/}
+    [[ -z "${LIB_COMPONENTS}" ]] \
+        && LIB_COMPONENTS="${BASE_NAME}" \
+        || LIB_COMPONENTS="${LIB_COMPONENTS}|${BASE_NAME}"
+done
+
+# Log stuff
+log "${LIB_COMPONENTS}"
+
+# Temp path
+FILE_NAME="$(basename ${FILE_PATH})"
+TMP_PATH="${TMP_DIR}/${FILE_NAME}"
+cp -f "${FILE_PATH}" "${TMP_PATH}"
+
+# Rules to be applied top to bottom (Perl FTW!)
+# http://stackoverflow.com/questions/18947516/import-vs-import-ios-7
+
+# '#import <Library/Library.h>' to be replaced with '@import Library;'
+perl -pi -e "s/#import[ \t]*<(${LIB_COMPONENTS})\/\1.h>/\@import \1;/" "${TMP_PATH}"
+
+# '#import <Library/Header.h>' to be replaced with '@import Library.Header'
+perl -pi -e "s/#import[ \t]*<(${LIB_COMPONENTS})\/(.*).h>/\@import \1.\2;/" "${TMP_PATH}"
+
+# Product output
+if [[ -n "${INPLACE}" ]]; then
+	mv -f "${TMP_PATH}" "${FILE_PATH}"
+elif [[ -n "${OUTPUT_PATH}" ]]; then
+	mv -f "${TMP_PATH}" "${OUTPUT_PATH}"
+else
+	cat "${TMP_PATH}"
+fi
