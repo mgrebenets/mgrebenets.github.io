@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# Fix source file header by removing current header and inserting standard copyright notice
+# Works for all C-based files, uses // comment style, current year and specified company name
+# Doesn't work for empty files
+
+# Temp directory
+TMP_DIR=$(mktemp -dt "XXXXXXXX")
+
+# Log
+log () {
+	[[ -n "$VERBOSE" ]] && echo -e "$@"
+}
+
+# Usage
+usage () {
+	echo "usage: $(basename $0) [-v|--verbose] [-i|--inplace] [-c|--company COMPANY] FILE_PATH [-o|--output OUTPUT_PATH]" 1>&2
+	echo "usage: $(basename $0) -h|--help" 1>&2
+	echo "Options:" 1>&2
+	echo -e "\tFILE_PATH\t\t\tPath to the source file." 1>&2
+	echo -e "\t-c, --company COMPANY\t\t\tCompany name to put in copyright notice." 1>&2
+	echo -e "\t-i, --inplace\t\t\tInplace edit (modify source file). By default output is written to stdout." 1>&2
+	echo -e "\t-o, --output OUTPUT_PATH\tSave output to given file path." 1>&2
+	echo -e "\t-v, --verbose\t\t\tVerbose output." 1>&2
+	echo -e "\t-h, --help\t\t\tDisplay this message." 1>&2
+
+	exit 2
+}
+
+# Parse args
+while [ "$1" != "" ]; do
+	case $1 in
+		-i | --inplace )
+			INPLACE="YES"
+			;;
+		-c | --company )
+			shift
+			COMPANY="$1"
+			;;
+		-o | --output )
+			shift
+			OUTPUT_PATH="$1"
+			;;
+	    -v | --verbose )
+	        VERBOSE="YES"
+	        ;;
+		-h | --help )
+			usage
+			;;
+		* )
+			# Only one expected
+			[[ -n "${FILE_PATH}" ]] && echo "Only one source file path expected!" && usage
+			FILE_PATH="$1"
+			;;
+	esac
+
+	# next arg
+	shift
+done
+
+# Can't have inplace and output path
+[[ -n "${INPLACE}" && -n "${OUTPUT_PATH}" ]] && echo "Can't specify inplace and output path options at the same time!" && usage
+
+# Temp path
+FILE_NAME="$(basename ${FILE_PATH})"
+TMP_PATH="${TMP_DIR}/${FILE_NAME}"
+cp -f "${FILE_PATH}" "${TMP_PATH}"
+
+# First strip leading blank lines
+sed -i . '/./,$!d' "${TMP_PATH}"
+
+# Do nothing if file start with block comment (/*)
+STARTS_WITH_BLOCK="$(head -n1 ${TMP_PATH} | grep '^/\*.*' )"
+[[ -n "${STARTS_WITH_BLOCK}" ]] && echo "File starts with block comment. Ignoring." && exit 0
+
+# Remove current header
+# Not an optimal way - first count // lines with awk, then removed that number of lines with sed
+N=$(cat "${TMP_PATH}" | awk '{ if(/^\/\//) print; else exit; }' | wc -l | xargs)
+# Do nothing if count is 0
+[[ ${N} -gt 0 ]] && sed -i . "1,${N}d" "${TMP_PATH}"
+
+# And cleanup leading blank lines again
+sed -i . '/./,$!d' "${TMP_PATH}"
+
+# Insert new header using current year
+HEADER="//\\
+// Copyright (c) $(date +'%Y') ${COMPANY}. All rights reserved.\\
+//\\
+\\
+"
+
+sed -i . "1s|^|${HEADER}|g" "${TMP_PATH}"
+
+# Product output
+if [[ -n "${INPLACE}" ]]; then
+	mv -f "${TMP_PATH}" "${FILE_PATH}"
+elif [[ -n "${OUTPUT_PATH}" ]]; then
+	mv -f "${TMP_PATH}" "${OUTPUT_PATH}"
+else
+	cat "${TMP_PATH}"
+fi
