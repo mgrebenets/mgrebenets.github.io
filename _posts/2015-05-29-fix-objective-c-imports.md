@@ -29,6 +29,10 @@ If your app minimum deployment target is iOS 7.0, you are free to switch to usin
 @import UIKit.UIImage;
 {% endhighlight %}
 
+A totally valid question to ask is "Should I even bother with fixing this?". And the answer is "No, not necessarily". As soon as you enabled modules for your project all `#include` and `#import` statements are automatically mapped to corresponding `@import` statement. This is described in some detail [here](http://clang.llvm.org/docs/Modules.html#id15) and [here](http://useyourloaf.com/blog/2014/12/07/modules-and-precompiled-headers.html).
+
+So, technically, fixing imports in legacy code is the question of code base maintenance and code style. It does look a bit off when both `#import` and `@import` are sitting few lines apart in the same file. Weigh all pros and cons before making a final decision. Keep in mind the fact that if you already have the script at hand, the conversion will take no time at all.
+
 # Fixing Recipe
 
 Xcode is know to offer code migration features, such as "Convert to ARC" or "Convert to Modern Objective-C Syntax". However, converting all `#import`s to `@import`s is not part of Xcode feature set. I would add "yet", because I believe sooner or later Apple will proclaim iOS 7.0 as minimum OS supported by Xcode and force all imports conversion. Until that happens we need to handle this migration ourselves.
