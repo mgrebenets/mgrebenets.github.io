@@ -25,6 +25,8 @@ Overall, managing provisioning profiles involves a lot of **manual** interaction
 
 There are so many uses for the tool, but in this article I'll describe the most basic one, that is downloading an existing provisioning profile. As a bonus, you will see how to parse provisioning profiles and get all the details from it, especially profile UUID and signing identity of the related certificate.
 
+> Disclaimer. This whole post is based around sigh version 0.5.2. The 1.0.0 beta version while offering lots of improvements, also breaks a lot of things, once the beta is stable and released I will updated the post.
+
 # Download Profile
 
 Time to fix all the assumptions before going forward.
@@ -54,7 +56,7 @@ So what's going on here?
 * `--username` is the Apple ID you used to join the developer program.
 * `--team_id` is the 10 character ID of the team. This is mandatory if the Apple ID is part of multiple teams (aka programs). In general, it's just a good rule of thumb to be as explicit as possible.
 * `--provisioning_name` is the name of provisioning profile. That's the very same name you see when you login to developer portal, not UUID or any other kind of identifier.
-* `--app_identifier` is the App identifier in the provisioning profile. The same thing you use as Bundle ID most of the time. In this example the profile is a wildcard profile, so app identifier is just "*" (wildcard).
+* `--app_identifier` is the App identifier in the provisioning profile. The same thing you use as Bundle ID most of the time. In this example the profile is a wildcard profile, so app identifier is just "*" (wildcard). Be cautious! Those quotes around `*` _really matter_!
 * `--filename` tell sigh where to save a copy of the provisioning profile file. By default it will be installed in `~/Library/MobileDevice/Provisioning Profiles/`. If you don't want the profile to be installed, add `--skip_install` option to the command.
 
 The very first time you use a given combination of Apple ID and Team ID you will be asked for a password. Fastlane will safely store your password in keychain and you will not have to type it in anymore (well, until the moment you change it, of course). So for CI setup you will have to use Sigh (or any other tool from Fastlane) at least once for each developer account, to have the password stored, and from that moment on all CI scripts will be able to work without user intervention required.
