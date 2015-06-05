@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "AppStore Version Territory"
-description: "AppStore Version Territory"
+title: "App Store Version Territory"
+description: "App Store Version Territory"
 category: Mobile CI
 tags: [mobile, ci, ios, apple, appstore, itunesconnect]
 ---

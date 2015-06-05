@@ -54,7 +54,7 @@ This is really a part of being login or non-login user. Login user as all the ot
 
 _Login Keychain_
 
-Keychain is important for Mobile CI, especially for iOS. Whether you build for Enterprise, AppStore or AdHoc distribution you have to sign the app bundle. To be able to sign you need a private-public key pair in your keychain and you **need to have access** to that keychain. Public key is part of the certificate so when I reference public key I also mean certificate that contains it.
+Keychain is important for Mobile CI, especially for iOS. Whether you build for Enterprise, App Store or AdHoc distribution you have to sign the app bundle. To be able to sign you need a private-public key pair in your keychain and you **need to have access** to that keychain. Public key is part of the certificate so when I reference public key I also mean certificate that contains it.
 
 With login user you can install development credentials (private-public key pair) into Login keychain in a very simple way. With non-login user you have no keychain to start with. Then you have to keep it up to date and make sure you put all new keys in that keychain.
 

@@ -11,7 +11,7 @@ A look at Xcode projects from another angle, trying to build things on another l
 
 <!--more-->
 
-When I started with iOS development, not much really existed in my noob view outside the Xcode IDE. For quite a while Xcode used to be my whole universe. I could go through the whole app life cycle from first line of code all the way to uploading it to AppStore, all of that in Xcode (except minor detour to iTunes Connect web interface). At some point my universe had to expand and I learned about basics of internal Xcode project structure, Xcode workspaces, `xcconfig` files, custom build phases and so on. Eventually I got out of the metaphorical Solar system (Xcode IDE) and dived into the black void of terminal window and command line interface.
+When I started with iOS development, not much really existed in my noob view outside the Xcode IDE. For quite a while Xcode used to be my whole universe. I could go through the whole app life cycle from first line of code all the way to uploading it to App Store, all of that in Xcode (except minor detour to iTunes Connect web interface). At some point my universe had to expand and I learned about basics of internal Xcode project structure, Xcode workspaces, `xcconfig` files, custom build phases and so on. Eventually I got out of the metaphorical Solar system (Xcode IDE) and dived into the black void of terminal window and command line interface.
 
 ## Xcode Limits
 
