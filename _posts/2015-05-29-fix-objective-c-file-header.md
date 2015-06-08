@@ -103,6 +103,6 @@ The described approach will not work for header comments that use block style, e
 
 # Summary
 
-As usual I link a version of [slightly improved script](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/fix-c-header-comments). As a bonus this script can fix header comments in `xcconfig` files as well. I still say _slightly_, because it can be improved more. One possible step up is to create a text file with you custom header comment and pass this file path as an input to a header fixing script.
+As usual I link a version of [slightly improved script](https://gist.github.com/mgrebenets/109fedfc7d5c8ebfff7f). As a bonus this script can fix header comments in `xcconfig` files as well. I still say _slightly_, because it can be improved more. One possible step up is to create a text file with you custom header comment and pass this file path as an input to a header fixing script.
 
 You can bundle this script up with [imports fixing script]({% post_url 2015-05-29-fix-objective-c-imports %}) and use as part of git commit hooks to eliminate some of the code style debates during code reviews.
