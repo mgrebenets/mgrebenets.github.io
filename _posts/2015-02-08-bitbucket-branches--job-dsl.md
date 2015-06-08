@@ -86,7 +86,7 @@ inputStream.close()
 
 {% endhighlight %}
 
-This code, when put together, will return list of all branches in JSON format, or will not in case you are behind...
+This code, when put together, will return list of all branches in JSON format, or will not in case you are behind the...
 
 ## Proxy
 
@@ -137,6 +137,8 @@ The JSON returned by Bitbucket API is a dictionary. Each entry has branch name a
 To experiment with Bitbucket API directly you can use this [REST Browser](http://restbrowser.bitbucket.org/).
 
 Using this information you can filter out unwanted branches. The reason to do that is that not all developers do a proper cleanup after their branches are merged. You can end up with branches as old as 3 years or more, which you don't want to pick up and create CI build project for. So you can use _timestamp_ information to ignore branches, which haven't been updated for a long time. This is also an opportunity to enforce correct branch naming rules and filter all branches with incorrect names.
+
+> An answer an absolutely valid question of "Why the branches are not deleted automatically on merge?" That's because some versions of git-flow do not use Bitbucket's native merge feature, but use a rebase instead. Thus the branches are left hanging around after they are merged and it becomes developer's responsibility to delete the branch.
 
 {% highlight groovy %}
 import java.text.DateFormat
@@ -213,7 +215,7 @@ On new project configuration page you can leave everything "as is" for this exam
 
 ![Add Build Step]({{ site.url }}/assets/images/bitbucket-dsl-add-build-step.png)
 
-Now you can [grab this DSL script](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/bitbucket-branches-job-dsl.groovy) and copy-paste it in Jenkins. Don't forget to select "Use the provided DSL script" option first.
+Now you can [grab this DSL script gist](https://gist.github.com/mgrebenets/d3b5dcabb7606f3d7863) and copy-paste it in Jenkins. Don't forget to select "Use the provided DSL script" option first.
 
 ![Provide DSL Script]({{ site.url }}/assets/images/copy-paste-bitbucket-dsl-script.png)
 
