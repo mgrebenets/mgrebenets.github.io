@@ -344,7 +344,7 @@ ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew upgrade i4napps-atlassian-cli
 # <a name="tldr"/> Summary
 
 - Create formula Ruby file and put it into a repository
-[i4napps-atlassian-cli.rb](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/i4napps-atlassian-cli.rb)
+[i4napps-atlassian-cli.rb](https://gist.github.com/mgrebenets/39fe319a2b05d182cbfa)
 
 - Create a Homebrew tap, install and upgrade
 

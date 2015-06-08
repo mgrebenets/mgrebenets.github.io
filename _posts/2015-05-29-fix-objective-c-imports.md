@@ -142,4 +142,4 @@ This case is somewhat more complicated than fixing system frameworks. I played a
 
 # Summary
 
-As a traditional TL;DR; part, I will just post the link to the [upgraded shell script version](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/fix-objc-imports).
+As a traditional TL;DR; part, I will just post the link to the [upgraded shell script version](https://gist.github.com/mgrebenets/40eaa2b8d2c724733bd5).

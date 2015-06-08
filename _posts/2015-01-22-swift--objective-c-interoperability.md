@@ -118,4 +118,4 @@ println(generic.accessValue())
 With this setup my crash went away and hadn't reappeared since then.
 
 ## Summary
-Reference to [swift-objc-interop.swift](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-objc-interop.swift) to experiment and run it from command line or in Playground
+Reference to [objc-interop.swift](https://gist.github.com/mgrebenets/96a0f3f26512ffba5ab1) to experiment and run it from command line or in Playground

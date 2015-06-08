@@ -320,5 +320,5 @@ Yet nothing stops you from creating a CI plan (job) for the Atlassian CLI RPM pa
 
 ## <a name="tldr"/> Summary
 
-- Create [RPM spec](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/nsbogan-atlassian-cli-rpm.spec)
-- Run `make rpm -f RPMMakefile` using this [RPMMakefile](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/RPMMakefile)
+- Create [RPM spec](https://gist.github.com/mgrebenets/b40ad2077172db9cdb2d)
+- Run `make rpm -f RPMMakefile` using this [RPMMakefile](https://gist.github.com/mgrebenets/b1b9d52e135561362666)

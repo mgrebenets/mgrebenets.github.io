@@ -157,4 +157,4 @@ wait([.Timeout: 0.1])
 wait([.Timeout: 0.1, .Message: "Custom timeout failed."])
 {% endhighlight %}
 
-You can [grab the swift code](https://github.com/mgrebenets/mgrebenets.github.io/blob/master/assets/scripts/swift-dictionary-literal-convertible.swift) and try it yourself in playground or just by running from command line with `xcrun swift`.
+You can [grab the swift code](https://gist.github.com/mgrebenets/ae93a434f3b15026c150) and try it yourself in playground or just by running from command line with `xcrun swift`.
