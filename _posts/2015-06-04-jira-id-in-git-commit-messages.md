@@ -66,7 +66,7 @@ fi
 Some explanation might be helpful. First the line that sets the `TICKET` variable.
 
 {% highlight bash %}
-TICKET=$(git symbolic-ref HEAD | rev | cut -d/ -f1 | rev | grep -o -E "[A-Z]+-[0-9]+")
+TICKET=$(git symbolic-ref HEAD | rev | cut -d/ -f1 | rev | grep -o -E "[A-Z]+-[0-9]+" | head -n1)
 {% endhighlight %}
 
 The `git symbolic-ref HEAD` commands gets the name of the current git branch, which may look like `refs/heads/feature/JIRA-1234-description`.
@@ -75,7 +75,7 @@ Then `rev` turns it into `noitpircsed-4321-ARIJ/erutaef/sdaeh/sfer`.
 
 When the branch name is reversed, the last component is not first in the string, and that's exactly the component we are after, so get it with `cut` command using `/` as a separator. `cut -d/ -f1` splits by `/` and takes `1`st component. The result is `noitpircsed-4321-ARIJ`.
 
-Next reverse it back into `JIRA-1234-description` and at this moment we expect the string to start with JIRA ID. JIRA ID by itself is more than one capital letter, then dash `-` and then more than one digit, this is exactly what `[A-Z]+-[0-9]+` regex describes. If your project name is different, you can adjust regex. `grep` with the given regex and `-o` option will return the match `o`nly, which is `JIRA-1234`.
+Next reverse it back into `JIRA-1234-description` and at this moment we expect the string to start with JIRA ID. JIRA ID by itself is more than one capital letter, then dash `-` and then more than one digit, this is exactly what `[A-Z]+-[0-9]+` regex describes. If your project name is different, you can adjust regex. `grep` with the given regex and `-o` option will return the match `o`nly, which is `JIRA-1234`. Finally `head -n1` will take only the first match, that's in case you have more than one JIRA ID in the branch name.
 
 If the `TICKET` has a value, then modify current commit message by adding value of `TICKET` at the start of it. The commit message is actually a file and that file can be accessed via bash script `$1` variable. `sed` is used to find a beginning of the line `^` and add `[${TICKET}] `, but only once, which is controlled by `1` before before the `s/` parth: `1s/^/[${TICKET}] /`.
 
