@@ -81,7 +81,7 @@ If you have to take proxy into account, add more `-D` options, for example
 
 The last one is useful when dealing with self-signed certificates.
 
-## Fix the Boker URLs
+## Fix the Broker URLs
 
 As usual, nothing just works right away, as if it was designed that way...
 

@@ -13,7 +13,7 @@ A way to change Objective-C `#import <Framework/Framework.h>` to modern `@import
 
 # Modules Syntax
 
-[Objective-C modules](http://clang.llvm.org/docs/Modules.html) were first introduced with iOS 7. Modules came to live for a reason, for lots of reasons. They are designed to overcome shortcomings of current preprocessor, specifically the way `#import`s are handled. You can find more information (here)[https://stoneofarc.wordpress.com/2013/06/25/introduction-to-objective-c-modules/] and (here)[http://www.raywenderlich.com/49850/whats-new-in-objective-c-and-foundation-in-ios-7].
+[Objective-C modules](http://clang.llvm.org/docs/Modules.html) were first introduced with iOS 7. Modules came to live for a reason, for lots of reasons. They are designed to overcome shortcomings of current preprocessor, specifically the way `#import`s are handled. You can find more information [here](https://stoneofarc.wordpress.com/2013/06/25/introduction-to-objective-c-modules/) and [here](http://www.raywenderlich.com/49850/whats-new-in-objective-c-and-foundation-in-ios-7).
 
 If your app minimum deployment target is iOS 7.0, you are free to switch to using modules for all system frameworks, such as `UIKit`, `Foundation` and the rest. With iOS 8.0 and support for custom dynamic frameworks, even your own frameworks can be imported as modules, but in the scope of this article we will look at system frameworks only. In terms of syntax your change would look like this
 
@@ -50,7 +50,7 @@ So what would be the recipe to fix imports for all system frameworks? Here's one
 Let's solve the first part and get a list of system frameworks. Naturally, I googled first and ended up [here](https://developer.apple.com/library/ios/documentation/Miscellaneous/Conceptual/iPhoneOSTechOverview/iPhoneOSFrameworks/iPhoneOSFrameworks.html). My desire to scrape the web page luckily died off right away, reading through the first paragraph I found out that all system frameworks are located in
 
 {% highlight bash %}
-<Xcode.app>Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/<iOS_SDK>/System/Library/Frameworks
+<Xcode.app>/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/<iOS_SDK>/System/Library/Frameworks
 {% endhighlight %}
 
 That path looked a bit familiar to me and I knew I could get at least some of it with help of `xcrun`, so this is what I got in the end
@@ -102,7 +102,7 @@ This is exactly the case where back reference needs to be used in the pattern ex
 "s,(group-capture),\1,"
 {% endhighlight %}
 
-The `()` parenthesis are capturing a group and then captured content can be back-referenced using `\1`, `\2` and so on. In this example `(group-capture)/\1` used in pattern match literally means string "group-capture" repeated 2 times and separated by `/`: "group-captureg/group-capture".
+The `()` parenthesis are capturing a group and then captured content can be back-referenced using `\1`, `\2` and so on. In this example `(group-capture)/\1` used in pattern match literally means string "group-capture" repeated 2 times and separated by `/`: "group-capture/group-capture".
 
 Anyway, assuming the source file name is stored in `FILE_PATH` variable, the in-place replacement with Perl looks like this
 

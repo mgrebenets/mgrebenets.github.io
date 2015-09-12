@@ -15,7 +15,7 @@ When I started with iOS development, not much really existed in my noob view out
 
 ## Xcode Limits
 
-In this article I will try to show you other ways to build Xcode projects. There's nothing bad with Xcode projects as such. As I mentioned before, you can have quite an elaborate configuration with multiple targets, schemes, cross-target dependencies. You can include and build sub-projects, define custom build phases such as running shell scripts. Then finally you can use _xcconfig_ files to take out project settings out of XML format and control them in plain text.
+In this article I will try to show you other ways to build Xcode projects. There's nothing bad with Xcode projects as such. As I mentioned before, you can have quite an elaborate configuration with multiple targets, schemes, cross-target dependencies. You can include and build sub-projects, define custom build phases such as running shell scripts. Then finally you can use _xcconfig_ files to take out project settings out of ASCII plist format and control them in plain text.
 
 With all that goodness you will eventually get to the limits of what Xcode project can do. Here are some examples.
 
@@ -23,7 +23,7 @@ With all that goodness you will eventually get to the limits of what Xcode proje
 
 If you have a lot of post-build phases with shell scripts, you probably want some of those to be executed only when you really need it. Have you ever seen hundreds of dSYMs uploaded to [Crashlytics](https://try.crashlytics.com/) because that small shell script phase was executed each time a developer would hit `Cmd + B`? That's just one example.
 
-No matter how sophisticated your is your use of _xcconfigs_, you'll eventually want to build an app overriding some of build settings from command line. That's often the case in CI setup, where you want to build with another provisioning profile, sign with another signing identity, etc. Going into the code and changing _xcconfig_ manually doesn't work for CI and it's too manual. Having dozens of targets with _xcconfigs_ that differ in one or two lines is another not so pleasant experience.
+No matter how sophisticated is your use of _xcconfigs_, you'll eventually want to build an app overriding some of build settings from command line. That's often the case in CI setup, where you want to build with another provisioning profile, sign with another signing identity, etc. Going into the code and changing _xcconfig_ manually doesn't work for CI and it's too manual. Having dozens of targets with _xcconfigs_ that differ in one or two lines is another not so pleasant experience.
 
 Back to shell scripts as custom build phases. Given that you have half a dozen of those, you will want to reuse them for other projects as well. Does copy-paste feel right? It should not and that's yet another reason to see how building iOS projects can be taken to the next level.
 
@@ -73,7 +73,9 @@ Another trick - phony targets, those are all listed as dependencies for a specia
 
 The `clean` target cleans Xcode project using `xcodebuild` under the hood. It also removes the `build` folder. The actual recipe for `clean` is a number of shell commands. By default `make` will print out all the executed commands to stdout. The use of `@` as in `@echo` will remove the "echo Cleaning up..." line form stdout and you will see only the "Cleaning up..." message. Another nice thing is that just like with shell you can use `\` to split single command into multiple lines.
 
-This example also features the use of variables in a makefile. You might have noticed that it's less strict than the shell syntax, e.g. it allows use of spaces for assignment operation. Using `$()` you can reference variables, shell-like `${}` is also a valid syntax, as well as not using `()` or `{}`, but I'd recommend sticking with `$()` all the time. Having `$PROJECT` resolved as `$P` `ROJECT` is not the easiest thing to figure out. Try running `make clean` to see how it works. `make` lets you override variables from command line.
+This example also features the use of variables in a makefile. You might have noticed that it's less strict than the shell syntax, e.g. it allows use of spaces around assignment operation. Using `$()` you can reference variables, shell-like `${}` is also a valid syntax. You could as well just use `$` without `()` or `{}`, but I'd recommend sticking with `$()` all the time. Having `$PROJECT` resolved as `$P` `ROJECT` is not the easiest thing to figure out. Finally `make` lets you override variables from command line.
+
+Try running `make clean` to see how it works.
 
 {% highlight bash %}
 make clean SCHEME=MyOtherScheme
@@ -146,7 +148,7 @@ Here's more advanced example, that demonstrates nesting of shell commands.
 CLANG_ANALYZER = $(shell dirname $$(which scan-build))/bin/clang-check
 {% endhighlight %}
 
-Note how I have to escape `$` with another `$` when capturing results of `which` command, that's because single `$` is part of makefile syntax and will try to resolve `$(which scan-biuild)` as makefile but not shell expression.
+Note how I have to escape `$` with another `$` when capturing results of `which` command, that's because single `$` is part of makefile syntax and will try to resolve `$(which scan-biuild)` as makefile variable but not as shell expression.
 
 An example for shell for-loop.
 
