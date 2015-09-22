@@ -1,13 +1,15 @@
 ---
 layout: post
-title: "Code Coverage for iOS"
-description: "Code Coverage for iOS"
+title: "Code Coverage for iOS (gcov)"
+description: "Code Coverage for iOS (gcov)"
 category: Mobile CI
-tags: [mobile, ci, test, ios, coverage]
+tags: [mobile, ci, test, ios, coverage, gcov, gcovr, lcov]
 ---
 {% include JB/setup %}
 
-Create code coverage reports for iOS unit tests.
+Create code coverage reports for iOS unit tests using `gcov` tool.
+
+*Note that this approach may not work with Xcode 7 and future Xcode updates. For information on how to generate test coverage reports using new Profdata format, [check this article]({% post_url 2015-09-21-code-coverage-for-ios-xcode-7 %})).*
 
 <!--more-->
 
