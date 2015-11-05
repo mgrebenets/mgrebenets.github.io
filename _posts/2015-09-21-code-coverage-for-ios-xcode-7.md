@@ -131,17 +131,17 @@ Filename                    Regions    Miss   Cover Functions  Executed
 ...usr/include/MacTypes.h         0       0    nan%         0      nan%
 ...sr/include/objc/objc.h         0       0    nan%         0      nan%
 ...r/include/sys/_types.h         0       0    nan%         0      nan%
-...tchTests/AppDelegate.m        17      14  17.65%         7    28.57%
+...tchTests/AppDelegate.m        17      15  11.76%         7    14.29%
 ...DetailViewController.m         8       5  37.50%         4    50.00%
 ...MasterViewController.m        30      20  33.33%        10    40.00%
-...MatchTests/Model.swift         1       1   0.00%         1     0.00%
+...MatchTests/Model.swift         1       0 100.00%         1   100.00%
 ...MatchTests/ObjCModel.m         1       0 100.00%         1   100.00%
 ...ixAndMatchTests/main.m         3       0 100.00%         1   100.00%
 -----------------------------------------------------------------------
-TOTAL                            60      40  33.33%        24    41.67%    
+TOTAL                            60      40  33.33%        24    41.67%  
 {% endhighlight %}
 
-Yes! A nice colorized (at least for me) output! Check `llvm-cov-show.sh` script for a bit more clean version of the shell script.
+Yes! A nice colorized (at least for me) output! Check `llvm-cov-show.sh` script for a cleaner version of the shell script.
 
 For now please ignore the fact that some system and test files are included in report, we will filter them out later. In the meantime we have achieved our first goal and converted profile data into some kind of test coverage report.
 
@@ -188,10 +188,10 @@ Now check `slather-report` directory and you got your `cobertura.xml` file ready
 Let's use simple output option and compare it to Xcode output.
 
 {% highlight bash %}
-MixAndMatchTests/AppDelegate.m: 11 of 33 lines (33.33%)
+MixAndMatchTests/AppDelegate.m: 8 of 33 lines (24.24%)
 MixAndMatchTests/DetailViewController.m: 9 of 23 lines (39.13%)
 MixAndMatchTests/MasterViewController.m: 22 of 63 lines (34.92%)
-MixAndMatchTests/Model.swift: 0 of 3 lines (0.00%)
+MixAndMatchTests/Model.swift: 3 of 3 lines (100.00%)
 MixAndMatchTests/ObjCModel.m: 3 of 3 lines (100.00%)
 MixAndMatchTests/main.m: 5 of 5 lines (100.00%)
 Test Coverage: 38.46%
@@ -200,6 +200,25 @@ Test Coverage: 38.46%
 ![Xcode Coverage Report]({{ site.url }}/assets/images/xcode-code-coverage/xcode-coverage.png)
 
 # Summary
-I bet you noticed, that Slather and Xcode (llvm-cov) reports don't actually match... I'm not sure yet what's going on. Most likely Slather's logic for calculating coverage is buggy. However, having slightly off reports is much better than nothing.
+I bet you noticed, that Slather and Xcode (llvm-cov) reports don't actually match... I'm not sure yet what's going on. Most likely Slather's logic for calculating coverage is a bit off. On the other hand, it looks like Slather is doing a better job with reporting coverage for some files... However, having slightly off reports is much better than nothing.
 
-With time either Slather will fix the bug or there will be yet another tool for converting profile data to Cobertura. Who knows, sooner or later there will be CI server plugins capable of understanding profile data format directly.
+# Caveats
+I'm adding this section as an update for this post.
+There's a number of things you have to do to have proper coverage for Swift code.
+
+**Enable Testability**
+First of all enable testability for the main target. This is controlled by `ENABLE_TESTABILITY` build setting that has to be set to `YES`. This flag will allow you to import Swift code from main target in unit tests code in this way:
+
+{% highlight swift %}
+@testable import MixAndMatchTests
+{% endhighlight %}
+
+**Don't include Swift files to Unit Tests target**
+This is another mandatory step to get coverage for Swift code.
+
+**Don't test Swift code using Objective-C code**
+This is rather a consequence of first two changes. Since Swift files are not part of test target, there is no generated code for these Swift files in the Swift umbrella header, and that means you can't use this Swift code from Objective-C.
+
+So you have to **test Swift with Swift** to get coverage reports.
+
+Thanks to [@GUL-](https://github.com/venmo/slather/pull/99#issuecomment-151502550) for help with this tricky stuff.
