@@ -7,7 +7,7 @@ tags: [mobile, ci, test, ios, coverage, llvm-cov, gcov, gcovr, lcov]
 ---
 {% include JB/setup %}
 
-Create code coverage reports for iOS unit tests using new Xocde 7 code coverage feature.
+Create code coverage reports for iOS unit tests using new Xcode 7 code coverage feature.
 
 <!--more-->
 
@@ -32,7 +32,7 @@ There's nothing new inside those scripts, same stuff as described in the previou
 
 Don't worry if you already trashed Xcode 6 and switched to Xcode 7. You still can run all the same scripts. The only problem is that `lcov.sh` will fail, that's not critical but is a first sign of trouble.
 
-The real problem is that there's *no coverage information available for Swift code*. That's because there are no `gcda` and `gcno` files generated for Swift files.
+The real problem is that there's *no coverage information available for Swift code*. That's because there are no `gcda` and `gcno` files generated for Swift.
 
 {% highlight bash %}
 # For Model.swift
@@ -52,7 +52,7 @@ XCTestCase+GCovFlush.o
 So Apple is slowly deprecating `gcov` after all.
 
 # Profile Data
-So what should we use to get test coverage reports for Swift code?
+What should we use to get test coverage reports for Swift code?
 
 Apple is switching to a new [Coverage Mapping Format](http://llvm.org/docs/CoverageMappingFormat.html) and [Profile Data format](http://llvm.org/docs/CommandGuide/llvm-profdata.html).
 
@@ -131,14 +131,14 @@ Filename                    Regions    Miss   Cover Functions  Executed
 ...usr/include/MacTypes.h         0       0    nan%         0      nan%
 ...sr/include/objc/objc.h         0       0    nan%         0      nan%
 ...r/include/sys/_types.h         0       0    nan%         0      nan%
-...tchTests/AppDelegate.m        17      15  11.76%         7    14.29%
-...DetailViewController.m         8       5  37.50%         4    50.00%
-...MasterViewController.m        30      20  33.33%        10    40.00%
+...tchTests/AppDelegate.m        17       6  64.71%         7    42.86%
+...DetailViewController.m         8       8   0.00%         4     0.00%
+...MasterViewController.m        30      25  16.67%        10    40.00%
 ...MatchTests/Model.swift         1       0 100.00%         1   100.00%
 ...MatchTests/ObjCModel.m         1       0 100.00%         1   100.00%
 ...ixAndMatchTests/main.m         3       0 100.00%         1   100.00%
 -----------------------------------------------------------------------
-TOTAL                            60      40  33.33%        24    41.67%  
+TOTAL                            60      39  35.00%        24    41.67%
 {% endhighlight %}
 
 Yes! A nice colorized (at least for me) output! Check `llvm-cov-show.sh` script for a cleaner version of the shell script.
@@ -150,19 +150,19 @@ So we have a coverage report, but how useful is it? Well, it's not much useful a
 
 The main reason for generating coverage report is to be able to feed it to your favorite CI server and enjoy a nicely formatted and browsable version of it. Ever more, configure your build jobs to be marked as stable, unstable or failed if test coverage is below a certain threshold.
 
-As it happens, none of the popular CI servers seem to have plugins for parsing Profile Data yet. So we have to convert it to something that CI servers can digest, such as Cobertura coverage report.
+As it happens, none of the popular CI servers seem to have plugins for parsing Profile Data yet. So we have to convert it to something that CI servers can digest, such as [Cobertura](http://cobertura.github.io/cobertura/) coverage report.
 
 LLVM toolset doesn't support such conversion, but there is a [glimpse](http://blog.llvm.org/2014/11/llvm-weekly-44-nov-3rd-2014.html) of [hope](http://reviews.llvm.org/rL220915).
 
 A brief search lead me to [this Stack Overflow page](http://stackoverflow.com/questions/31040594/how-to-generate-gcov-file-from-llvm-cov) with further reference to [Slather](https://github.com/venmo/slather) ruby gem. Slather is designed to take care of all your testing tasks including generating coverage report. In this article I'll only use it for converting profile data to Cobertura format.
 
-There are 2 pull requests ([#99](https://github.com/venmo/slather/pull/99) and [#92](https://github.com/venmo/slather/pull/92)) with changes to support this new feature. Requests are somewhat conflicting and it's not yet clear which of the two will be merged. But let's build this gem from source and see if it's up to job. I chose [mattdelves:feature-profdata](https://github.com/mattdelves/slather/tree/feature-profdata) branch.
+There is a pull request [#92](https://github.com/venmo/slather/pull/92) (still open at the moment of updating this post) with changes to support this new feature. Let's build this gem from source and see if it's up to job.
 
 First we need to create a custom Gemfile.
 {% highlight ruby %}
 # Gemfile
 source 'https://rubygems.org'
-gem 'slather', :git => "https://github.com/mattdelves/slather.git", :branch => "feature-profdata"
+gem 'slather', :git => "https://github.com/viteinfinite/slather.git", :branch => "feature-profdata"
 {% endhighlight %}
 
 Then install Slather from this branch.
@@ -183,42 +183,70 @@ bundle exec slather coverage \
     MixAndMatchTests.xcodeproj
 {% endhighlight %}
 
-Now check `slather-report` directory and you got your `cobertura.xml` file ready to be fed to CI server plugin! There are options other than `--cobertura-xml`, such as `--simple-output` and `--html`. HTML option is broken at the moment, but will be fixed before the feature is merged into mainstream branch (I hope).
+Now check `slather-report` directory and you got your `cobertura.xml` file ready to be fed to CI server plugin! There are options other than `--cobertura-xml`, such as `--simple-output`, `--html` and others.
 
 Let's use simple output option and compare it to Xcode output.
 
 {% highlight bash %}
-MixAndMatchTests/AppDelegate.m: 8 of 33 lines (24.24%)
-MixAndMatchTests/DetailViewController.m: 9 of 23 lines (39.13%)
-MixAndMatchTests/MasterViewController.m: 22 of 63 lines (34.92%)
+MixAndMatchTests/AppDelegate.m: 16 of 33 lines (48.48%)
+MixAndMatchTests/DetailViewController.m: 0 of 23 lines (0.00%)
+MixAndMatchTests/MasterViewController.m: 19 of 63 lines (30.16%)
 MixAndMatchTests/Model.swift: 3 of 3 lines (100.00%)
 MixAndMatchTests/ObjCModel.m: 3 of 3 lines (100.00%)
 MixAndMatchTests/main.m: 5 of 5 lines (100.00%)
-Test Coverage: 38.46%
+Test Coverage: 35.38%
 {% endhighlight %}
 
 ![Xcode Coverage Report]({{ site.url }}/assets/images/xcode-code-coverage/xcode-coverage.png)
 
-# Summary
-I bet you noticed, that Slather and Xcode (llvm-cov) reports don't actually match... I'm not sure yet what's going on. Most likely Slather's logic for calculating coverage is a bit off. On the other hand, it looks like Slather is doing a better job with reporting coverage for some files... However, having slightly off reports is much better than nothing.
+# Fastlane
+If you are a fun of [fastlane](https://github.com/fastlane/fastlane) (I am), then have a look at project `Fastfile`. It includes a basic example of how you can use `scan` and `slather` actions to get coverage reports.
 
 # Caveats
 I'm adding this section as an update for this post.
 There's a number of things you have to do to have proper coverage for Swift code.
 
-**Enable Testability**
-First of all enable testability for the main target. This is controlled by `ENABLE_TESTABILITY` build setting that has to be set to `YES`. This flag will allow you to import Swift code from main target in unit tests code in this way:
+## Enable Testability
+
+First of all enable testability for the _main_ target. This is controlled by `ENABLE_TESTABILITY` build setting that has to be set to `YES`. In fact, enabling this flag for unit tests target causes no trouble. This flag will allow you to import Swift code from main target in unit tests code in this way:
 
 {% highlight swift %}
 @testable import MixAndMatchTests
 {% endhighlight %}
 
-**Don't include Swift files to Unit Tests target**
-This is another mandatory step to get coverage for Swift code.
+## Don't include main target files to Unit Tests target
 
-**Don't test Swift code using Objective-C code**
+This is another mandatory step to get coverage for Swift code. Otherwise you will get a lot of warnings like this in the test log:
+
+{% highlight bash %}
+# For Swift files
+objc[7995]: Class _TtC14MixAndMatchTests4Model is implemented in both
+<derived-data-path>/MixAndMatchTests.app/MixAndMatchTests and
+<derived-data-path>/MixAndMatchTests.xctest/MixAndMatchTests.
+One of the two will be used. Which one is undefined.
+
+# For Objective-C files
+objc[7995]: Class ObjCModel is implemented in both
+<derived-data-path>/MixAndMatchTests.app/MixAndMatchTests and
+<derived-data-path>/MixAndMatchTests.xctest/MixAndMatchTests.
+One of the two will be used. Which one is undefined.
+{% endhighlight %}
+
+This is not only annoying, but also will result in useless code coverage reports generated.
+
+## Don't test Swift code using Objective-C code
 This is rather a consequence of first two changes. Since Swift files are not part of test target, there is no generated code for these Swift files in the Swift umbrella header, and that means you can't use this Swift code from Objective-C.
 
 So you have to **test Swift with Swift** to get coverage reports.
+
+## Avoid using legacy and new coverage formats together
+If you coverage results look totally off and you get tons of message in test log, that look like this:
+
+{% highlight bash %}
+ObjectiveC.gcda: cannot merge previous GCDA file: corrupt arc tag (<some hex address>)
+{% endhighlight %}
+
+Then you are most-likely mixing both test approaches together, which is not recommended.
+Make sure you have disabled legacy flags `GCC_GENERATE_TEST_COVERAGE_FILES` and `GCC_INSTRUMENT_PROGRAM_FLOW_ARCS`, when you want to use Profile Data. Have a look at these discussions: [1](http://stackoverflow.com/questions/33289254/xcode-7-0-and-7-1-code-coverage-turned-on-unit-test-crash-cannot-merge-previo), [2](http://stackoverflow.com/questions/22519530/dozens-of-profilinginvalid-arc-tag-when-running-code-coverage-in-xcode-5), [3](https://forums.developer.apple.com/thread/9765).
 
 Thanks to [@GUL-](https://github.com/venmo/slather/pull/99#issuecomment-151502550) for help with this tricky stuff.
