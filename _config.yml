@@ -5,8 +5,7 @@ permalink: /:categories/:year/:month/:day/:title
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
 highlighter: pygments
 markdown: kramdown
-kramdown:
-  use_coderay: true
+syntax_highlighter: coderay
 
 excerpt_separator: <!--more-->
 
