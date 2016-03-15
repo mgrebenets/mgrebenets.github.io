@@ -70,27 +70,16 @@ _If Xcode comes with a static analyzer already available, why bother and use ano
 
 ## Installation
 
-Unlike [OCLint]({% post_url 2015-02-08-oclint %}) Clang Static Analyzer is not available for installation neither via [Homebrew](http://brew.sh/) nor via [Homebrew Cask](https://github.com/caskroom/homebrew-cask). Well, there's a [pull request for a new formula](https://github.com/Homebrew/homebrew/pull/50002), so probably by the time you read this `brew install scan-build` will just work... Otherwise installation is a bit manual and consists of standard steps.
+Clang Static Analyzer is not available for installation via Homebrew directly. You _can_ get it as part of `llvm` package if installed with `--with-clang` option, but this is not recommended, because Homebrew `llvm` version will not be the same as Apple LLVM version. You won't be able to build your iOS projects with this toolchain right away.
 
-Get the tar-ball and unzip it, then move or copy to `/usr/local` and update the path in your shell profile (`.bash_profile` in this example).
+So I would recommend to use the [custom Homebrew tap](https://github.com/mgrebenets/homebrew-scan-build) instead.
 
 {% highlight bash %}
-# Get the tarball
-wget http://clang-analyzer.llvm.org/downloads/checker-278.tar.bz2
-
-# Untar - xzf (extract zee filez)
-tar xzf checker-278.tar.bz2
-
-# Move to /usr/local (aka install)
-mv checker-278 /usr/local/llvm-checker
-
-# Put these lines in shell profile (e.g. .bash_profile)
-# Clang Static Analyzer
-LLVM_CHECKER_HOME=/usr/local/llvm-checker
-export PATH=$LLVM_CHECKER_HOME:$PATH
+brew tap mgrebenets/scan-build
+brew install scan-build
 {% endhighlight %}
 
-Restart your shell session or source profile and you are good to go. Run `scan-build` to make sure installation is successful.
+Run `scan-build` to make sure installation is successful.
 
 ## Usage
 
