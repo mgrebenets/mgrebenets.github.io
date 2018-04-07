@@ -36,20 +36,20 @@ Time to fix all the assumptions before going forward.
 
 That will do it. First thing to do is to install Fastlane Ruby gem. You could install just Sigh alone, but I recommend to get the whole package.
 
-{% highlight bash %}
+```bash
 [sudo] gem install fastlane
-{% endhighlight %}
+```
 
 Time to get a profile now.
 
-{% highlight bash %}
+```bash
 # Download the profile
 sigh --username myappleid \
     --team_id 10CHTEAMID \
     --provisioning_name "Enterprise Wildcard" \
     --app_identifier "*" \
     --filename profile.mobileprovision
-{% endhighlight %}
+```
 
 So what's going on here?
 
@@ -77,55 +77,55 @@ If you don't trust Xcode too much (I don't), you can write a simple shell script
 
 Start with dropping all the digital signature stuff and getting just the profile XML (plist) part.
 
-{% highlight bash %}
+```bash
 security cms -D -i profile.mobileprovision > profile.plist
-{% endhighlight %}
+```
 
 I can't tell you what _exactly_ all arguments of `security` command mean, you may find better answers in the [Inside Code Signing](http://www.objc.io/issue-17/inside-code-signing.html) article, where I learned about this command and other commands you will see in the rest of this post. The result is saved to `profile.plist`.
 
 Now you have a plist with all the data. Let's get UUID first. The tool that can work with plists is `/usr/libexec/PlistBuddy`.
 
-{% highlight bash %}
+```bash
 /usr/libexec/PlistBuddy -c "Print :UUID" profile.plist
-{% endhighlight %}
+```
 
 This doesn't need much explanation. If you run this command you will get the UUID of the profile as an output.
 
 Next is signing identity, which is a bit more difficult. Signing identity name is not stored as plain text in the profile, however, it is part of the certificate. The profile stores all associated certificates in `DeveloperCertificates` key-value pair. That's right, there can be more than one certificate associated with one provisioning profile. It's hard to figure out which of the certificates to pick automatically. The assumption is that all of those certificates are valid and any of them can be used to sign the app bundle. If that's not the case, you need to tidy up things in your developer portal. Sigh can actually help you to do that from command line as well. Anyway, let's assume the first certificate is the one you need, time to get it.
 
-{% highlight bash %}
+```bash
 /usr/libexec/PlistBuddy -c "Print :DeveloperCertificates:0 :data" profile.plist
-{% endhighlight %}
+```
 
 Oops, looks rather ugly. Seems like PlistBuddy is doing some base 64 decoding under the hood. You can feed this output to `base64` utility to encode it back and see the same data as in plist, but do you really need to? Instead, just feed this unreadable data directly to `openssl` and ask for the subject field.
 
-{% highlight bash %}
+```bash
 /usr/libexec/PlistBuddy -c "Print :DeveloperCertificates:0 :data" profile.plist \
     | openssl x509 -inform DER -noout -subject
-{% endhighlight %}
+```
 
 The output is something like
 
-{% highlight bash %}
+```bash
 subject= /UID=10CHTEAMID/CN=iPhone Distribution: My Company Pty Limited/OU=10CHTEAMID/O=My Company Pty Limited/C=AU
-{% endhighlight %}
+```
 
 You only need to get Common Name (CN) part. At the moment I didn't find anything better than using `sed` as you can see below. It extracts the string between "/CN=" and "/OU=". I don't know in which flavors certificates come, could be this regex needs adjustments in case the order of fields in subject is different.
 
-{% highlight bash %}
+```bash
 CODE_SIGN_IDENTITY=$( \
     /usr/libexec/PlistBuddy \
         -c "Print :DeveloperCertificates:0 :data" profile.plist \
     | openssl x509 -inform DER -noout -subject \
     | sed -n '/^subject/s/^.*CN=\(.*\)\/OU=.*/\1/p' \
 )
-{% endhighlight %}
+```
 
 Alternatively, you can use this regex
 
-{% highlight bash %}
+```bash
 '/^subject/s/^.*CN=\([^\/]*\)\/.*/\1/p'
-{% endhighlight %}
+```
 
 It works with the assumption there are no `/`s in the common name. I think the message here is
 
@@ -135,7 +135,7 @@ It works with the assumption there are no `/`s in the common name. I think the m
 
 So now you have a way to download and parse provisioning profile. Automatically, in one go. With little bit of work you can come up with a proper shell script for the task.
 
-{% highlight bash %}
+```bash
 # Download the profile
 sigh --username myappleid \
     --team_id 10CHTEAMID \
@@ -156,6 +156,6 @@ CODE_SIGN_IDENTITY=$( \
     | openssl x509 -inform DER -noout -subject \
     | sed -n '/^subject/s/^.*CN=\([^\/]*\)\/.*/\1/p' \
 )
-{% endhighlight %}
+```
 
 Wit a bit more work you can refactor it to take username, team id and other parameters as input arguments.

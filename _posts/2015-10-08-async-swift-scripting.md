@@ -15,7 +15,7 @@ I was really inspired by [this talk by Ayaka Nonaka](https://realm.io/news/swift
 
 Anyway, I wanted to use [Alamofire](https://github.com/Alamofire/Alamofire) in a simple Swift script. So I have copy-paste-edited sample code from their GitHub page and saved it as a `Example.swift` file.
 
-{% highlight swift %}
+```swift
 import Alamofire
 
 Alamofire.request("http://httpbin.org/get")
@@ -24,7 +24,7 @@ Alamofire.request("http://httpbin.org/get")
     }
 
 print("Done")
-{% endhighlight %}
+```
 
 # Build Alamofire
 
@@ -41,7 +41,7 @@ Before I go on, it's important to specify versions of the tools I use.
 
 Start with a `Podfile` that looks like this:
 
-{% highlight ruby %}
+```ruby
 platform :osx, "10.10"
 use_frameworks!
 plugin "cocoapods-rome"
@@ -59,20 +59,20 @@ post_install do |installer|
     end
   end
 end
-{% endhighlight %}
+```
 
 Note that a file named `.swift-version` must exist in your working directory.
 The contents of the file are "4.0" indicating Swift language version to use.
 
 Next run `pod install` to build the frameworks.
 
-{% highlight bash %}
+```bash
 # If Xcode 9.2 is not the default toolchain - use path to Xcode 9.2 app
 export DEVELOPER_DIR=/Applications/Xcode-9.2.app/Contents/Developer
 
 # Build the frameworks
 pod install
-{% endhighlight %}
+```
 
 You may want to use `bundle exe pod install` if you installed gems with `Gemfile` and bundler.
 Now you have `Alamofire.framework` ready for use in `Rome` directory.
@@ -81,19 +81,19 @@ Now you have `Alamofire.framework` ready for use in `Rome` directory.
 
 Start with a `Cartfile`.
 
-{% highlight ruby %}
+```ruby
 github "alamofire/Alamofire" ~> 4.6.0
-{% endhighlight %}
+```
 
 Then build.
 
-{% highlight bash %}
+```bash
 # If Xcode 9.2 is not the default toolchain - use path to Xcode 9.2 app
 export DEVELOPER_DIR=/Applications/Xcode-9.2.app/Contents/Developer
 
 # Update and build
 carthage update --platform mac
-{% endhighlight %}
+```
 
 Note the `--platform mac` option. The option is not really well documented, but it's extremely important in this case. It tells carthage to build only Mac OS X targets, and that's exactly what you need for Swift scripting.
 
@@ -103,7 +103,7 @@ You should now have `Alamofire.framework` ready for use in `Carthage/Build/Mac` 
 
 Time to run the script. To point Swift compiler to location of 3rd party frameworks use `-F` option and make sure you put it _before_ the name of the Swift file.
 
-{% highlight bash %}
+```bash
 # If Xcode 9.2 is not the default toolchain - use path to Xcode 9.2 app
 export DEVELOPER_DIR=/Applications/Xcode-9.2.app/Contents/Developer
 
@@ -112,13 +112,13 @@ swift -F Rome Example.swift
 
 # Run using framework built with Carthage
 swift -F Carthage/Build/Mac Example.swift
-{% endhighlight %}
+```
 
 And the output is...
 
-{% highlight bash %}
+```bash
 Done
-{% endhighlight %}
+```
 
 Wait a sec. How come? Well, that's because...
 
@@ -127,7 +127,7 @@ Yes, the callback from Alamofire is asynchronous. So the script finishes executi
 
 That means we have to keep the script alive and kicking until we get all async callbacks. You have probably thought about semaphores or mutexes right now. Good guess, but that won't work. Consider this pseudo-code.
 
-{% highlight swift %}
+```swift
 MUTEXT = CREATE_MUTEX()
 LOCK(MUTEX) // Main queue
 Alamofire.request("http://httpbin.org/get")
@@ -136,7 +136,7 @@ Alamofire.request("http://httpbin.org/get")
          UNLOCK(MUTEX) // Main queue!
     }
 WAIT(MUTEX) // Main queue
-{% endhighlight %}
+```
 
 The problem is that callback block (closure) is dispatched to the same queue it was originally enqueued from. This is the case for Alamofire and I'm pretty sure for most of the libraries with async callbacks.
 
@@ -148,7 +148,7 @@ The answer to this particular problem is [Run Loop](https://developer.apple.com/
 Each OS X or iOS application has a main run loop that keeps the app alive and reacts to all kinds of input sources, such as timer events or selector calls.
 As a matter of fact, our Swift script has a run loop too, all we have to do is to keep it running until all async callbacks are received. The draft solution looks like this:
 
-{% highlight swift %}
+```swift
 import Alamofire
 
 var keepAlive = true
@@ -163,7 +163,7 @@ while keepAlive &&
     runLoop.runMode(NSDefaultRunLoopMode, beforeDate: NSDate(timeIntervalSinceNow: 0.1)) {
     // Run, run, run
 }
-{% endhighlight %}
+```
 
 In this example we get current run loop (`runLoop`) and then keep it running with help of `runMode(_: beforeDate:)` method. [According to the documentation](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSRunLoop_Class/#//apple_ref/occ/instm/NSRunLoop/runMode:beforeDate:) this method will return `YES` if the run loop ran and processed an input source or if the specified timeout value was reached; otherwise, `NO` if the run loop could not be started.
 
@@ -173,17 +173,17 @@ That's the main difference from using mutexes or semaphores. `runMode` doesn't b
 
 To make the task of writing scripts with async callbacks easier, I have created a [SwiftScriptRunner](https://github.com/mgrebenets/SwiftScriptRunner) framework. Here's how you'd use it:
 
-{% highlight ruby %}
-# In Podfile
+```ruby
+# In Podfile.
 pod "SwiftScriptRunner", "~> 1.0.1"
 
-# In Cartfile
+# In Cartfile.
 github "mgrebenets/SwiftScriptRunner" ~> 1.0.1
-{% endhighlight %}
+```
 
 Then in `Example.swift`:
 
-{% highlight swift %}
+```swift
 import Alamofire
 import SwiftScriptRunner
 
@@ -197,6 +197,6 @@ Alamofire.request("http://httpbin.org/get")
     }
 
 runner.wait() // Wait
-{% endhighlight %}
+```
 
 You can call `lock()` multiple times before `wait()`, just make sure you balance each `lock()` with `unlock()` to avoid _deadlocks_.

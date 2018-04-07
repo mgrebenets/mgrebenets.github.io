@@ -15,27 +15,27 @@ Destination option (`-destination`) was a new addition to Xcode 5 release. It is
 
 Allow me just to quote the man page here
 
-{% highlight bash %}
+```bash
 The -destination option takes as its argument a destination specifier describing the device (or devices) to use as a destination.  A destination specifier is a single argument consisting of a set of comma-separated key=value pairs.  The -destination option may be specified multiple times to cause xcodebuild to perform the specified action on multiple destinations.
-{% endhighlight %}
+```
 
 By the way, pay a closer attention to the last sentence. It's a really nice feature, for example with single command you can run tests on multiple simulators.
 
 One of the keys supported is "platform" and there are 3 options: "OS X", "iOS" and "iOS Simulator". Let's get more details on the last two. iOS and iOS Simulator platforms both require a "name" and "OS" keys to specify device name and iOS version. The question is "How to get list of all names and OS versions?". There are many ways to do that.
 
-## Instruments
+# Instruments
 
 The Xcode Instruments command line utility has an undocumented `-s` option, which lists all devices and templates. By adding `devices` to the invocation only devices are be listed.
 
-{% highlight bash %}
+```bash
 instruments -s devices
-# or
+# Or
 xcrun instruments -s devices
-{% endhighlight %}
+```
 
 Example output, note that it also includes your Mac as a device.
 
-{% highlight bash %}
+```bash
 Known Devices:
 R5003398 [5C25B8A6-EDF5-5856-B8B9-CB28DFBFADC4]
 Maksym's iPhone (8.1.3) [5dc0e5a8a9f7c0af1feea4bfa13860c9e61350d6]
@@ -56,28 +56,27 @@ iPhone 5s (7.1 Simulator) [6856CCCF-842E-48E8-897B-87BB1865CD10]
 iPhone 5s (8.1 Simulator) [0AC6BB28-E860-4320-A532-272BE43C067C]
 iPhone 6 (8.1 Simulator) [7953EE9F-19E8-4D0C-9219-268FB0BA6626]
 iPhone 6 Plus (8.1 Simulator) [E574C367-1BAA-4F9F-BB92-BD5F6BAB1226]
-{% endhighlight %}
+```
 
-## SimCtl
+# `simctl`
 
 Another option is to use `xcrun simctl`, which is a new addition to Xcode 6. In fact, `simctl` looks like a very promising tool that allows you to create, boot, launch and then shutdown and destroy iOS simulators on the fly, and provides commands to install and launch specific apps. If you ever used [Genymotion](https://www.genymotion.com/#!/) you might have created Android simulators using [VirtualBox](https://www.virtualbox.org/) command line utility, Apple works towards the same flexibility with `simctl`.
 
 In context of this article, to see a list of available devices, run this command
 
-{% highlight bash %}
+```bash
 xcrun simctl list
-{% endhighlight %}
+```
 
 You will get the list of device types, runtimes and devices. Device types and runtimes will be handy if you need to create new simulators. You can tell `simctl` to filter output, for example, list devices only
 
-
-{% highlight bash %}
+```bash
 xcrun simctl list devices
-{% endhighlight %}
+```
 
 Sample output
 
-{% highlight bash %}
+```bash
 == Devices ==
 -- iOS 7.0 --
     iPhone 4s (6CF0F409-F4F8-4BCD-AC4E-30E58947A3EB) (Shutdown) (unavailable)
@@ -105,22 +104,22 @@ Sample output
     iPad Air (6032BE94-1A62-4ADB-9013-50FAB2B088F6) (Shutdown)
     Resizable iPhone (5E7A9E8C-D3A8-4E58-935F-8754B100E867) (Shutdown)
     Resizable iPad (15FC1628-B369-44DE-8CE0-756439D9AEBC) (Shutdown)
-{% endhighlight %}
+```
 
 To get more details just run `xcrun simctl list -h` to get help on `list` command.
 
-## xcodebuild
+# `xcodebuild`
 
 Finally, to get the most detailed output, ask `xcodebuild` itself. It is not really documented and doesn't look like a proper approach, but it works. The idea is to give `xcodebuild` invalid key-value pair in destination specifier and wait until it complains about it offering a list of valid options in return.
 
-{% highlight bash %}
+```bash
 xcodebuild test -project MyProject.xcodeproj -scheme MyScheme \
     -destination "name=NoSuchName" -destination-timeout 1
-{% endhighlight %}
+```
 
 The output is
 
-{% highlight bash %}
+```bash
 xcodebuild: error: Unable to find a destination matching the provided destination specifier:
     { name:NoSuchName }
 
@@ -153,16 +152,16 @@ xcodebuild: error: Unable to find a destination matching the provided destinatio
     { platform:iOS Simulator, id:5E7A9E8C-D3A8-4E58-935F-8754B100E867, OS:8.1, name:Resizable iPhone }
     { platform:iOS Simulator, id:9151073B-3B7D-441A-8069-E797FA5059CE, OS:8.1, name:MyIPhone6 }
     { platform:iOS, id:5dc0e5a8a9f7c0af1feea4bfa13860c9e61350d6, name:Maksym's iPhone }
-{% endhighlight %}
+```
 
 Thanks [Tor Arne](https://disqus.com/by/disqus_ToXiGZRJLc/) for pointing out `-destination-timeout` option in the comments. Without this option `xcodebuild` will take way too long to figure out that destination doesn't exist.
 
-## Back to Destination
+# Back to Destination
 
 Now that last output from `xcodebuild` is much better than anything else. It gives you all the key-value pairs as is, no additional guesswork involved. You get the "platform", "OS" and "name" keys, and as a bonus you get an undocumented "id" key. Give it a try and see that it actually works.
 
-{% highlight bash %}
+```bash
 xcodebuild test -project MyProject.xcodeproj -scheme MyScheme -destination "id=E574C367-1BAA-4F9F-BB92-BD5F6BAB1226"
-{% endhighlight %}
+```
 
 You can adopt this approach as part of CI workflow automation and grep all key-value pairs from `xcodebuild` output.

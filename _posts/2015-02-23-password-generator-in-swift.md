@@ -15,7 +15,7 @@ One day I was chatting with other iOS devs and someone posted an example of pass
 
 I tried to find a real application for nice Swift features like generators, sequences and some functional methods like `reduce`. I went through a number of iterations to get to the final state. Here's the code I eventually came up with.
 
-{% highlight swift %}
+```swift
 import Foundation
 
 struct PasswordGenerator: SequenceType {
@@ -47,7 +47,7 @@ println(passwordGenerator.password())
 println(passwordGenerator.password())
 println(passwordGenerator.password())
 
-{% endhighlight %}
+```
 
 As you can see this code is using Swift 1.2 features, such as new `Set` data type.
 

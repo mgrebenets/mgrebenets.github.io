@@ -13,7 +13,7 @@ I've stumbled on an issue while working on my hobby project. One of the few rela
 
 Let's setup a simple code base.
 
-{% highlight swift %}
+```swift
 import AppKit
 typealias BaseObjCClass = NSObject
 
@@ -50,7 +50,7 @@ let objectGeneric = GenericClass(embeddedInstance: ObjCSubclass())
 
 println(objectGeneric.accessValue())
 println(objectGeneric.accessSize())
-{% endhighlight %}
+```
 
 There's pure Swift enum, protocol and a subclass of Objective-C class that adopts pure Swift protocol. By the way, have you ever tried declaring Swift enum with just one case?
 
@@ -64,31 +64,31 @@ So the problem in this case is that I'm implicitly checking the conformance of O
 
 Apparently, this is a known issue. There's a couple of discussions on StackOverflow ([one](http://stackoverflow.com/questions/24132738/swift-set-delegate-to-self-gives-exc-bad-access), [two](http://stackoverflow.com/questions/24174348/calling-method-using-optional-chaining-on-weak-variable-causes-exc-bad-access)).
 
-## Solution A: Back to Roots
+# Solution A: Back to Roots
 
 The first solution is to turn `PureSwiftProtocol` into Objective-C protocol by using `@objc` notation.
 
-{% highlight swift %}
+```swift
 @objc protocol PureSwiftProtocol {
   var value: PureSwiftEnum { get }
   var size: CGSize { get }
 }
-{% endhighlight %}
+```
 
 But that won't make compiler happy because it has no idea how to map `PureSwiftEnum` into Objective-C. So you have to take it one step further. You have to declare `PureSwiftEnum` as Objective-C enum (with `NS_ENUM`), obviously you have to do it in Objective-C header file and properly setup bridging header in your project.
 
-{% highlight objective-c %}
+```objective-c
 typedef NS_ENUM(NSInteger, PureSwiftEnum) {
   PureSwiftEnumValue,
   PureSwiftEnumAnotherValue,
 };
-{% endhighlight %}
+```
 
-## Solution B: Wrap it Up
+# Solution B: Wrap it Up
 
 If you don't want to revert back to adding Objective-C code with the hope that Apple eventually fixes this issue in the future, you can try another ugly trick - wrap your Objective-C class with pure Swift class that conforms to the same protocol.
 
-{% highlight swift %}
+```swift
 class PureSwiftWrapper: PureSwiftProtocol {
   var objcInstance: ObjCSubclass
 
@@ -104,18 +104,19 @@ class PureSwiftWrapper: PureSwiftProtocol {
     return objcInstance.size
   }
 }
-{% endhighlight %}
+```
 
 Now you can pass an instance of `PureSwiftWrapper` to `GenericClass`
 
-{% highlight swift %}
+```swift
 let wrapper = PureSwiftWrapper(objcInstance: ObjCSubclass())
 let generic = GenericClass(embeddedInstance: wrapper)
 
 println(generic.accessValue())
-{% endhighlight %}
+```
 
 With this setup my crash went away and hadn't reappeared since then.
 
-## Summary
+# Summary
+
 Reference to [objc-interop.swift](https://gist.github.com/mgrebenets/96a0f3f26512ffba5ab1) to experiment and run it from command line or in Playground

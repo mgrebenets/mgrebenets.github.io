@@ -20,7 +20,8 @@ Here's how it looks in Xcode, note the last column with checkboxes.
 
 If you look inside `kartoteka-reloaded.xcodeproj` folder you will see how Xcode stores the schemes.
 Here's how it looks when `kartoteka-reloaded.xcscheme` is not shared
-{% highlight bash %}
+
+```bash
 kartoteka-reloaded.xcodeproj/
 ├── project.pbxproj
 ├── project.xcworkspace
@@ -32,10 +33,11 @@ kartoteka-reloaded.xcodeproj/
         └── xcschemes
             ├── kartoteka-reloaded.xcscheme
             └── xcschememanagement.plist
-{% endhighlight %}
+```
 
 Now let's tick the "Shared" checkbox then list directory contents again
-{% highlight bash %}
+
+```bash
 kartoteka-reloaded.xcodeproj/
 ├── project.pbxproj
 ├── project.xcworkspace
@@ -47,17 +49,17 @@ kartoteka-reloaded.xcodeproj/
     └── grebenetsm.xcuserdatad
         └── xcschemes
             └── xcschememanagement.plist
-{% endhighlight %}
+```
 
 Notice how the `kartoteka-reloaded.xcscheme` moved from user data folder to shared data folder. This is basically what makes scheme a shared one.
 
 The general practice for Xcode projects `.gitignore` file is to ignore user data
 
-{% highlight bash %}
+```bash
 # .gitignore
 xcuserdata/
 *.xcuserdatad
-{% endhighlight %}
+```
 
 So when you check out source code on a build box, there won't be any user schemes inside `.xcodeproj` folder and `xcodebuild` won't be able to see the schemes and will fail to build them.
 
@@ -83,12 +85,14 @@ Since it all happens on a build box as part of a build plan, you can't push anyt
 The answer to your problems comes from Ruby world. In particular the [xcodeproj](https://rubygems.org/gems/xcodeproj) Ruby gem. This is an incredibly handy library to work with Xcode projects and workspaces. You can do pretty much anything you need, create and modify targets and schemes, add new files to targets, modify build settings and other properties, and, of course, share schemes. By the way, `xcodeproj` is used by [CocoaPods](https://github.com/CocoaPods/Xcodeproj) and that says a lot.
 
 Go ahead and install the gem
-{% highlight bash %}
+
+```bash
 [sudo] gem install xcodeproj
-{% endhighlight %}
+```
 
 Now create a simple Ruby file, name it whatever you want
-{% highlight ruby %}
+
+```ruby
 #!/usr/bin/env ruby
 # share_schemes.rb
 
@@ -96,18 +100,19 @@ require 'xcodeproj'
 xcproj = Xcodeproj::Project.open("MyProject.xcodeproj")
 xcproj.recreate_user_schemes
 xcproj.save
-{% endhighlight %}
+```
 
 This is it! Put your Xcode project name in there, then run and the scheme will be shared.
 
-{% highlight bash %}
+```bash
 chmod +x share_schemes.rb
 ./share_schemes.rb
-{% endhighlight %}
+```
 
 # Caveats
+
 It sounds to good to be true, right?
-There's a number of situations where shaing a scheme via Ruby script will not work as expected.
+There's a number of situations where sharing a scheme via Ruby script will not work as expected.
 
 If your Xcode project already has a shared scheme, then you will end up having one scheme from user's data directory and another one form `xcshareddata`. Xcode IDE will pick up both and that's the reason why you see same scheme twice with project name in parentheses.
 ![Manage Schemes]({{ site.url }}/assets/images/duplicated-schemes-list.png)
@@ -122,7 +127,7 @@ Surely the Ruby script can be improved, you'd want to pass Xcode project name as
 
 As usual, in Summary I just provide file listing with a solution ready to copy-paste. Here's more advanced Ruby script for your use. You can just get the file directly if you'd like, [share-schemes.rb](https://gist.github.com/mgrebenets/041a0b61cd5e4aaa9bdd)
 
-{% highlight ruby %}
+```ruby
 #!/usr/bin/env ruby
 # share_schemes.rb
 
@@ -190,17 +195,17 @@ xcproj = Xcodeproj::Project.open(options.project)
 xcproj.recreate_user_schemes
 xcproj.save
 
-{% endhighlight %}
+```
 
 Right, this is one of those cases where actual meaningful code is very small (just 4 lines), the rest is options parsing and error checking, but then it's worth it in the end.
 
 Finally run it
 
-{% highlight bash %}
+```bash
 chmod +x share_schemes.rb
 ./share_schemes.rb -p "MyProject.xcodeproj"
-{% endhighlight %}
+```
 
+## P.S.
 
-### P.S.
 [Related thread](http://stackoverflow.com/questions/14368938/xcodebuild-says-does-not-contain-scheme) on StackOverflow.

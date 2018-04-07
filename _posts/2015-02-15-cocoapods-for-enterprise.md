@@ -11,7 +11,7 @@ A practical example of using CocoaPods for enterprise projects.
 
 <!--more-->
 
-The "Enterpise" definition isn't that clear and is not something standard. I will define it as follows.
+The "Enterprise" definition isn't that clear and is not something standard. I will define it as follows.
 
 - Enterprise is a company that builds more that one app on the same platform.
 - Has a large number of in-house libraries and modules.
@@ -19,27 +19,27 @@ The "Enterpise" definition isn't that clear and is not something standard. I wil
 
 The challenge is to adopt CocoaPods for such projects. This is actually more of a case-study than success story of adopting CocoaPods.
 
-## xcconfig
+# `xcconfig`
 
 One thing that "complex" project setup means is extensive use of _xcconfig_ files. The problem is that CocoaPods generates it's own _xcconfigs_ and expects them to be applied to project target. If it detects existing _xcconfigs_ it displays a warning in the end of generation step. Solution is to follow the advise and include Pods _xcconfig_ in the very last _xcconfig_ file which is applied to a target.
 
 
-{% highlight java %}
+```c
 // Pods
 #include "Pods/Target Support Files/Pods/Pods.debug.xcconfig"
-{% endhighlight %}
+```
 
 Make sure you do that for all targets and all configurations.
 
-## $(inherited)
+# `$(inherited)`
 
 This is next issue which is [known to CocoaPods users](https://github.com/CocoaPods/CocoaPods/issues/1761).
 
 The problem is that CocoaPods assumes it's the only thing in the world using _xcconfigs_. So it never ever uses `$(inherited)` thus it doesn't pick up any of the previous definitions when included into other _xcconfigs_.
 
-One of the solutions is to patch Pods _xcconfig_ files as part of `pod upate` or `pod install` command. This is what post-install hooks are for. Consider this example
+One of the solutions is to patch Pods _xcconfig_ files as part of `pod update` or `pod install` command. This is what post-install hooks are for. Consider this example
 
-{% highlight ruby %}
+```ruby
 # Podfile for Project with xcconfig files
 source 'https://github.com/CocoaPods/Specs.git'
 
@@ -62,11 +62,11 @@ post_install do |installer|
         end
     end
 end
-{% endhighlight %}
+```
 
 The `post_install` hook iterates through all targets, figures out the full path to generated Pods _xcconfig_ and patches it by prepending `$(inherited)` for all occurrences of `HEADER_SEARCH_PATHS` and `OTHER_LDFLAGS`.
 
-## Git Submodules and Proxy
+# Git Submodules and Proxy
 
 This is another issue that may happen in "enterprise" environment, especially if proxy is involved. CocoaPods is not able to checkout pods with submodules. An example of a pod with such problems is [Facebook SDK](http://stackoverflow.com/questions/25953246/facebook-ios-sdk-installation-via-cocoapods).
 
@@ -74,19 +74,19 @@ To avoid this problem in the first place I would recommend to use pods with stat
 
 If you have to have those submodules, use the following git trick:
 
-{% highlight bash %}
+```bash
 git config --global url.https://github.com/.insteadOf git://github.com/
-{% endhighlight %}
+```
 
 See discussions on [StackOverflow](http://stackoverflow.com/questions/1722807/git-convert-git-urls-to-http-urls) and [this post](https://coderwall.com/p/sitezg/force-git-to-clone-with-https-instead-of-git-urls). This command will modify your `.gitconfig` by adding this line
 
-{% highlight bash %}
+```bash
 [url "https://"]       insteadOf = git://
-{% endhighlight %}
+```
 
 This will solve submodule issue and is much easier than other workarounds like messing up with proxy stuff and tools like `socat`.
 
-## Git Submodules for Internal Components
+# Git Submodules for Internal Components
 
 Another blocker for migration is all those internal libraries you already use as submodules in your project. You still want to be able to change their code right inside submodule directory and work with git in-place. With pure CocoaPods approach this is not possible since all your changes will be reset on next `pod update`.
 
@@ -94,7 +94,7 @@ However, there's a beautiful work-around that allows you to benefit from both wo
 
 The idea is to use so called _Development Pods_. That means in your Podfile you specify the path to a submodule directory which has podspec file. This way CocoaPods ignores version information in podspec and uses latest files from submodule directory to generate pods. You get all the benefits of working with submodules code directly and then get all the flexibility of CocoaPods approach.
 
-## Build Problems
+# Build Problems
 
 Final paragraph is related to building projects with `xcodebuild` from command line. This is what happens on CI box after all.
 
@@ -104,22 +104,23 @@ The solution is twofold.
 
 - If specifying custom `CONFIGURATION_BUILD_DIR` then make it an **absolute** path
 
-{% highlight bash %}
-# Bad
+```bash
+# Bad.
 CONFIGURATION_BUILD_DIR=build
-# Good
+
+# Good.
 CONFIGURATION_BUILD_DIR=$(pwd)/build
-{% endhighlight %}
+```
 
 - If overriding `CONFIGURATION_BUILD_DIR` you **must** also specify `OBJROOT`, `SYMROOT` and `DSTROOT` and make sure all those are **absolute** paths as well
 
-{% highlight bash %}
-# example
+```bash
+# Example.
 OBJROOT=$(pwd)/build SYMROOT=$(pwd)/build DSTROOT=$(pwd)/build
-{% endhighlight %}
+```
 
-{% highlight bash %}
-# Example of complete build command
+```bash
+# Example of complete build command.
 xcodebuild clean build \
   -workspace Sandbox-ObjC.xcworkspace \
   -scheme Sandbox-ObjC \
@@ -128,4 +129,4 @@ xcodebuild clean build \
   OBJROOT=$(pwd)/build \
   SYMROOT=$(pwd)/build \
   DSTROOT=$(pwd)/build
-{% endhighlight %}
+```

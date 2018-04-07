@@ -13,11 +13,11 @@ A simple way to fix file headers in your Objective-C (an not only) files.
 
 Might be worth to clean up confusions, if any. By "file header" in this case I mean the C-style header comment like this
 
-{% highlight c %}
+```c
 //
 // Copyright (c) 2015 NSBogan. All rights reserved.
 //
-{% endhighlight %}
+```
 
 # Problem
 
@@ -41,9 +41,9 @@ Before proceeding further, let's agree we are working with a source file named `
 
 The blank lines at the start of the file are a rare exception, but sometimes they do occur. Fixing this is possible with `sed` is _easy_
 
-{% highlight bash %}
+```bash
 sed -i . '/./,$!d' "${FILE_PATH}"
-{% endhighlight %}
+```
 
 This is one of those they call _read-only language_. A one-liner that takes hours to decipher, unless you are fluent with `sed` already.
 
@@ -58,13 +58,13 @@ Whoa, that was a lot of words to explain one 7-characters `sed` command...
 
 Next thing to do is to remove existing header comment. This is a matter of removing consequent lines starting with `//` from the start of the file. You may think this sounds just like removing consequent blank lines. It does! But I failed big time to do it with sed. I originally assumed this is just a matter of replacing `/./` regex with something like `/^\/\//`, but no, it didn't work for me. I spent a fair amount of time googling and trying my best with `sed` and `awk`, before I gave up and came up with the solution you will see below. However, it would be fair to say that my seding and awking skills are nowhere near good enough, I am sure there's a better way to do it and I would welcome any comments.
 
-{% highlight bash %}
+```bash
 # Count number of consequent lines starting with // at the beginning of the file
 N=$(cat "${FILE_PATH}" | awk '{ if(/^\/\//) print; else exit; }' | wc -l | xargs)
 
 # Remove first N lines from the file
 [[ ${N} -gt 0 ]] && sed -i . "1,${N}d" "${FILE_PATH}"
-{% endhighlight %}
+```
 
 You can see here that the very same `/^\/\//` regex I tried to use with `sed` works perfectly with `awk`. The `awk` command will execute `print` until file lines match the pattern and will stop (using `exit` command) as soon as the first non-matching line occurs.
 
@@ -76,7 +76,7 @@ Next if `N` is greater than zero, use good old `sed` to remove first `N` lines f
 
 Finally, you have the file stripped of its old header comment, time to insert a new header.
 
-{% highlight bash %}
+```bash
 # Insert new header using current year
 HEADER="//\\
 // Copyright (c) $(date +'%Y') NSBogan All rights reserved.\\
@@ -85,7 +85,7 @@ HEADER="//\\
 "
 
 sed -i . "1s|^|${HEADER}|g" "${FILE_PATH}"
-{% endhighlight %}
+```
 
 The header here is using `date` command to insert current year in _YYYY_ format, e.g. 2015.
 
@@ -95,11 +95,11 @@ The header here is using `date` command to insert current year in _YYYY_ format,
 
 The described approach will not work for header comments that use block style, e.g.
 
-{% highlight c %}
+```c
 /**
     File header comment.
 */
-{% endhighlight %}
+```
 
 # Summary
 

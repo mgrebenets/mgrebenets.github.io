@@ -3,9 +3,13 @@
 permalink: /:categories/:year/:month/:day/:title
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
-highlighter: pygments
 markdown: kramdown
-syntax_highlighter: coderay
+highlighter: rouge
+kramdown:
+  input: GFM
+# highlighter: pygments
+# markdown: kramdown
+# syntax_highlighter: kramdown
 
 excerpt_separator: <!--more-->
 

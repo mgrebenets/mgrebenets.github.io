@@ -25,10 +25,10 @@ So remote node launched via SSH is running as Launch Daemon and has no context t
 
 Next option would be launching slave agent via Java Web Start. Option with clicking button in the browser should be ignored right away, it hardly qualifies as automated approach. Using `javaws` it a bit better though requires you to login to slave agent via GUI and then run the command and answer one prompt by clicking Run button. Finally, you can run it in a headless mode
 
-{% highlight bash %}
+```bash
 java -jar slave.jar \
   -jnlpUrl http://yourserver:8080/jenkins/computer/parasite/slave-agent.jnlp
-{% endhighlight %}
+```
 
 Now that's better, this will start a slave agent that is capable of running GUI applications and thus running iOS unit tests in simulator. If you are puzzled where does `slave.jar` come from, the answer is that it is put there by Jenkins server when you have created slave agent via Jenkins UI. The `jnlpUrl` tells an agent where the server is. The order in which agent and server are fired up seems to be important. Server first, agent second, otherwise agent may fail to start. I had this issue while using GUI mode launch via `javaws` and yet to confirm if it's true for headless mode. Still you have to start an agent manually if remote node machine reboots.
 
@@ -36,7 +36,7 @@ I have one solution to offer. It is not the best I can think of, but it's the ea
 
 Setting up Launch Agent should become a usual drill for you after you deal with Mac-based CI for a while. Create a plist file in `~/Library/LaunchAgents`, name it what you like, for example `org.jenkins-agent-a.plist` and put the following content in it.
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -63,22 +63,22 @@ Setting up Launch Agent should become a usual drill for you after you deal with 
   <true/>
 </dict>
 </plist>
-{% endhighlight %}
+```
 
 The `/Shared/Users/Jenkins-Agent-A` is your agent's home. You should have create one when setting up agent via server UI and `slave.jar` should be already located in this folder. Now if agent machine reboots and autologin is configured, the agent will go back online automatically. If the server reboots though, I'm not quite sure what happens, my assumption is that agent will stay alive and will keep trying to reconnect to server and finally they both happily reunite. I'm yet to test how exactly it works in reality.
 
 To manually start and stop an agent use following commands (typealias if you need to use them often)
 
-{% highlight bash %}
-# start
+```bash
+# Start.
 launchctl load ~/Library/LaunchAgents/org.jenkins-agent-a.plist
 
-# stop
+# Stop.
 launchctl unload ~/Library/LaunchAgents/org.jenkins-agent-a.plist
 
 # list (by label)
 launchctl list org.jenkins-agent-a
-{% endhighlight %}
+```
 
 
 One additional note. You can run a remote agent on localhost, which technically makes it not remote any more. This may be useful when for some reason Jenkins server is launched under non-login user session (Launch Daemon again) and you can't use default master node to run unit tests.

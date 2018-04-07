@@ -15,15 +15,15 @@ If you have read [this article]({% post_url 2015-03-15-hackerrank-in-swift---io 
 
 Start by grabbing Swift code, you can use [this file](https://github.com/mgrebenets/hackerrank/blob/master/StdIO.swift) for example. Put it in a file, name it `StdIO.swift` and put it in the root of your HackerRank folder alongside the makefile from [this post]({% post_url 2015-03-16-hackerrank-in-swift---makefiles %}) (you'll need that makefile later on).
 
-## Swift Module
+# Swift Module
 
 For next step you should have 2 files. A `StdIO.swift` file created earlier and, say, `solve-me-first.swift` for the [warmup assignment](https://www.hackerrank.com/challenges/solve-me-first).
 
-{% highlight swift %}
+```swift
 let a: Int = readLn()
 let b: Int = readLn()
 println(a + b)
-{% endhighlight %}
+```
 
 If you try to run `solve-me-first.swift` with makefile created in the article mentioned before, you'll get nowhere. Swift compiler has no idea where to look for `readLn` methods, so it can't interpret this script file alone. We have to build a Swift Module for `StdIO.swift` and then link it with our main Swift file.
 
@@ -35,39 +35,39 @@ Check out [this](http://railsware.com/blog/2014/06/26/creation-of-pure-swift-mod
 
 In general, Swift Module can include more than one Swift file. It just so happens that we have only one. To build a module you need to run this command
 
-{% highlight bash %}
-# Get location of OS X SDK
+```bash
+# Get location of OS X SDK.
 export OSX_SDK=$(xcrun --show-sdk-path --sdk macosx)
 
-# build StdIO module (use `xcrun swiftc` for OS X 10.9)
+# Build StdIO module (use `xcrun swiftc` for OS X 10.9).
 swiftc -sdk ${OSX_SDK} \
     -emit-library \
     -emit-module StdIO.swift \
     -module-name StdIO
-{% endhighlight %}
+```
 
 The options are instructing compiler to emit Swift module and shared library. Compiler also needs to know which SDK to build for. As expected, you should have 3 new files created.
 
-{% highlight bash %}
+```bash
 StdIO.swiftdoc
 StdIO.swiftmodule
 libStdIO.dylib
-{% endhighlight %}
+```
 
 That's great, the module is ready. Next step is to link it with your main Swift file and run the code. Before you run any command in the shell, you need to add one more line to `solve-me-first.swift` file.
 
-{% highlight swift %}
+```swift
 # This line is new, import StdIO module
 import StdIO
 
 let a: Int = readLn()
 let b: Int = readLn()
 println(a + b)
-{% endhighlight %}
+```
 
 Now it's time to link the two and run the code. This time we can use `swift` command.
 
-{% highlight bash %}
+```bash
 # Get location of OS X SDK
 export OSX_SDK=$(xcrun --show-sdk-path --sdk macosx)
 
@@ -77,14 +77,14 @@ cat tc/solve-me-first-tc0.txt | \
         -l$(pwd)/libStdIO.dylib \
         -I $(pwd) -module-link-name StdIO \
         solve-me-first.swift
-{% endhighlight %}
+```
 
 Let's talk about each option separately.
 
 - `-l<library>` - this is a flag that should be followed by the name of the library to link with.
-    - Actually, `-lStdIO` works as well, but that's because `libStdIO.dylib` is sitting in the same folder. I choose to be more verbose and use the full path to shared library. My intentions will become clear later when we talk about makefiles.
+  - Actually, `-lStdIO` works as well, but that's because `libStdIO.dylib` is sitting in the same folder. I choose to be more verbose and use the full path to shared library. My intentions will become clear later when we talk about makefiles.
 - `-I <import-path>` - this flag is used to specify import path. Similar to include path in Objective-C world, this way we tell the compiler where to look for Swift modules to resolve `import` statements in the code.
-    - Once again, instead of specifying current folder as `.`, I'm using full path. That will be explained later.
+  - Once again, instead of specifying current folder as `.`, I'm using full path. That will be explained later.
 - `-module-link-name <name>` - well, it expects a name of the module to link with.
 
 > Actually, this is a bit of a cheat. This second command does not compile the code, but interprets it while linking with existing module. There is a way to use Swift compiler here as well, you can find the reference in the end of this post.
@@ -95,7 +95,7 @@ OK, so run this command and you should get a (high) `5` as output. Replace the n
 
 ... with Makefile, of course. With small effort we can convert shell script into a makefile script.
 
-{% highlight makefile %}
+```makefile
 # Makefile
 
 # Actual directory of this Makefile, not where it is called form
@@ -142,7 +142,7 @@ tc-path = $(TC_DIR)/$(patsubst %.$(2),%-tc$(1).txt,$(3))
 			-l$(BUILD_DIR)/$(SWIFT_STDIO_LIB_NAME) \
 			-I $(BUILD_DIR) -module-link-name $(SWIFT_STDIO) \
 			$@
-{% endhighlight %}
+```
 
 OK, so let's walk the code.
 
@@ -165,13 +165,13 @@ Finally, the `%.swift` target runs all the compile commands. This code is almost
 
 Give it a try and run it.
 
-{% highlight bash %}
+```bash
 # Using `make` directly
 make -f ../../Makefile solve-me-first.swift
 
 # Using `hrrun` alias
 hrrun solve-me-first.swift
-{% endhighlight %}
+```
 
 `hrrun` is an alias defined in [previous article]({% post_url 2015-03-16-hackerrank-in-swift---makefiles %}) as well.
 
@@ -181,7 +181,7 @@ So it works now and you can keep stdin code separately and reuse it in assignmen
 
 Since makefiles support if-else flow control statements, you can add a conditional statement and split your makefile code in 2 parts, one for running code using interpreters, another to compile before running. It's as easy as this
 
-{% highlight makefile %}
+```makefile
 # Makefile
 
 # Compile (YES) vs interpret (NO)
@@ -203,15 +203,15 @@ else	# Compile and run
 	# TODO: Compile and run
 
 endif
-{% endhighlight %}
+```
 
 By controlling value of `COMPILE` variable you can choose one of the two ways to run assignments code. Another alias would be handy as well.
 
-{% highlight bash %}
+```bash
 HACKER_RANK_HOME="${HOME}/Projects/hackerrank"
 alias hrrun="make -f ${HACKER_RANK_HOME}/Makefile"
 alias hrrunc="make -f ${HACKER_RANK_HOME}/Makefile COMPILE=YES"
-{% endhighlight %}
+```
 
 ## Summary
 

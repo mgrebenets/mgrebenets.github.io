@@ -21,9 +21,9 @@ I have faced this issue when dealing with Jenkins CI server running as Launch Da
 
 The lesson is - don't mess up and run things manually in your CI server's guts. Another lesson, [don't run CI Xcode build jobs as non-login user]({% post_url 2015-02-01-mobile-ci-daemon-vs-agent %}) to avoid permissions problems. A practical advice to take home - clean Xcode Derived Data on regular basis on your CI box(es). You could create a cron job to do that, make it run some time after midnight and execute this simple shell command
 
-{% highlight bash %}
+```bash
 rm -rf /Users/username/Library/Developer/Xcode/DerivedData/*
-{% endhighlight %}
+```
 
 Note the use of full path in the command. That's in case you do have multiple user accounts as part of your CI setup and the plan can run under any of those accounts.
 
@@ -33,6 +33,6 @@ Cleaning derived data might increase the time of first build for each project ne
 
 For daily use on your development machine create a type alias in your bash profile.
 
-{% highlight bash %}
+```bash
 typealias xcode-clean-derived="rm -rf /Users/i4niac/Library/Developer/Xcode/DerivedData/*"
-{% endhighlight %}
+```

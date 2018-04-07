@@ -21,8 +21,8 @@ If you decide to take mobile CI under your total control, you have to pick a bui
 
 I personally have worked with Bamboo for 1.5 years and I'm dealing with Jenkins right now, so I have few insights and can give some comparison of the two.
 
-
 ## Setup & Configuration
+
 [Bamboo installation]({% post_url 2015-02-01-bamboo-ci-server-on-osx %}) and [Jenkins installation]({% post_url 2015-02-01-jenkins-ci-server-on-osx %}) tasks are about the same in terms of time and knowledge required. While installing one of the two you'll climb a certain learning curve which will help you heaps if you ever have to deal with second option.
 
 Both are built using Java. Being Java applications, both will require similar JVM configuration. Default configuration won't really serve you well. You'll experience out of memory issues as soon as you add a couple of basic build plans/projects.
@@ -30,6 +30,7 @@ Both are built using Java. Being Java applications, both will require similar JV
 And lot of other things are similar: configuration behind proxy, login vs non-login user ([Launch Agent vs Daemon]({% post_url 2015-02-01-mobile-ci-daemon-vs-agent %})), OS X Keychain, iOS Simulator, etc.
 
 ## GUI
+
 Obviously, this is not a comparison criteria at all. This criteria is as subjective as it could possibly be!
 
 Out of the box Bamboo UI looks much better than Jenkins version.
@@ -41,6 +42,7 @@ You should start by installing [Simple Theme Plugin](https://wiki.jenkins-ci.org
 There's multitude of [UI, List View and Page Decorator plugins](https://wiki.jenkins-ci.org/display/JENKINS/Plugins) available for Jenkins. Some of them must be good and help you customize you Jenkins look & feel and functionality.
 
 ## Plugins
+
 This is where the large community plays its role. Subjectively or not, Jenkins has a larger choice of plugins of all kinds, starting from management and organization of build jobs and ending up with reporting.
 
 Via a fancy pie chart diagram we are told that Bamboo has **151** plugins on [Atlassian Marketplace](https://marketplace.atlassian.com/home/jira).
@@ -53,17 +55,17 @@ Reporting is one of the most important plugin categories in my opinion. For exam
 
 Jenkins features **127** plugins just for reporting, that's almost as much as Bamboo can offer in total. Of course, quality of all those plugins deserves a detailed research. Just numbers don't tell much. But this post _is_ based on some hands on experience, so I'll compare some reporting plugins I have used over time.
 
-_Publish HTML_
+### Publish HTML
 
 If you ever used [Clang Static Analyzer]({% post_url 2015-02-08-clang-static-analyzer %}) for your iOS projects, you know then that there's no proper reporting plugin for this task. You end up with HTML report that needs to be published and made available in build project/plan summary page.
 
 With Bamboo you create a new [Shared Artifact](https://confluence.atlassian.com/display/BAMBOO/Sharing+artifacts), with Jenkins you use [HTML Publisher plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin).
 
-_Unit Tests_
+### Unit Tests
 
 Of course you run unit tests as part of your CI, don't you? In that case you are well covered by reporting plugin on both Bamboo and Jenkins. Jenkins plugin also includes trending graphs, which is nice.
 
-_Cobertura Code Coverage_
+### Cobertura Code Coverage
 
 Of course you don't just run unit tests, but also [gather code coverage data]({% post_url 2015-02-08-code-coverage-for-ios %}), don't you?
 
@@ -71,7 +73,7 @@ This is the first time Bamboo falls one plugin short. You can [check related dis
 
 Jenkins has your back on this one with [Cobertura Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Cobertura+Plugin). You can configure custom threshold values to mark builds as failed if you tests don't provide enough coverage.
 
-_Static Analyzers Reports_
+### Static Analyzers Reports
 
 [OCLint]({% post_url 2015-02-08-oclint %}) is amazing tool to run another round of static analysis on your code and detect vast number of issues as well as to enforce coding guidelines. OCLint can produce output compatible with [PMD](http://pmd.sourceforge.net/) output format. So it can then be processed by [Jenkins PMD Plugin](https://wiki.jenkins-ci.org/display/JENKINS/PMD+Plugin). You end up with browsable report with issues grouped by priority, category and other criteria. You can navigate all the way down to the line of code causing the warning. Once again, you can configure threshold values to mark builds with lots of warnings as failed.
 
@@ -81,7 +83,7 @@ With Bamboo, unfortunately, all you have is publishing HTML report via shared ar
 
 P.S. I'm a big fan of Swift programming language, but one thing makes me a bit sad. It will take some time before we get tools like OCLint available for Swift.
 
-_Warnings_
+### Warnings
 
 If you run CI tasks such as build, test, analyze and lint, often you don't want your build project/plan to stop immediately if it encounters an error, for example test error. You still want your reporting tasks to run and pick up those errors and generate reports for them. This often leads to a problem where you have compilation error but the build is marked as passing. Preferred way to avoid this issue is to have a reporting task which will pick up all the errors and mark build as failed if needed.
 
@@ -89,11 +91,11 @@ Jenkins has [Warnings plugin](https://wiki.jenkins-ci.org/display/JENKINS/Warnin
 
 I don't know about Bamboo plugin to do the same job. I remember myself few months ago grepping test logs for errors and then marking builds as failed by doing something like `exit 1`.
 
-_Functional Tests_
+### Functional Tests
 
 If you happen to use frameworks like [Calabash](http://calaba.sh/) that produce [Cucumber](https://cukes.info/) test reports, then Both CI servers have plugins to provide nice reports.
 
-_Higher-order Plugins_
+### Higher-order Plugins
 
 Forgive me this injection of so popular these days functional slang, but this is how I want to introduce The Mother and The Father of all Jenkins plugins - [Jenkins Job DSL Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin). In short, it allows you to manage your configuration as a code and to generate and update build projects from code. What could be better for a developer?
 
@@ -125,7 +127,7 @@ Each plan consists of one ore more Build _Stages_. Stages run in **sequential** 
 
 Stages contain Build _Jobs_. Build jobs in one stage can run in **parallel** if there's enough build agents for that. Each job can require different capabilities and can be dispatched to run on some designated build agent. Build jobs may produce Build _Artifacts_ and share them with other jobs in consequent stages. Since jobs are parallelized, if one of them fails other jobs will still keep running until they finish on their own. This feature can significantly reduce build time, instead of sequential `Build ⟼ Test ⟼ Analyze ⟼ Lint` running 10 minutes, you get parallel `Build || Test || Analyze || Lint` running for about 3 minutes (given that longest job takes around 3 minutes).
 
-Finally each job is made of Build _Tasks_. Tasks run in order from top to bottom. A task may be a basic shell script or one of the many tasks provided via plugins. Here's a generalized example of a job and it's tasks. One large and important group of taks is reporting tasks.
+Finally each job is made of Build _Tasks_. Tasks run in order from top to bottom. A task may be a basic shell script or one of the many tasks provided via plugins. Here's a generalized example of a job and it's tasks. One large and important group of tasks is reporting tasks.
 
 - Checkout git repository
 - Build
@@ -143,7 +145,7 @@ A summary of a Build Plan structure
   - [_more jobs_]
 - [_more stages_]
 
-_Not So Parallel_
+#### Not So Parallel
 
 Bamboo deserves a special side-note in regards to parallel job execution and iOS build plans.
 
@@ -157,18 +159,17 @@ Now imagine that you are adding your specialized Mac build agent to be used for 
 
 There's no easy fix to this problem and you can tackle it in one of 2 ways.
 
-_Ideal Solution_
+#### Ideal Solution
 
 Ideally, CI must be done right. All the build plans must be maintained, updated and removed if no longer needed. As a requirement, all build plans must explicitly declare capabilities they require to be able to run. This is something to be enforced at team management level. Company has to have guidelines for creating and managing build plans and there must be a person or even a team (Dev Support team) responsible for keeping guidelines up to date and enforcing them.
 
-_Down to Earth Solution_
+#### Down to Earth Solution
 
 The reality is rough. The number of existing plans is overwhelming, it will take months to chase people responsible for each build plan and communicate the importance of declaring capabilities to them. The whole change has to be made in a safe way so it doesn't break existing workflows and production deployments.
 
 You don't have months of waiting allocated in your schedule, you need mobile CI running ASAP. One thing you could do is to setup your own CI server just for mobile and essentially move to "under the desk" setup. This way you get no support from Dev Support team (given that you have one) and all the trouble of setting up, configuring and supporting the server and agents is now yours.
 
 However, you still can do mobile CI as part of company wide CI. There is a plugin that will help you - [Bamboo Group Agent plugin]({% post_url 2015-02-01-bamboo-group-agent %}). Have a read if you interested, Group Agent plugin offers a solution which is not fully flexible, but will help with original problem.
-
 
 ### Jenkins
 
@@ -202,7 +203,7 @@ Once again with a fair bit of work Jenkins can match Bamboo's default functional
 
 I mentioned artifact sharing briefly for Bamboo. For Multijob plugin there is no proper artifact sharing support yet. There's a number of open tickets ([JENKINS-20241](https://issues.jenkins-ci.org/browse/JENKINS-20241), [JENKINS-25111](https://issues.jenkins-ci.org/browse/JENKINS-25111), [JENKINS-16847](https://issues.jenkins-ci.org/browse/JENKINS-16847), [JENKINS-16847](https://issues.jenkins-ci.org/browse/JENKINS-16847)) with workarounds available. So the problem can be solved but it's not part of official Jenkins release yet.
 
-_Not So Parallel Either_
+#### Not So Parallel Either
 
 Jenkins is still prone to the same problem Bamboo is when it comes to adding iOS build nodes to existing infrastructure. Chances are high your Mac build node will be used by all the other build projects if capabilities are not configured properly.
 
@@ -214,17 +215,17 @@ At this moment I am not aware of a Jenkins analogue of Bamboo Group Agent.
 
 Branches are an essential part of any source code management workflow. By supporting branches in CI workflow you get a number of benefits.
 
-_Timely Feedback_
+### Timely Feedback
 
 By running CI for each branch you provide developer with earlier feedback on their changes. They will know right away if changes they made are breaking the build, unit or functional tests, introduce static analyzer or linter warnings, etc. Developers can then fix these problems before they create pull request and involve the rest of the team in review process.
 
-_Earlier Tests_
+### Earlier Tests
 
 If you have testable build for each branch, you can make it available to your test team automatically as part of continuous delivery process. This way important and critical changes can be tested before they are merged to upstream branch (doesn't mean you don't do integration testing after the merge though). Bugs can be caught earlier and you end up with faster develop-and-test iterations.
 
 Finally, some branches are never destined to be merged upstream. They may contain some experimental feature code, something you still need to build and make available to testers or internal stakeholders. For example have a special build to demo crazy design idea to your UI/UX people.
 
-_Branch Naming_
+### Branch Naming
 
 I had to mention branch naming in a separate paragraph. For some reason, yet unknown to me, when it comes to naming a branch developers get completely wild. What I mean is that within the same team you can see branch names with and without prefix, using dashes or camel case, dashes _and_ camel case combined, underscores... just anything. Sometimes the same developer would be very inconsistent when naming their branches. The very same developers are very disciplined when it comes to coding, i.e. class, variable and method names, and following coding style guide in general.
 
@@ -236,9 +237,9 @@ Bamboo does a great job with branches. With a single tick of a checkbox you can 
 
 With a standard [Java regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) you can filter branches by their name and instruct Bamboo to ignore branch names that don't follow guidelines.  For example, the regex below will accept only `master` and `development` branches, and branches that are prefixed with `bugfix/`, `hotfix/` or `feature/` followed by JIRA issue ID and lowercase-with-dashes description.
 
-{% highlight java %}
+```java
 master|development|((bugfix/|hotfix/|feature/)\w{2,}-\d+(-[\da-z]*)*)
-{% endhighlight %}
+```
 
 A good Java regex test website is [RegexPlanet](http://www.regexplanet.com/advanced/java/index.html).
 
@@ -249,7 +250,6 @@ With another simple configuration field you can control aging of the branches. I
 I've mentioned branch merging strategies and that's one more feature that Bamboo provides out of the box. Using [Branch Updater](https://confluence.atlassian.com/display/BAMBOO/Using+plan+branches#Usingplanbranches-Branchupdater) or [Gatekeeper](https://confluence.atlassian.com/display/BAMBOO/Using+plan+branches#Usingplanbranches-Gatekeeper) you can configure build plan to do upstream merge before or downstream merge after running the build, and even push merged changes back to the repository. This is a very good way to detect merge conflicts earlier and to keep your git workflow in order.
 
 Bamboo's branches support also shines when it comes to CI pipelines, more on that later in the post.
-
 
 ### Jenkins & Branches
 
@@ -276,7 +276,7 @@ Yes, it takes time and learning to get used to Job DSL plugin, but the benefits 
 
 Pipelines is another name for CI/CD workflows. In certain cases single build plan/project is not enough, and that's when you can create pipelines. Creating a pipeline means you chain build plans together, if first plan (aka _parent_) is successful it triggers its _child_ plans. Child plans can have children of their own, and so on.
 
-{% highlight bash %}
+```bash
 .
 └── Parent Plan
     ├── Child Plan 1
@@ -284,7 +284,7 @@ Pipelines is another name for CI/CD workflows. In certain cases single build pla
     │   └── Grandchild Plan 1.2
     ├── Child Plan 2
     └── [more children]
-{% endhighlight %}
+```
 
 A real world example of pipelines for mobile space is UI automation tests, often called Functional or Acceptance tests. UI automation is usually a heavyweight task compared to unit tests. If you run UI automation tests as part of a single build plan it can take too long to complete.
 
@@ -302,7 +302,6 @@ The real power of Bamboo pipelines is in its support for branches. Child plan wi
 
 When child plan starts it can get artifacts from the parent via Artifact Downloader task. Yet again, the branch of the child plan gets artifacts from the matching branch of the parent plan, all is handled by Bamboo.
 
-
 ### Jenkins Pipelines
 
 Jenkins has no pipelines support by default. As usual plugins should be used.
@@ -318,8 +317,8 @@ Most popular plugins used for pipelines are
 
 Both are supported by Job DSL allowing you to script complex pipelines in code and change them easily.
 
-
 ## Distributed Builds
+
 Both Bamboo and Jenkins have support for distributed builds. Bamboo is using [Remote Agents](https://confluence.atlassian.com/display/BAMBOO/Bamboo+remote+agent+installation+guide) while Jenkins calls them [Remote Nodes](https://wiki.jenkins-ci.org/display/JENKINS/Distributed+builds ), sometimes referred as slave nodes or agents.
 
 A side note - both servers support local build agents/nodes as well. Those are running locally (as the name suggests) on the same hardware as the build server.
@@ -331,19 +330,20 @@ Both will suffer from issues caused by sitting behind the company proxy, specifi
 Why the server is in the cloud and the agent/node is not? - you'd ask. Well, that takes us to next topic.
 
 ## Mac Support
+
 Right, this whole comparison is focusing on mobile CI after all, meaning you have to deal with one of the most popular mobile platforms these days - that is iOS.
 
 To build an iOS app you must have Xcode, which can run only on OS X (unless you want to follow the path of certain insanity and make it work on other OS).
 
-_Hackintosh_
+### Hackintosh
 
 Not a very good idea I'd say. The company does iOS development and wants to go with Hackintosh to setup OS X build server. Really?
 
-_Cloud (aka OnDemand)_
+### Cloud (aka OnDemand)
 
 Could be a really good option, but not with industry giants like AWS. AWS or alike is where you'd go if using Bamboo OnDemand feature. I can find posts as old as 2011 discussing this issue: [one](https://answers.atlassian.com/questions/22655/bamboo-mac-agent), [two](https://jira.atlassian.com/browse/BAM-11870). Apple doesn't make it easy to run virtual OS X instances to the extent that none of the big cloud providers are brave enough to provide official support for this feature. These days you can go with one of the many Mac Mini colocation services. You either rent a Mac hardware or even provide your own.
 
-_Self-hosted_
+### Self-Hosted
 
 This is also an option. If your company has security concerns about those Mac hosting providers, or doesn't want to spend money for that, or for any other reason, you can always purchase Mac hardware and host it in your data center.
 
@@ -352,6 +352,7 @@ Whenever you are using self-hosting or remote hosting, you end up dealing with n
 Next step is to install remote agent/node and get it running. As I mentioned already, installing [remote agent for Bamboo]({% post_url 2015-02-01-bamboo-remote-agent%}) is around the same complexity as installing [remote node for Jenkins]({% post_url 2015-02-01-jenkins-remote-node%}). The problems start popping up when you begin using them.
 
 ### Bamboo Remote Agent
+
 Things you definitely need to know in regards to Bamboo remote agent.
 
 [The rumor has it that] Atlassian are using Mac OS X to develop their products, including Bamboo, but OS X is never ever listed as _officially_ supported. Indeed, why would you choose to run your JIRA, Stash, Bamboo, whatever, on OS X server? Hopefully with increasing demand for iOS CI Atlassian will put a bit higher priority on fixing Bamboo issues for OS X, and there's plenty, btw.
@@ -362,13 +363,13 @@ Major and the most important group of issues is related to **Artifacts Sharing**
 
 Whenever your remote agent finishes a build stage it is most often producing build artifacts. It _doesn't matter_ if those artifacts are shared or not, they must be copied to the server anyway. That is part of distributed build system. Your remote agent can go offline any time, your build plan jobs can run on different agents with different capabilities and artifacts must be passed from one agent to another. All in all, the reality is - the artifacts must be copied to the server.
 
-**Problem Proxy**
+#### Problem Proxy
 
 Is your remote agent behind proxy? May I introduce you to [HTTP 1.1 Chunked Transfer Encoding](http://en.wikipedia.org/wiki/Chunked_transfer_encoding) then? Well, not to the feature itself, but how it relates to Bamboo: [BAM-5182](https://jira.atlassian.com/browse/BAM-5182), [more](https://confluence.atlassian.com/pages/viewpage.action?pageId=420971598).
 
 Bamboo server requires support of HTTP chunked transfer feature of 1.1 protocol version to pick up artifacts. If your proxy doesn't support this feature, you are in trouble. Strictly speaking, this is not Bamboo's problem, this is the problem of your company network team. HTTP 1.1 standard was released in [1999](http://www.w3.org/Protocols/rfc2616/rfc2616.html)! There is a lot of HTTP proxy implementations that support it, [nginx](http://nginx.org/en/) for example. However, things move really slow in most of big companies when it comes to changing network infrastructure. If you are so unlucky and you company is still stuck around 1999 in terms of network infrastructure, you will most likely have to find a work-around rather than waiting months and months before you get any progress on proxy upgrade.
 
-**Problem Atlassian**
+#### Problem Atlassian
 
 But wait then! Too early to take all the blame off the Atlassian's shoulders!
 

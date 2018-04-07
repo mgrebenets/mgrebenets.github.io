@@ -13,7 +13,7 @@ Bamboo Group Agent plugin for Mac agents.
 
 [Bamboo Group Agent](https://marketplace.atlassian.com/plugins/com.edwardawebb.bamboo-group-agent) is a free plugin for Atlassian's Bamboo CI server. Like most plugins Bamboo Group Agent plugin is designed to solve a particular problem.
 
-## Problem
+# Problem
 
 Consider a distributed CI setup, for example [Bamboo Cloud](https://confluence.atlassian.com/display/Cloud/Bamboo+Cloud). The server runs in EC2 Amazon together with a number of [Elastic Agents](https://confluence.atlassian.com/display/BAMBOO/About+Elastic+Bamboo). Your goal is to add [Mac remote build agents]({% post_url 2015-02-01-bamboo-remote-agent %}) to this CI setup.
 
@@ -25,13 +25,13 @@ This setup works until the moment you need to have a special agent with special 
 
 The problem is identified, so what's with the solution? Going though the agents and declaring capabilities will not help, because all the plans need to specify capabilities as well.
 
-## Fix The Plans
+# Fix The Plans
 
 Fixing the plans by specifying capabilities is the right solution. Unfortunately it is often a hard solution. Depending on your company you may have dozens if not hundreds of build plans, created by different developers in different periods of time. It's a hell of a task just to track responsible people if you ever find anyone. Then you'd have to explain why it is important to specify capabilities and so on. It may take months before changes are applied and you don't have months, you need Mac agents up and running right now.
 
 This leads you to using a workaround which is...
 
-## Bamboo Group Agent
+# Bamboo Group Agent
 
 Allow me some copy-paste here.
 
@@ -39,7 +39,7 @@ Allow me some copy-paste here.
 
 Let's see how this applies to our Mac agent. Start by installing Group Agent plugin from Marketplace. You will have to restart Bamboo server to apply changes.
 
-### Configure Group Agent
+## Configure Group Agent
 
 Next you need to configure the agent. In this example I will use remote agent running on the same machine. Navigate to Bamboo Administration, then select Agents and select remote agent from the list.
 
@@ -63,7 +63,7 @@ Everything looks fine except for one thing, the agent name. Right now it's the I
 
 ![Rename Agent]({{ site.url }}/assets/images/bamboo-rename-remote-agent.png)
 
-### Use Group Agent
+## Use Group Agent
 
 Now create or select a build plan you want to assign to the Group Agent. Then select `Actions > Configure plan`.
 
@@ -77,17 +77,17 @@ Note, that you are using agent name here and you can specify more than one agent
 
 That's it, this plan will now run _only_ on _Mac Agent 1_ and **no other plans** will run on this agent or any group agents you configure in the future.
 
-## Drawbacks
+# Drawbacks
 
 The benefit of using Bamboo Group Agent is that it solves original problem described in this article. However, this approach has a number of drawbacks you need to know about.
 
-**Lock Entire Plan**
+## Lock Entire Plan
 
 First drawback is that by using Group Agent you lock the _entire_ plan to be executed on certain group of agents only. _Entire_ means the plan and all of its jobs will run on a single agent at a time, that means jobs can't run in parallel and you can't take advantage of this awesome feature. Another issue is that your typical iOS build plan will have only few jobs that actually need Mac OS X (`xcodebuild`), the rest will be tasks to upload builds for distribution, to generate reports, to update issue trackers and so on. Ideally all those tasks could be ran on other agents thus freeing up Mac agent for next `xcodebuild` job, but that's something that can't be done with Group Agent.
 
 The reason for this is not plugin developer's fault. Actual reason is the lack of flexibility of APIs provided by Atlassian in their plugin development SDK. Group Agent uses [BuildAgentRequirementFilter](https://docs.atlassian.com/atlassian-bamboo/latest/com/atlassian/bamboo/v2/build/agent/BuildAgentRequirementFilter.html) class which allows to filter list of Bamboo agents capable of running the plan. There's no API to apply similar filter for Build Jobs at the moment.
 
-**Deployment Projects**
+## Deployment Projects
 
 Another drawback is related to [Deployment Projects](https://confluence.atlassian.com/display/BAMBOO/Deployment+projects). By enabling Group Agent for remote or local agent you exclude it from the pool of agents that can run Deployment Projects. I bet you've just recalled that "Allow Deployments" checkbox I have recommended to leave unchecked. Well this option does exactly what it says, but it opens up the group agent for **all** deployment projects. Once again you will have dozens of unwanted deployment projects starting on a group agent, most of those will fail since Mac agent does not necessarily have all the required capabilities to deploy.
 
@@ -97,6 +97,6 @@ One of the solutions for this problem is to have a [dedicated deployment agent](
 
 Another solution would be to support group agent feature for deployment projects. Since deployment project is always linked to a build plan, it would be nice for deployment project to inherit group agent settings from it's "parent" plan. As a matter of fact, there's an already merged [pull request](https://bitbucket.org/eddiewebb/bamboo-group-agent/pull-request/1/advanced-support-for-deployment-projects/diff) addressing this issue, though the changes didn't make it into release yet.
 
-## Summary
+# Summary
 
 If you have a good opportunity then do your best to promote proper use of capabilities in your CI setup. Otherwise give Bamboo Group Agent a shot.

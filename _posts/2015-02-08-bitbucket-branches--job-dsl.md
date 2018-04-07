@@ -15,11 +15,11 @@ For any real life application of any tool you have to start with real life probl
 
 You have probably ended up here by following the link from [this article]({% post_url 2015-01-29-bamboo-vs-jenkins %}). To reiterate, there are couple of Jenkins plugins that come close to solving the original problem, but they have number of serious drawbacks. So let's see how you can solve this problem with help of Jenkins Job DSL.
 
-## Get Bitbucket Branches
+# Get Bitbucket Branches
 
 First, let's start with [example for GitHub](https://github.com/jenkinsci/job-dsl-plugin/wiki/Real-World-Examples).
 
-{% highlight groovy %}
+```groovy
 def project = 'Netflix/asgard'
 def branchApi = new URL("https://api.github.com/repos/${project}/branches")
 def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
@@ -32,7 +32,7 @@ branches.each {
         }
     }
 }
-{% endhighlight %}
+```
 
 The first 3 lines are hitting GitHub API and grab the list of all branches. This code is not going to work for Bitbucket, so we need to come up with something different. Another complication is that (in my case) we are dealing with private Bitbucket repository, so need to take authorization into account. So lets figure out what's the URL to hit. The components of URL are
 
@@ -46,7 +46,7 @@ The first 3 lines are hitting GitHub API and grab the list of all branches. This
 
 Time to put it all together
 
-{% highlight groovy %}
+```groovy
 String baseUrl = "https://bitbucket.org/api"
 String version = "1.0"
 String organization = "i4niac"
@@ -54,11 +54,11 @@ String repository = "flappy-swift"
 
 // put it all together
 String branchesUrl = [baseUrl, version, "repositories", organization, repository, "branches"].join("/")
-{% endhighlight %}
+```
 
 Next we need to convert this string to `URL`, hit it and parse the output. But before we do that, we have to set Authorization header for HTTPS authentication with username and password. The username and password should be Base64 encoded.
 
-{% highlight groovy %}
+```groovy
 String username = "i4niac"
 String password = "mypassword"
 
@@ -84,15 +84,15 @@ def branchesJson = new groovy.json.JsonSlurper().parseText(inputStream.text)
 // Close the stream
 inputStream.close()
 
-{% endhighlight %}
+```
 
 This code, when put together, will return list of all branches in JSON format, or will not in case you are behind the...
 
-## Proxy
+# Proxy
 
 This bit of code will help you to configure proxy for JVM
 
-{% highlight groovy %}
+```groovy
 String host = "myproxyhost.com.au"
 String port = 8080
 
@@ -100,15 +100,15 @@ String port = 8080
 System.getProperties().put("proxySet", "true");
 System.getProperties().put("proxyHost", host);
 System.getProperties().put("proxyPort", port);
-{% endhighlight %}
+```
 
 Yep, `";"`s are a legacy thing and I put them there to demonstrate relation between Java and Groovy. In general, any Java code is a valid Groovy code, but not the other way around.
 
-## Filter Branches
+# Filter Branches
 
 The JSON returned by Bitbucket API is a dictionary. Each entry has branch name as a key and branch description as value. Branch description is yet another dictionary with entries such as author, last commit hash and message, timestamp for last update, etc. Here's an example.
 
-{% highlight json %}
+```json
 {
   "master":  {
     "node": "a1ec1649a471",
@@ -132,7 +132,7 @@ The JSON returned by Bitbucket API is a dictionary. Each entry has branch name a
     "size": -1
   }
 }
-{% endhighlight %}
+```
 
 To experiment with Bitbucket API directly you can use this [REST Browser](http://restbrowser.bitbucket.org/).
 
@@ -140,7 +140,7 @@ Using this information you can filter out unwanted branches. The reason to do th
 
 > An answer an absolutely valid question of "Why the branches are not deleted automatically on merge?" That's because some versions of git-flow do not use Bitbucket's native merge feature, but use a rebase instead. Thus the branches are left hanging around after they are merged and it becomes developer's responsibility to delete the branch.
 
-{% highlight groovy %}
+```groovy
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import groovy.time.TimeCategory
@@ -191,7 +191,7 @@ branchesJson.each { branchName, details ->
     }
 }
 
-{% endhighlight %}
+```
 
 Let's go through the code in case comments are not descriptive enough. The main part is iterating over JSON dictionary `branchesJson` returned by Bitbucket API. On each iteration we have branch name `branchName` and its details packed as `details` JSON dictionary. We get the last modified date _timestamp_ and convert it into the `Date` object. Now we can check if the branch has valid name and is not too old.
 
@@ -203,7 +203,7 @@ Then there's a note, that no `def` keyword or type are used to declare `majorBra
 
 Final bit that needs some explanation, is the use of `job` construction. `job` is a property of the Groovy script you are running. In fact, the scrip itself is an instance of [DslFactory](https://github.com/jenkinsci/job-dsl-plugin/blob/master/job-dsl-core/src/main/groovy/javaposse/jobdsl/dsl/DslFactory.groovy) class. Job is configured with a closure. The bare minimum it needs to create Jenkins Job (or as I refer to it in this article _Project_), is `name`, so I set it to current branch name replacing all `"/"`s with `"-"`s in the process.
 
-## Summary
+# Summary
 
 As a summary for this post, you can try to run Job DSL script on real Jenkins. First or all, you need to have an access to  Jenkins server. Next, you have to have [Jenkins Job DSL Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Job+DSL+Plugin) installed. Another required plugin is [Git Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Git+Plugin).
 
