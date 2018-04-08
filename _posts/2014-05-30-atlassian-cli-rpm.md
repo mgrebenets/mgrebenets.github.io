@@ -15,7 +15,7 @@ This post describes how to create an RPM package for Atlassian CLI to install it
 
 Jump directly to [Summary](#tldr) if just want to grab the end result.
 
-## Why Bother?
+# Why Bother?
 
 Same question as one would as for using [Homebrew on OS X]({% post_url 2014-05-30-atlassian-cli-homebrew%}). And same answer again - Automation.
 
@@ -31,7 +31,7 @@ Preparing new image has a funny name, that is _Baking_ (remember _Brewing_?). Wh
 
 In any case, to conclude this long passage, one of the reasons to have an RPM package for Atlassian CLI is to be able to bake it into your build agent.
 
-## Create RPM Spec
+# Create RPM Spec
 
 Creating and RPM package is very similar to creating Homebrew tap, only in this case instead of Formula you need to create [RPM Spec](http://www.rpm.org/max-rpm/ch-rpm-inside.html).
 
@@ -41,7 +41,7 @@ touch rpm.spec
 
 Let's put first lines into the spec
 
-```r
+```bash
 %define __spec_install_post %{nil}
 %define __os_install_post %{nil}
 %define debug_package %{nil}
@@ -76,7 +76,7 @@ LC_ALL=C rpmbuild --define "version ${VERSION}" --define "release ${RELEASE}" --
 
 Some of the header attributes worth mentioning separately. For starters the _Source:_ attribute should point to your source tarball. But it doesn't have to be a local file, it can be a URL just like Homebrew's `url` attribute. You can then download and unzip it with one call to [`%setup` macro](http://www.rpm.org/max-rpm-snapshot/s1-rpm-inside-macros.html).
 
-```r
+```bash
 %prep
 %setup
 ```
@@ -85,16 +85,16 @@ I myself just found out about it recently and didn't try it yet. So in this arti
 
 Then there's `_tmppath` variable. You will notice later that it's not passed to RPM script directly anywhere, instead, it's picked up from a special `.rpmmacros` file. You'll see how it's used later on.
 
-### Install
+## Install
 
 Now it's time to define install command. It's again very similar to Homebrew's install. So I will give here brief description of the steps with the code and for more details you can always get back to [Homebrew post]({% post_url 2014-05-30-atlassian-cli-homebrew%}).
 
-#### Prepare and Setup
+### Prepare and Setup
 
 Since we don't use `%setup` macro, we have to some of the work here.
 Remove old build directory, unzip the source tarball and cleanup Windows stuff right away.
 
-```r
+```bash
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/opt/nsbogan-atlassian-cli
@@ -104,13 +104,13 @@ tar -zxvf %{_sourcedir}/%{name}-%{version}.tar.gz -C %{buildroot}/opt/nsbogan-at
 rm -f %{buildroot}/opt/nsbogan-atlassian-cli/*.bat
 ```
 
-#### Patch and Move
+### Patch and Move
 
 Next is patching time and once patching is over move the files to a proper location (`bin` folder). I've explained why this is required in the post related to Homebrew formula, so have a peek there.
 
 When patching we'll update all the `.sh` scripts and put new relative path to JAR files, we'll also insert proper `JAVA_HOME` export in each.
 
-```r
+```bash
 # Patch shell scripts, rename and move to bin.
 mkdir -p %{buildroot}/opt/nsbogan-atlassian-cli/bin
 
@@ -126,7 +126,7 @@ done
 
 Then it's time to customize all the Atlassian product URLs as well as put a proper service account username and password if you plan to save keystrokes in the future.
 
-```r
+```bash
 # Customize atlassian.sh with products username, password and URLs.
 filename=%{buildroot}/opt/nsbogan-atlassian-cli/atlassian.sh
 sed -i.bak -e "s/\(.*user=\)'.*'/\1'%{username}'/g" $filename
@@ -143,7 +143,7 @@ sed -i.bak -e "s,\(.*\)https://crubicle.example.com\(.*\),\1https://crubicle.nsb
 
 Finally rename ambiguous `all.sh` to `atlassian-all.sh` and move all `.sh` files to `bin` folder. I personally prefer to drop `.sh` part from the filename in the process.
 
-```r
+```bash
 # all.sh - rename to atlassian-all.sh before moving.
 mv %{buildroot}/opt/nsbogan-atlassian-cli/all.sh %{buildroot}/opt/nsbogan-atlassian-cli/atlassian-all.sh
 
@@ -165,11 +165,11 @@ done
 rm -rf *.bak
 ```
 
-### Files and Symlinks
+## Files and Symlinks
 
 Now it's time to tell RPM spec which files are part of final installation.
 
-```r
+```bash
 %files
 /opt/nsbogan-atlassian-cli
 ```
@@ -178,7 +178,7 @@ In post-install stage we want to symlink all the shell scripts and JAR files to 
 
 We also add info for post-uninstall process so it can remove all these symlinks for us.
 
-```r
+```bash
 %post
 # Link binaries to /usr/local/bin.
 for file in /opt/nsbogan-atlassian-cli/bin/*; do
@@ -206,21 +206,21 @@ done
 
 No comments on this one.
 
-```r
+```bash
 %clean
 rm -rf %{buildroot}
 ```
 
-### Changelog
+## Changelog
 
 Add some change log and you are done with the spec.
 
-```r
+```bash
 * Feb 18 2014 - Maksym Grebenets <mgrebenets@gmail.com> %{version}-%{release}
 - Upgrade to 3.9.0
 ```
 
-## Build RPM
+# Build RPM
 
 It's time to build an RPM based on the spec we have just came up with.
 In this example I'll use Makefile which helps to present material in more simple and organized way than just shell scripts.
@@ -288,7 +288,7 @@ Still we end up doing some additional work here. `rpmbuild` expects a certain di
 - Copy our RPM spec to `SPECS`
 - Then add `%_topdir` and `%_tmppath` to a special `~/.rpmmacros` file. `rpmbuild` will scan `~/.rpmmacros` and pass all picked up values to RPM spec when building it.
 - Finally call rpmbuild passing version, release and all the other vars.
-  + The [`-bb` option](http://www.rpm.org/max-rpm-snapshot/ch-rpm-b-command.html) tells `rpmbuild` which steps to execute.
+  - The [`-bb` option](http://www.rpm.org/max-rpm-snapshot/ch-rpm-b-command.html) tells `rpmbuild` which steps to execute.
 - Once `rpmbuild` is done, copy RPM package to distributive directory.
 
 ```makefile
@@ -312,7 +312,7 @@ make rpm
 
 I ran it on Fedora 20 as well on a custom Linux distribution running in AWS cloud. Since the package does not depend on architecture, you could in theory build it on OS X machine, but it's not what I would recommend, getting proper `rpmbuild` port configured is not something you enjoy very much.
 
-## Install RPM
+# Install RPM
 
 To test your installation, use these commands
 
@@ -328,7 +328,7 @@ Now you can hand RPM package over to your Dev Support guys, they'll put it into 
 
 Yet nothing stops you from creating a CI plan (job) for the Atlassian CLI RPM package itself. You can run `make rpm` and test rpm install on the very same build agent this package is targeted for, thus creating yet another "CI Loop", which is good.
 
-## <a name="tldr"/> Summary
+# <a name="tldr"/> Summary
 
 - Create [RPM spec](https://gist.github.com/mgrebenets/b40ad2077172db9cdb2d)
 - Run `make rpm -f RPMMakefile` using this [RPMMakefile](https://gist.github.com/mgrebenets/b1b9d52e135561362666)
