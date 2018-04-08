@@ -3,7 +3,7 @@ layout: post
 title: "Swift Dictionary Literal Convertible"
 description: "Swift Dictionary Literal Convertible"
 category: Swift
-tags: [swift, ios, apple]
+tags: [swift, ios, apple, outdated]
 ---
 {% include JB/setup %}
 

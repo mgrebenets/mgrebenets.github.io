@@ -3,7 +3,7 @@ layout: post
 title: "HackerRank in Swift - StdIn"
 description: "HackerRank in Swift - Standard Input"
 category: HackerRank
-tags: [hackerrank, io, stdin, swift, haskell]
+tags: [hackerrank, io, stdin, swift, haskell, outdated]
 ---
 {% include JB/setup %}
 

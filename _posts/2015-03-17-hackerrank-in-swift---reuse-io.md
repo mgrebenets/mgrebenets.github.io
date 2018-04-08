@@ -3,7 +3,7 @@ layout: post
 title: "Hacker Rank in Swift - Reuse Code"
 description: "Hacker Rank in Swift - Reuse Code"
 category: HackerRank
-tags: [hackerrank, swift, io, stdin, makefile, xcode]
+tags: [hackerrank, swift, io, stdin, makefile, xcode, outdated]
 ---
 {% include JB/setup %}
 

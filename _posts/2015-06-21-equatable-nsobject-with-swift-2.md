@@ -3,7 +3,7 @@ layout: post
 title: "Equatable NSObject With Swift 2"
 description: "Equatable NSObject With Swift 2"
 category: Swift
-tags: [swift, swift-2.0, playground, xcode, ios, apple]
+tags: [swift, swift-2.0, playground, xcode, ios, apple, outdated]
 ---
 {% include JB/setup %}
 

@@ -17,10 +17,12 @@ You might find something useful in this blog.
 
 <ul>
   {% for post in site.posts %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-      {{ post.excerpt }}
-    </li>
+    {% unless post.tags contains "outdated" %}
+      <li>
+        <a href="{{ post.url }}">{{ post.title }}</a>
+        {{ post.excerpt }}
+      </li>
+    {% endunless %}
   {% endfor %}
 </ul>
 
