@@ -3,13 +3,18 @@ layout: post
 title: "Swift and Objective-C Interoperability"
 description: "A practical manifestation of Swift and Objective-C interoperability problems"
 category: Swift
-tags: [swift, ios, apple, objc]
+tags: [swift, ios, apple, objc, outdated]
 ---
 {% include JB/setup %}
 
+[<font color="red">OUTDATED</font>]
+
 I've stumbled on an issue while working on my hobby project. One of the few related to Swift and Objective-C interoperability.
 
+
 <!--more-->
+
+> Note. This article content refers to Swift version 2.0 or earlier and is now outdated.
 
 Let's setup a simple code base.
 

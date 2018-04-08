@@ -7,9 +7,13 @@ tags: [swift, ios, apple]
 ---
 {% include JB/setup %}
 
+[<font color="red">OUTDATED</font>]
+
 A practical example of Swift's `DictionaryLiteralConvertible` protocol application.
 
 <!--more-->
+
+> Note. This article content refers to Swift version 2.0 or earlier and is now outdated.
 
 If "Literal Convertibles" sounds strange to you then a good place to start is an excellent [NSHipster's post](http://nshipster.com/swift-literal-convertible/).
 

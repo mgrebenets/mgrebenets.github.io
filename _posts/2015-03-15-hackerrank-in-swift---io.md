@@ -7,6 +7,8 @@ tags: [hackerrank, io, stdin, swift, haskell]
 ---
 {% include JB/setup %}
 
+[<font color="red">OUTDATED</font>]
+
 A way to read standard input for [HackerRank](https://hackerrank.com) assignments in Swift.
 
 <!--more-->

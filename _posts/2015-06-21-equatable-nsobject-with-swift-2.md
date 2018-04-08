@@ -7,6 +7,8 @@ tags: [swift, swift-2.0, playground, xcode, ios, apple]
 ---
 {% include JB/setup %}
 
+[<font color="red">Swift 2.0</font>]
+
 Subtle differences in implementing `Equatable` protocol for `NSObject` subclasses in Swift 1.2 and 2.0.
 
 <!--more-->

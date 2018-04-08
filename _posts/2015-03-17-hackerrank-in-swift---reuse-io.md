@@ -7,6 +7,8 @@ tags: [hackerrank, swift, io, stdin, makefile, xcode]
 ---
 {% include JB/setup %}
 
+[<font color="red">OUTDATED</font>]
+
 Reuse Swift IO code for multiple [HackerRank](https://hackerrank.com) assignments.
 
 <!--more-->
