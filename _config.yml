@@ -138,3 +138,6 @@ JB :
   # where [HELPER] is the name of the helper you are overriding.
 
 # theme: twitter
+
+# plugins_dir:
+#   - _includes/JB/gist
