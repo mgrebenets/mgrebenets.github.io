@@ -7,7 +7,7 @@ tags: [mobile, bamboo, jenkins, atlassian, ci]
 ---
 {% include JB/setup %}
 
-A _biased and subjective_ comparison of Bamboo and Jenkins as CI servers for mobile development, based on practical experience with both.
+A _biased and subjective_ (and by now a bit outdated) comparison of Bamboo and Jenkins as CI servers for mobile development, based on practical experience with both.
 
 <!--more-->
 
