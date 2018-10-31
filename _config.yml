@@ -100,7 +100,7 @@ JB :
       appid: 482069691926173
       num_posts: 5
       width: 580
-      colorscheme: light
+      colorscheme: dark
 
   # Settings for analytics helper
   # Set 'provider' to the analytics provider you want to use.
@@ -137,4 +137,4 @@ JB :
   #   ./_includes/custom/[HELPER]
   # where [HELPER] is the name of the helper you are overriding.
 
-theme: jekyll-theme-midnight
+# theme: twitter
