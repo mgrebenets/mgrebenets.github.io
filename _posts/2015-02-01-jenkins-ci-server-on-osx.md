@@ -23,36 +23,21 @@ You will need JDK to be [installed and configured on your Mac]({% post_url 2015-
 
 To install run a simple shell command.
 
-```bash
-brew install jenkins
-```
+{% gist d7fb72b9e326f20d65e3cefdfec73d3a %}
 
 Jenkins will be installed to `usr/local` and Homebrew will actually tell you right away how to turn it into a Launch Agent.
 
-```bash
-To have launchd start jenkins at login:
-    ln -sfv /usr/local/opt/jenkins/*.plist ~/Library/LaunchAgents
-Then to load jenkins now:
-    launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
-```
+{% gist 4639671209d603804d295f9752e35122 %}
 
 This recommends you to symlink Jenkins launch agent plist file to `~/Library/LaunchAgents` but I would advise against it. As you will see next you will need to modify that file. That means if you ever upgrade Jenkins via Homebrew all your changes in plist will be lost. My recommendation is to copy it instead of making a symbolic link.
 
 Even more, once installed via Homebrew I then delegate Jenkins upgrades to Jenkins itself. For this reason I pin Homebrew formula to prevent Homebrew from upgrading Jenkins files.
 
-```bash
-brew pin jenkins
-```
+{% gist 3b7d2ae7641b6db07a7fe0aae64eeed4 %}
 
 Now you also have manual control over Jenkins installation and can start/stop it from command line.
 
-```bash
-# Start.
-launchctl load ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
-
-# Stop.
-launchctl unload ~/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
-```
+{% gist 170152434d3789ab06c993c63c43233a %}
 
 # Configure
 
@@ -64,70 +49,37 @@ To understand why you need to change plist try to run Jenkins server. Give it a 
 - Set minimum and maximum heap size with `-Xms` and `Xmx` flags. 512 Mb works for me most of the time.
 - Configure garbage collector, class unloading and permanent space.
 
-```xml
-  <string>-d64</string>
-  <string>-Xms512m</string>
-  <string>-Xmx512m</string>
-  <!-- Use Concurrent GC-->
-  <string>-XX:+UseConcMarkSweepGC</string>
-  <string>-XX:+CMSClassUnloadingEnabled</string>
-  <string>-XX:MaxPermSize=256m</string>
-```
+{% gist 6a4b18f3452e7ab17d4a05b960fd4fcc %}
 
 ## HTTP Proxy
 
 By far the largest source of issues and frustration, company proxy. Specify it using `-D` option.
 
-```xml
-  <string>-Dhttp.proxyHost=my-company-proxy-host.com.au</string>
-  <string>-Dhttp.proxyPort=8080</string>
-```
+{% gist 24bdf3afb723b8950e8ca5f98a045231 %}
 
 ## Port and Prefix
 
 Run Jenkins on a custom port with custom prefix in url. This example uses default `8080` port and `/jenkins` prefix, so you can access your Jenkins dashboard like `http://yourhostname:8080/jenkins` or ever `http://youthostname/jenkins`. These arguments need to be passed to `jenkins.war` which was installed by Homebrew to `/usr/local/opt/jenkins/libexec`.
 
-```xml
-  <string>-jar</string>
-  <string>/usr/local/opt/jenkins/libexec/jenkins.war</string>
-  <string>--httpListenAddress=127.0.0.1</string>
-  <string>--httpPort=8080</string>
-  <string>--prefix=/jenkins</string>
-```
+{% gist d50d1e3b2ba6118bfcdf8d5cca7fcee6 %}
 
 ## Run at Load
 
 Enable Run at Load option to start server automatically if machine reboots.
 
-```xml
-  <key>RunAtLoad</key>
-  <true/>
-```
+{% gist 9973d3a4f53397dbfd9f844cfdb7ec37 %}
 
 ## Environment Variables
 
 If any of the commands in this plist need environment variables this is how you can define them.
 
-```xml
-<key>EnvironmentVariables</key>
-   <dict>
-    <key>HTTP_PROXY</key>
-    <string>http://my-company-proxy-host.com.au:8080</string>
-  </dict>
-```
+{% gist a00c74ed35d5d4bc62b50f236ac6b354 %}
 
 ## Standard Output and Error
 
-It is up to you to redirect stdout and stderr. While sounds like a good idea for logging I would advise agains redirecting stderr into a file. I once had to deal with 90 Gb log file created by Bamboo remote agent over a few months period.
+It is up to you to redirect stdout and stderr. While sounds like a good idea for logging I would advise against redirecting stderr into a file. I once had to deal with 90 Gb log file created by Bamboo remote agent over a few months period.
 
-```xml
-  <!--
-  <key>StandardOutPath</key>
-  <string>/Users/i4niac/.jenkins/log/output.log</string>
-  -->
-  <key>StandardErrorPath</key>
-  <string>/Users/i4niac/.jenkins/log/error.log</string>
-```
+{% gist c49ccb8896f0d031f4dfd6177a6fc894 %}
 
 Note that Jenkins put its files in `.jenkins` folder in your user's home path. You also have to specify full paths when dealing with launch agent plists. Create `log` folder if it's not there yet.
 
@@ -135,52 +87,11 @@ Note that Jenkins put its files in `.jenkins` folder in your user's home path. Y
 
 By default Jenkins enables security protocol for email. I have also faced an issue with [Bitbucket Plugin](https://wiki.jenkins-ci.org/display/JENKINS/BitBucket+Plugin) and had to set `preferIPv4Stack` flag as a workaround. These are all flags for `java` command.
 
-```xml
-  <string>-Dmail.smtp.starttls.enable=true</string>
-  <string>-Djava.net.preferIPv4Stack=true</string>
-```
+{% gist a9a28e5a289c2ea39fa5be2ff63258cc %}
 
 Not put it all together
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>Label</key>
-  <string>homebrew.mxcl.jenkins</string>
-  <key>ProgramArguments</key>
-  <array>
-    <string>/usr/bin/java</string>
-    <string>-server</string>
-    <string>-d64</string>
-    <string>-Xms512m</string>
-    <string>-Xmx512m</string>
-    <string>-Dmail.smtp.starttls.enable=true</string>
-    <!-- Use Concurrent GC-->
-    <string>-XX:+UseConcMarkSweepGC</string>
-    <string>-XX:+CMSClassUnloadingEnabled</string>
-    <string>-XX:MaxPermSize=256m</string>
-    <string>-Djava.net.preferIPv4Stack=true</string>
-    <string>-Dhttp.proxyHost=my-company-proxy-host.com.au</string>
-    <string>-Dhttp.proxyPort=8080</string>
-    <string>-jar</string>
-    <string>/usr/local/opt/jenkins/libexec/jenkins.war</string>
-    <string>--httpListenAddress=127.0.0.1</string>
-    <string>--httpPort=8080</string>
-    <string>--prefix=/jenkins</string>
-  </array>
-  <key>RunAtLoad</key>
-  <true/>
-
-  <key>EnvironmentVariables</key>
-   <dict>
-    <key>HTTP_PROXY</key>
-    <string>http://my-company-proxy-host.com.au:8080</string>
-  </dict>
-</dict>
-</plist>
-```
+{% gist 56f774c72cf1d067eb3c7a0eb2ac1669 %}
 
 Now you have a reliable Jenkins server that runs 24/7 and performs stable CI tasks.
 
@@ -188,25 +99,11 @@ Now you have a reliable Jenkins server that runs 24/7 and performs stable CI tas
 
 To find out how exactly Jenkins was launched, grep active processes list.
 
-```bash
-ps aux | grep java
-```
+{% gist 6c84f352247b8bb079f1bd11f9ab3cc4 %}
 
 The output will tell you everything you need to know.
 
-```bash
-jenkins   85   0.0  3.8  4633552 636852   ??  Ss   Tue02pm  20:11.30
-  /usr/bin/java
-    -Dfile.encoding=UTF-8
-    -XX:PermSize=256m -XX:MaxPermSize=512m
-    -Xms512m -Xmx512m
-    -Djava.io.tmpdir=/Users/Shared/Jenkins/tmp
-    -Dhttps.proxyHost=my-company-proxy-host.com.au -Dhttps.proxyPort=8080
-    -Dhttp.proxyHost=my-company-proxy-host.com.au -Dhttp.proxyPort=8080
-    -jar /usr/local/opt/jenkins/libexec/jenkins.war
-      --prefix=/jenkins
-      --httpPort=8080
-```
+{% gist b3c46fbebc176a3ef612fd199e493d91 %}
 
 # Other Ways
 
@@ -224,26 +121,11 @@ Another approach I've seen is to use custom runner script. I am actually working
 
 The main difference is that all configuration is stored in Mac OS X defaults and then read by the script like this.
 
-```bash
-defaults read /Library/Preferences/org.jenkins-ci
-```
+{% gist 73b0fd09e0a03f6da110ed5c86a66961 %}
 
 Defaults are stored as plist and are read as a dictionary. An example output looks like this
 
-```bash
-{
-    heapSize = 512m;
-    "http.proxyHost" = "my-company-proxy-host.com.au";
-    "http.proxyPort" = 8080;
-    "https.proxyHost" = "my-company-proxy-host.com.au";
-    "https.proxyPort" = 8080;
-    minHeapSize = 256m;
-    minPermGen = 256m;
-    permGen = 512m;
-    prefix = "/jenkins";
-    tmpdir = "/Users/Shared/Jenkins/tmp";
-}
-```
+{% gist d1e73d2bd021c05606a05795ef9c4788 %}
 
 Using `[sudo] defaults write` you can change Jenkins configuration.
 
