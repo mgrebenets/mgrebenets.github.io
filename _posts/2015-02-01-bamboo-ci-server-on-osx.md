@@ -19,18 +19,13 @@ The preferred way to install Bamboo is using official [Mac OS X installer](https
 
 To download tar-ball using command line run this command
 
-```bash
-wget http://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-5.7.2.tar.gz
-```
+{% gist f04d73c9aebd8411dec2d54a087857b4 %}
 
 Bamboo needs Java to be [installed]({% post_url 2015-02-15-install-java-on-mac-os-x %}), recommended versions are 1.6 or 1.7, I would advise to go with 1.7.
 
 Make a new home for Bamboo. It could be `/Applications/Bamboo` or `~/bamboo/bamboo-home` or whatever you want. For this post I'll stick with second option. It is often recommended to create a special `bamboo` user and put all things in their home directory. To create a new user use System Preferences and create Standard user.
 
-```bash
-su -u bamboo
-mkdir -p /Users/bamboo/bamboo-home
-```
+{% gist fdf193c3b67abf0fd2670b78ecc255f9 %}
 
 Note that I switch user (`su`) to work with Bamboo user's files and folders. This way I stay away from possible permissions conflicts. You could login as bamboo user instead. In any case, the rest of the article **assumes you are operating as bamboo user**.
 
@@ -38,17 +33,13 @@ Once downloaded unzip the tar-ball and copy `atlassian-bamboo-5.7.2` to bamboo u
 
 Then go inside that folder. This is referred as _installation directory_ and this is where you will install and run Bamboo from. Edit the file in `atlassian-bamboo/WEB-INF/classes/bamboo-init.properties`. Uncomment the line with `bamboo.home` and put the following.
 
-```java
-bamboo.home=/Users/bamboo/bamboo-home
-```
+{% gist 16fb6751fe5d1cd0e41ec72cb223facb %}
 
 This is where Bamboo will put all the customizations and build plan details.
 
 Now you should run `bin/start-bamboo.sh`.
 
-```bash
-./bin/start-bamboo.sh
-```
+{% gist 1081eda39ae7739873ae42625c5c739d %}
 
 Bamboo is now running on [http://localhost:8085/](http://localhost:8085/).
 
@@ -70,35 +61,11 @@ Now it's time to make sure Bamboo start automatically when build box restarts. A
 
 Next create `com.atlassian.bamboo.plist` in `/Users/bamboo/Library/LaunchAgents`.
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-    <dict>
-        <key>Label</key>
-        <string>com.atlassian.bamboo</string>
-        <key>UserName</key>
-        <string>bamboo</string>
-        <key>ProgramArguments</key>
-        <array>
-          <string>/Users/bamboo/bamboo/bin/start-babmoo.sh</string>
-        </array>
-        <key>KeepAlive</key>
-        <true/>
-        <key>RunAtLoad</key>
-        <true/>
-    </dict>
-</plist>
-```
+{% gist 8747a688835383c750cc80401aacd6fc %}
 
 Make sure you create few aliases to start and stop Bamboo server from command line.
 
-```bash
-alias start-bamboo="/Users/bamboo/bamboo/bin/start-babmoo.sh"
-alias stop-bamboo="/Users/bamboo/bamboo/bin/stop-babmoo.sh"
-alias restart-bamboo="stop-bamboo & start-bamboo"
-```
+{% gist 00bcbc2a74b52ed1f7ead7a8b1ec3a97 %}
 
 # Troubleshooting
 
@@ -110,19 +77,11 @@ For example, you start Bamboo and see this instead of dashboard.
 
 To find out the reason look into Bamboo logs, specifically in `/Users/bamboo/bamboo/logs/catalina.out`.
 
-```bash
-java.sql.SQLException: The database is already in use by another process: org.hsqldb.persist.NIOLockFile@340c5c3c[file =/Users/bamboo/bamboo-home/database/defaultdb.lck, exists=true, locked=false, valid=false, fl =null]: java.lang.Exception: checkHeartbeat(): lock file [/Users/bamboo/bamboo-home/database/defaultdb.lck] is presumably locked by another process.
-```
+{% gist 76ccf24592410f3915eca77337e87c5c %}
 
 OK, so database is presumably locked by another process. In my case it meant there was another Bamboo running already. Double check it then by running `ps`.
 
-```bash
-PID TTY           TIME CMD
-89838 ttys002    0:00.02 bash
-89865 ttys002    6:44.00 /Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home/bin/java -Djava.util.logging.config.file=/Users/bamboo/bamboo/conf/logging.properties -Djava.util.logging.
-41644 ttys010    0:00.03 bash
-41672 ttys010    0:40.37 /Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home/bin/java -Djava.util.logging.config.file=/Users/bamboo/bamboo/conf/logging.properties -Djava.util.logging.
-```
+{% gist fdab9eae1f635ad3d997fc5ca61f6635 %}
 
 Indeed it is. I have another terminal tab open running bamboo user session and Bamboo server.
 
