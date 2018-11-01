@@ -23,25 +23,10 @@ I find that for most applications I'm using 1.7, rarely 1.6 for some outdated an
 
 Lots of applications, if not all, expect `JAVA_HOME` environment variable to be set. This tells them where the Java Virtual Machine (JVM) is located. I would recommend to update your `~/.bash_profile` and add something like this:
 
-```bash
-# Default Java Home.
-[[ -z "$JAVA_VERSION" ]] && JAVA_VERSION=1.7
-[[ -s /usr/libexec/java_home ]] && export JAVA_HOME=$(/usr/libexec/java_home -v $JAVA_VERSION)
-```
+{% gist 388ee1ee1d4345e7973a8d9251891829 %}
 
-This is an over-devensive version. It can safely run on OS other than Mac, but will not set `JAVA_HOME` in that case. It uses OS X specific `java_home` executable found in `/usr/libexec`. A very convenient utility to get JVM path for Java installation. Try `-V` to get a list of all JVMs installed.
+This is an over-defensive version. It can safely run on OS other than Mac, but will not set `JAVA_HOME` in that case. It uses OS X specific `java_home` executable found in `/usr/libexec`. A very convenient utility to get JVM path for Java installation. Try `-V` to get a list of all JVMs installed.
 
-```bash
-/usr/libexec/java_home -V
-
-# Sample output.
-Matching Java Virtual Machines (4):
-    1.8.0_25, x86_64:	"Java SE 8"	/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home
-    1.7.0_72, x86_64:	"Java SE 7"	/Library/Java/JavaVirtualMachines/jdk1.7.0_72.jdk/Contents/Home
-    1.6.0_65-b14-466.1, x86_64:	"Java SE 6"	/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
-    1.6.0_65-b14-466.1, i386:	"Java SE 6"	/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home
-
-/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home
-```
+{% gist 3ade6a7f892a8eb0e720a1d3a737d798 %}
 
 If you are using shell other than bash, include the same in your shell's version of `.bash_profile` or source it directly with `source .bash_profile`.
