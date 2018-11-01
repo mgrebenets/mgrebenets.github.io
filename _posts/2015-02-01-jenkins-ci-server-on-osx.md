@@ -89,7 +89,9 @@ By default Jenkins enables security protocol for email. I have also faced an iss
 
 {% gist a9a28e5a289c2ea39fa5be2ff63258cc %}
 
-Not put it all together
+## Full Config
+
+Now put it all together.
 
 {% gist 56f774c72cf1d067eb3c7a0eb2ac1669 %}
 
