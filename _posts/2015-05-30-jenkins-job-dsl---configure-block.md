@@ -23,21 +23,7 @@ Here's an example, a default configuration of [Git plugin](https://wiki.jenkins-
 
 Job DSL [provides an API](https://github.com/jenkinsci/job-dsl-plugin/wiki/Job-reference#git) to enable recursive submodules update. This is how you can use it in DSL
 
-```groovy
-job {
-    scm {
-        git {
-            remote {
-                url("git-remote-url")
-            }
-            branch("branch-name")
-
-            // All submodules recursively
-            recursiveSubmodules(true)
-        }
-    }
-}
-```
+{% gist a7225902db25df74c08a47caecddca35 %}
 
 That was easy. Here's how the Jenkins job will look like now.
 
@@ -53,66 +39,19 @@ Now it's time to locate the XML on file system. All the jobs data is located in 
 
 Navigate to Jenkins Home, then to `jobs` directory, then find the directory of your particular job, this is very straightforward task, finally you will see `config.xml` in that directory, open it and have a look. This is the node you are looking for
 
-```xml
-<scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.5">
-    <!--...-->
-</scm>
-```
+{% gist c72d8681ed734e28613c3d8473073239 %}
 
 Specifically you are interested in this block of code
 
-```xml
-<extensions>
-      <hudson.plugins.git.extensions.impl.SubmoduleOption>
-        <disableSubmodules>false</disableSubmodules>
-        <recursiveSubmodules>true</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
-        <timeout>20</timeout>
-      </hudson.plugins.git.extensions.impl.SubmoduleOption>
-</extensions>
-```
+{% gist 97ebd26ef0a466ce510e24050d6a6ed7 %}
 
 See that `<timeout>20</timeout>` node? This is exactly what you want to generate using Configure Block. This is how you can do that
 
-```groovy
-job {
-    scm {
-        git {
-            remote {
-                url("git-remote-url")
-            }
-            branch("branch-name")
-
-            // All submodules recursively
-            recursiveSubmodules(true)
-
-            // Increase submodule clone timeout using config block (set 20m, default is 10m)
-            configure { node ->
-                // node represents <hudson.plugins.git.GitSCM>
-                node / 'extensions' << 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
-                    timeout 20
-                }
-            }
-        }
-    }
-}
-```
+{% gist d5dede68e46ac61a163865a78c297e2a %}
 
 That looks easy, doesn't it? But hold on a sec before you celebrate. Run a DSL script first then have a look at resulting XML _before_ looking at job configuration via Jenkins UI. Locate the SCM node again
 
-```xml
-<scm class="hudson.plugins.git.GitSCM">
-    <!--Skipped nodes-->
-    <disableSubmodules>false</disableSubmodules>
-    <recursiveSubmodules>true</recursiveSubmodules>
-    <!--Skipped nodes-->
-    <extensions>
-        <hudson.plugins.git.extensions.impl.SubmoduleOption>
-            <timeout>20</timeout>
-        </hudson.plugins.git.extensions.impl.SubmoduleOption>
-    </extensions>
-</scm>
-```
+{% gist de4d135d14704854e48d827011bf6a13 %}
 
 Hm... Looks a bit strange doesn't it? The `disableSubmodules` and `recursiveSubmodules` nodes are outside of `hudson.plugins.git.extensions.impl.SubmoduleOption` for some reason. At least the values look right. So now go ahead and open the job configuration in Jenkins UI or hit refresh if you had it open all this time.
 
@@ -122,19 +61,7 @@ Wait... What did just happen there? The recursive update checkbox is cleared!
 
 Let's have a look at job XML one more time.
 
-```xml
-<scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.5">
-    <!--Skipped nodes-->
-    <extensions>
-      <hudson.plugins.git.extensions.impl.SubmoduleOption>
-        <disableSubmodules>false</disableSubmodules>
-        <recursiveSubmodules>false</recursiveSubmodules>
-        <trackingSubmodules>false</trackingSubmodules>
-        <timeout>20</timeout>
-      </hudson.plugins.git.extensions.impl.SubmoduleOption>
-    </extensions>
-</scm>
-```
+{% gist b1b27043c63e46acab22720514aa3f46 %}
 
 Well, the `scm` node is moved up in the XML and is changed a bit. Also, the `recursiveSubmodules` as well as `disableSubmodules` are moved inside the `hudson.plugins.git.extensions.impl.SubmoduleOption` node, but somehow `recursiveSubmodules` has lost its custom value in the process. Whatever Jenkins is doing under the hood is a mystery for me. This may be a bug in Jenkins Job DSL plugin or a known limitation. Brief search in project [JIRA](https://issues.jenkins-ci.org/browse/JENKINS-22138?jql=project%20%3D%20JENKINS%20AND%20component%20%3D%20job-dsl-plugin%20AND%20status%20%3D%20Open%20ORDER%20BY%20priority%20DESC) and discussion [group](https://groups.google.com/forum/#!searchin/job-dsl-plugin/configure$20block$20overwrites$20values) didn't come back with any results. That means if you are working with Configure Blocks, keep the following in mind
 
@@ -142,24 +69,4 @@ Well, the `scm` node is moved up in the XML and is changed a bit. Also, the `rec
 
 If you want to have both recursive submodule update and custom timeout configured, set both of them via Configure Block.
 
-```groovy
-job {
-    scm {
-        git {
-            remote {
-                url("git-remote-url")
-            }
-            branch("branch-name")
-
-            // Increase submodule clone timeout using config block (set 20m, default is 10m)
-            configure { node ->
-                // node represents <hudson.plugins.git.GitSCM>
-                node / 'extensions' << 'hudson.plugins.git.extensions.impl.SubmoduleOption' {
-                    recursiveSubmodules true	// Clone submodules recursively
-                    timeout 20
-                }
-            }
-        }
-    }
-}
-```
+{% gist dab7359f219ee70861d3147f9c07055c %}
