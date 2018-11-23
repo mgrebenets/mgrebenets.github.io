@@ -29,7 +29,7 @@ But what happens if environment variable is not defined? In that case correspond
 
 So what do you do if you really want to read the variable first and if it's not there just use sensible default? For example
 
-{% groovy 14bebdb1a29f9cd87e305e839771bafd %}
+{% gist 14bebdb1a29f9cd87e305e839771bafd %}
 
 First thing you may try is to use `hasProperty` method which is a member of any Groovy class.
 
