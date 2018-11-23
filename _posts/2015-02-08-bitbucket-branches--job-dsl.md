@@ -19,72 +19,25 @@ You have probably ended up here by following the link from [this article]({% pos
 
 First, let's start with [example for GitHub](https://github.com/jenkinsci/job-dsl-plugin/wiki/Real-World-Examples).
 
-```groovy
-def project = 'Netflix/asgard'
-def branchApi = new URL("https://api.github.com/repos/${project}/branches")
-def branches = new groovy.json.JsonSlurper().parse(branchApi.newReader())
-branches.each {
-    def branchName = it.name
-    job {
-        name "${project}-${branchName}".replaceAll('/', '-')
-        scm {
-            git("git://github.com/${project}.git", branchName)
-        }
-    }
-}
-```
+{% gist 6b2840df486613bf4b83e924e172bd71 %}
 
 The first 3 lines are hitting GitHub API and grab the list of all branches. This code is not going to work for Bitbucket, so we need to come up with something different. Another complication is that (in my case) we are dealing with private Bitbucket repository, so need to take authorization into account. So lets figure out what's the URL to hit. The components of URL are
 
-- API Base URL - by default it's _https://bitbucket.org/api_
+- API Base URL - by default it's [https://bitbucket.org/api](https://bitbucket.org/api)
 - API Version - _1.0_ or _2.0_
 - API Endpoint Path - includes the following
-  - "repositories" - since we want to use one of the repositories API
-  - Organization Name - aka team or account name
-  - Repository Name - repository slug
-  - Repositories API Endpoint - _branches_ since we want to get list of branches
+    - "repositories" - since we want to use one of the repositories API
+    - Organization Name - aka team or account name
+    - Repository Name - repository slug
+    - Repositories API Endpoint - _branches_ since we want to get list of branches
 
 Time to put it all together
 
-```groovy
-String baseUrl = "https://bitbucket.org/api"
-String version = "1.0"
-String organization = "i4niac"
-String repository = "flappy-swift"
-
-// put it all together
-String branchesUrl = [baseUrl, version, "repositories", organization, repository, "branches"].join("/")
-```
+{% gist 04941cb42fb0cde4531db87574596849 %}
 
 Next we need to convert this string to `URL`, hit it and parse the output. But before we do that, we have to set Authorization header for HTTPS authentication with username and password. The username and password should be Base64 encoded.
 
-```groovy
-String username = "i4niac"
-String password = "mypassword"
-
-// Create authorization header using Base64 encoding
-String userpass = username + ":" + password;
-String basicAuth = "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(userpass.getBytes());
-
-// Create URL
-URL url = branchesUrl.toURL()
-
-// Open connection
-URLConnection connection = url.openConnection()
-
-// Set authorization header
-connection.setRequestProperty ("Authorization", basicAuth)
-
-// Open input stream
-InputStream inputStream = connection.getInputStream()
-
-// Get JSON output
-def branchesJson = new groovy.json.JsonSlurper().parseText(inputStream.text)
-
-// Close the stream
-inputStream.close()
-
-```
+{% gist 8b68a43fe282c2a5c609d9c19c524514 %}
 
 This code, when put together, will return list of all branches in JSON format, or will not in case you are behind the...
 
@@ -92,15 +45,7 @@ This code, when put together, will return list of all branches in JSON format, o
 
 This bit of code will help you to configure proxy for JVM
 
-```groovy
-String host = "myproxyhost.com.au"
-String port = 8080
-
-// `;`s can be safely removed
-System.getProperties().put("proxySet", "true");
-System.getProperties().put("proxyHost", host);
-System.getProperties().put("proxyPort", port);
-```
+{% gist 8d5177201ccd5c676651b1e0573f82bf %}
 
 Yep, `";"`s are a legacy thing and I put them there to demonstrate relation between Java and Groovy. In general, any Java code is a valid Groovy code, but not the other way around.
 
@@ -108,31 +53,7 @@ Yep, `";"`s are a legacy thing and I put them there to demonstrate relation betw
 
 The JSON returned by Bitbucket API is a dictionary. Each entry has branch name as a key and branch description as value. Branch description is yet another dictionary with entries such as author, last commit hash and message, timestamp for last update, etc. Here's an example.
 
-```json
-{
-  "master":  {
-    "node": "a1ec1649a471",
-    "files":  [
-       {
-        "type": "modified",
-        "file": "README.md"
-      }
-    ],
-    "raw_author": "mgrebenets <mgrebenets@gmail.com>",
-    "utctimestamp": "2015-01-12 06:29:01+00:00",
-    "author": "i4niac",
-    "timestamp": "2015-01-12 07:29:01",
-    "raw_node": "a1ec1649a47183a01f8887875e34a038ff9707a0",
-    "parents":  [
-      "fd0db3889c80"
-    ],
-    "branch": "master",
-    "message": "Fix link to slides\n",
-    "revision": null,
-    "size": -1
-  }
-}
-```
+{% gist 39adfc61580453105354ca02ec648e95 %}
 
 To experiment with Bitbucket API directly you can use this [REST Browser](http://restbrowser.bitbucket.org/).
 
@@ -140,62 +61,11 @@ Using this information you can filter out unwanted branches. The reason to do th
 
 > An answer an absolutely valid question of "Why the branches are not deleted automatically on merge?" That's because some versions of git-flow do not use Bitbucket's native merge feature, but use a rebase instead. Thus the branches are left hanging around after they are merged and it becomes developer's responsibility to delete the branch.
 
-```groovy
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import groovy.time.TimeCategory
-
-// Note: no def or type used to declare this variables!
-// List with names of major branches
-majorBranches = ["master", "development", "release"]
-// List with valid branch prefixes
-validBranchPrefixes = ["feature", "bugfix", "hotfix"]
-// All valid prefixes
-allValidPrefixes = majorBranches + validBranchPrefixes
-
-// Check if the branch is a valid branch
-Boolean isValidBranch(String name) {
-    String prefix = name.split("/")[0]
-    prefix in allValidPrefixes
-}
-
-// Check if the branch is not too old
-Boolean isUpToDateBranch(String branch, Date date) {
-    // major branches are considered as always up to date
-    if (branch in majorBranches) {
-        true
-    } else {
-        def maxBranchAgeInDays = 15
-        Date now = new Date()
-        use (TimeCategory) {
-            date.before(now) && date.after(now - maxBranchAgeInDays.days)
-        }
-    }
-}
-
-// Iterate through branches JSON
-branchesJson.each { branchName, details ->
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    Date lastModified = dateFormat.parse(details["timestamp"])
-
-    // Check if branch name and age are valid
-    if (isValidBranch(branchName) && isUpToDateBranch(branchName, lastModified)) {
-        // Branch is valid, create the job for it
-        println "Valid branch: ${branchName}"
-
-        // Configure the job
-        job {
-            name branchName.replaceAll('/','-')
-            // TODO: the rest of Jenkins job configuration
-        }
-    }
-}
-
-```
+{% gist d1d9621f77bd7e3fea426a0d3ebad0f1 %}
 
 Let's go through the code in case comments are not descriptive enough. The main part is iterating over JSON dictionary `branchesJson` returned by Bitbucket API. On each iteration we have branch name `branchName` and its details packed as `details` JSON dictionary. We get the last modified date _timestamp_ and convert it into the `Date` object. Now we can check if the branch has valid name and is not too old.
 
-_Valid_ name in this example means that branch is one of the major branches (_master_, _development_ and anything that starts with _release_), or that branch name has one of the 3 valid prefixes (_feature_, _bugfix_ and _hotfix_). `isValidBranch` method splits the branch name by `"/"`, get's the first element and checks if it's one of the valid prefixes.
+_Valid_ name in this example means that branch is one of the major branches (_master_, _development_ and anything that starts with _release_), or that branch name has one of the 3 valid prefixes (_feature_, _bugfix_ and _hotfix_). `isValidBranch` method splits the branch name by `"/"`, gets the first element and checks if it's one of the valid prefixes.
 
 Another filter is for branches that are too old, or in other words branches that haven't been updated for too long. This is what `isUpToDateBranch` method is for. Note that we consider all major branches to be always up to date. For example, _master_ branch can be updated only when major releases occur and we don't want its build project to be removed in the meantime. If Jenkins project is removed and then created again, its build number will be reset to 1, this is something we want to avoid, especially if build number is baked into the app version. Anyway, the logic is straightforward, if branch is one of the major branches, then consider it to be up to date. Otherwise, compare branch last modified date with current date and if the difference is more that expected (15 days in this example), then ignore this branch.
 
@@ -230,8 +100,8 @@ Here you have 2 Jenkins jobs generated for _master_ and _development_ branches.
 This is just the beginning, from this moment on you can have numerous improvements. For example
 
 - Refactor one big monolith script into packages and classes, such as
-  - Class to work with Bitbucket API
-  - Class to configure network proxy
-  - etc.
+    - Class to work with Bitbucket API
+    - Class to configure network proxy
+    - etc.
 - Put the script into repository and modify DSL job to clone repo and run the script from it
 - And much more...
