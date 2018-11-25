@@ -164,9 +164,9 @@ Now you can hand RPM package over to your Dev Support guys, they'll put it into 
 
 Yet nothing stops you from creating a CI plan (job) for the Atlassian CLI RPM package itself. You can run `make rpm` and test rpm install on the very same build agent this package is targeted for, thus creating yet another "CI Loop", which is good.
 
-# Summary
-
 <a name="tldr"/>
+
+# Summary
 
 - Create [RPM spec](b40ad2077172db9cdb2d)
 - Run `make rpm -f RPMMakefile` using this [RPMMakefile](b1b9d52e135561362666)
