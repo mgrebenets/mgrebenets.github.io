@@ -186,7 +186,9 @@ To upgrade you need to update brew repositories, including the taps, then upgrad
 
 {% gist 85cef3758ee1469ecd739800516a1f09 %}
 
-# <a name="tldr"/> Summary
+<a name="tldr"/>
+
+# Summary
 
 - Create formula Ruby file and put it into a repository
 
