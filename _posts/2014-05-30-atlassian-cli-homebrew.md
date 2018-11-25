@@ -20,10 +20,7 @@ If you don't care about all the details and steps involved, you can jump right t
 [Homebrew](http://brew.sh/) (aka "brew") is a missing package manager for OS X.
 After you install it, you need to update your `PATH`. By default `/usr/local/bin` is not in the system path, so modify your `~/.bash_profile` before you continue.
 
-```bash
-# ~/.bash_profile
-export PATH=/usr/local/bin:$PATH
-```
+{% gist a17bef39eee3fe70cdbd626989144569 %}
 
 ## Why Brew?
 
@@ -35,37 +32,15 @@ Well, Homebrew does all that and then much more. After initial installation upgr
 
 ### Create Formula
 
-You could use `brew create <link>` command, but that will create formula in `/usr/loca/Library/Formula`. Instead let's create it manually.
+You could use `brew create <link>` command, but that will create formula in `/usr/local/Library/Formula`. Instead let's create it manually.
 
 Let's say our company is called i4nApps (I know, it's a weird name...), so create new Ruby file
 
-```bash
-touch i4napps-atlassian-cli.rb
-```
+{% gist 4cb315bccf887a3b825d4ee0cfce2b25 %}
 
 With contents like this
 
-```ruby
-
-require "formula"
-
-class I4nAppsAtlassianCli < Formula
-    version "3.9.0"
-    homepage "https://marketplace.atlassian.com/plugins/org.swift.atlassian.cli"
-    url "https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/#{version.to_s.delete('.')}"
-    sha1 "c18174f5dee921f69fedd663bd4a9e330565a7d3"
-
-    def install
-        # TODO:
-    end
-
-    # Test
-    test do
-        puts "version: #{version}-#{release}"
-        %x[ jira ]
-    end
-end
-```
+{% gist 842f6d6d003886729e74ed787be353a1 %}
 
 These are the basics of brewing.
 
@@ -75,23 +50,14 @@ These are the basics of brewing.
 - `url` is used to download source code. Note a bit of tweaking at the end of the link `#{version.to_s.delete('.')}`, that's to remove dots.
 - `sha1` obviously is SHA-1 calculated for file downloaded from `url`.
 
-```bash
-# calculate SHA-1
-wget https://marketplace.atlassian.com/download/plugins/org.swift.atlassian.cli/version/390
-openssl sha1 atlassian-cli-3.9.0-distribution.zip
-# SHA1(atlassian-cli-3.9.0-distribution.zip)= c18174f5dee921f69fedd663bd4a9e330565a7d3
-```
+{% gist 9038a9b8379caa3877f7126e5e9fec2e %}
 
 - `install` method is where you do all the installation magic once the source is downloaded and unzipped.
 - `test` is used to test formula after installation. Normally you just execute main program installed by the formula, in our case it can be `jira`.
 
 Now let's take advantage of the fact that Homebrew formula is just a Ruby class and add few more custom lines to use later.
 
-```ruby
-version "3.9.0"
-def release() "1" end
-def java_version() ENV["JAVA_VERSION"] || "1.6" end
-```
+{% gist 1e55d8777bfc4cd0a24532520f57f61e %}
 
 - `release` will be used for managing multiple releases for same version
 - `java_version` will come handy for setting `JAVA_HOME` environment variable. Default is "1.6" but you can user `JAVA_VERSION` environment variable to override default settings.
@@ -110,10 +76,7 @@ Our job is to cleanup first, then patch and rename some scripts and finally move
 
 So let's cleanup. Since we are installing on OS X, we don't need all the Windows stuff.
 
-```ruby
-# Delete Windows batch scripts
-rm Dir["*.bat"]
-```
+{% gist fcd401880dad67677bce81e1ff4dccd9 %}
 
 As an improvement, this could be a good place to remove examples.
 
@@ -131,26 +94,12 @@ In case of Atlassian CLI, all the shell scripts are sitting in the root folder, 
 The order doesn't really matter.
 Patching is required because each shell script is a wrapper around JAR file and contains relative path to that JAR. So if you move the shell script, you have to update the relative path as well.
 
-```ruby
-# patch before moving to bin
-Dir['*.sh'].each do |f|
-    # patch by updating path to lib folder
-    %x[ sed -i -e 's,/lib,/../lib,g' #{f} ]
-    # patch by inserting and setting JAVA_HOME
-    %x[ awk 'NR==2 {print "export JAVA_HOME=$(/usr/libexec/java_home -v #{java_version})"} {print}' #{f} > #{f}.bak && mv #{f}.bak #{f} ]
-end
-```
+{% gist f38b4000518713a9465b46604436f046 %}
 
 Here we replace relative path to `lib` with `../lib`.
 We also set `JAVA_HOME` here using `java_home` OS X utility and `java_version` method. This is to be sure Java version is as we expect it.
 
-```ruby
-# move to bin and rename
-Dir.mkdir "bin"
-Dir['*.sh'].each { |f| mv f, "bin/#{f.gsub('.sh', '')}" }
-# all.sh, really? how about atlassian-all?
-mv "bin/all", "bin/atlassian-all"
-```
+{% gist 309c3c9dfad8f17eef6e4a7535c0e213 %}
 
 We just moved all the `.sh` scripts to `bin` folder. I also prefer to drop the `.sh` part. Finally `all` feels too ambiguous, so rename it to `atlassian-all`.
 
@@ -158,10 +107,7 @@ We just moved all the `.sh` scripts to `bin` folder. I also prefer to drop the `
 
 We can finally install everything to prefix (`/usr/local`), that's where `prefix` variable is used
 
-```ruby
-prefix.install_metafiles
-prefix.install Dir['*']
-```
+{% gist 0b2c65852c749636679e72beab6be1a0 %}
 
 ## Customize
 
@@ -171,111 +117,23 @@ Of course this can be solved with aliases, but then you'd have to configure alia
 
 The `atlassian.sh` (which we renamed to `atlassian` and moved to `bin`) is there for customization. Have a look inside that file
 
-```bash
-# - - - - - - - - - - - - - - - - - - - - START CUSTOMIZE FOR YOUR INSTALLATION !!!
-user='automation'
-password='automation'
-settings=''
-# - - - - - - - - - - - - - - - - - - - - - END CUSTOMIZE FOR YOUR INSTALLATION !!!
-```
+{% gist 5c62c231b016b1a6b3950f74c7ca9694 %}
 
 This is where you can customize your Atlassian products username and password, as well as additional JVM settings. That's usual practice for organizations, you have a special user account (service account) than can access the whole range of products with single username and password.
 
 And there's another block of code like this, which is used to customize Atlassian products server urls.
 
-```bash
-# - - - - - - - - - - - - - - - - - - - - START CUSTOMIZE FOR YOUR INSTALLATION !!!
-if [ "$application" = "confluence" ]; then
-    string="confluence-cli-3.9.0.jar --server https://confluence.example.com --user $user --password $password"
-elif [ "$application" = "jira" ]; then
-    string="jira-cli-3.9.0.jar --server https://jira.example.com --user $user --password $password"
-elif [ "$application" = "fisheye" ]; then
-    string="fisheye-cli-3.9.0.jar --server https://fisheye.example.com --user $user --password $password"
-elif [ "$application" = "crucible" ]; then
-    string="crucible-cli-3.9.0.jar --server https://crucible.example.com --user $user --password $password"
-elif [ "$application" = "bamboo" ]; then
-    string="bamboo-cli-3.9.0.jar --server https://bamboo.example.com --user $user --password $password"
-elif [ "$application" = "stash" ]; then
-    string="stash-cli-3.9.0.jar --server https://stash.example.com --user $user --password $password"
-elif [ "$application" = "" ]; then
-    echo "Missing application parameter. Specify an application like confluence, jira, or similar."
-    echo "$0 <application name> <application specific parameters>"
-    exit -99
-else
-    echo "Application $application not found in $0"
-    exit -99
-fi
-# - - - - - - - - - - - - - - - - - - - - - END CUSTOMIZE FOR YOUR INSTALLATION !!!
-```
+{% gist e7e008ef0b2fd8f5a7d93b690c41e763 %}
 
 You will need to replace all the `https://***.example.com` with your company urls. If you have multiple instances of same product in your organization, you can add another `elif` block for that. For example you are in the middle of migration from Confluence server `https://confluence.example.com` to a new instance `https://confluence.ni.example.com`, for a while you want to be able to use both, so add another block like this
 
-```bash
-if [ "$application" = "confluence" ]; then
-    string="confluence-cli-3.9.0.jar --server https://confluence.example.com --user $user --password $password"
-elif [ "$application" = "confluence.ni" ]; then
-    string="jira-cli-3.9.0.jar --server https://confluence.ni.example.com --user $user --password $password"
-# ***
-```
+{% gist 075a92a78d677b2034bef6c4b2e74ae4 %}
 
 In this example there won't be multiple instances for same product, but it would be possible to customize scripts to handle that case as well.
 
 So let's write some Ruby again. For the company called i4nApps we will create a nested class `I4nAppsEnv` that will contain all the company specific environment settings.
 
-```ruby
-# nested environment class
-class I4nAppsEnv
-    # Patch the shell script above
-    # @param [String] filename name of shell script to patch
-    def patch(filename)
-        # system "sed -i -e \"s/\\(.*user=\\)'.*'/\\1'#{env.username}'/g\" #{filename}"
-        # username and password
-        %x[ sed -i -e \"s/\\(.*user=\\)'.*'/\\1'#{username}'/g\" #{filename} ]
-        %x[ sed -i -e \"s/\\(.*password=\\)'.*'/\\1'#{password}'/g\" #{filename} ]
-        # server urls for products, use internal knowledge that atlassian.sh has links like https://<product>.example.com
-        products.each do |product|
-            %x[ sed -i -e \"s,\\(.*\\)https://#{product.to_s}.example.com\\(.*\\),\\1#{server(product)}\\2,g\" #{filename} ]
-        end
-    end
-
-    # Get list of products for enumeration
-    # @return [Array<Symbol>] array of product types
-    def products
-        [ :jira, :bamboo, :stash, :confluence, :fisheye, :crucible ]
-    end
-
-    # Atlassian Product servers
-    @@servers = {
-        :jira => "http://jira.i4napps.com.au",
-        :bamboo => "http://bamboo.i4napps.com.au",
-        :stash => "http://stash.i4napps.com.au",
-        :confluence => "http://wiki.i4napps.com.au",
-        :fisheye => "http://fisheye.i4napps.com.au",
-        :crucible => "https://crucible.i4napps.com",
-    }
-
-    # Get server url for product
-    # @param [Symbol] product +:jira+, +:bamboo+, +:stash+, +:confluence+, +:fisheye+, +:crucible+
-    # @return [String] server url
-    def server(product)
-        @@servers[product.to_sym]
-    end
-
-    # Username for Atlassian servers
-    # @note Optionally use ATLASSAIN_USERNAME environment variable when installing
-    # @return [String] username
-    def username
-        ENV["ATLAS_USERNAME"]
-    end
-
-    # Username for Atlassian servers
-    # @note Optionally use ATLASSAIN_PASSWORD environment variable when installing
-    # @return [String] password
-    def password
-        ENV["ATLAS_PASSWORD"]
-    end
-end
-```
+{% gist 7b998ddd43cea92886540b134503416c %}
 
 `username` and `password` methods pick up values from `ATLAS_USERNAME` and `ATLAS_PASSWORD` environment variables. Set those when running `brew install` or `brew upgrade`.
 
@@ -288,9 +146,7 @@ Finally `patch` method patches the shell script the way we want it.
 
 You have to add one more line to `install` method in the formula
 
-```ruby
-I4nAppsEnv.new.patch("atlassian.sh")
-```
+{% gist 29433d8bbf5565ba81ef3c3363db12ab %}
 
 Make sure to put this line **before** `atlassian.sh` is moved and renamed.
 
@@ -300,7 +156,9 @@ Make sure to put this line **before** `atlassian.sh` is moved and renamed.
 
 We are done with the formula. It's time now to push it to a repository. Whatever is you favorite SCM - use it. In this example we will use Git repository hosted with Stash. For example
 
-    ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git
+```text
+ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git
+```
 
 ## <a name="tap-install"/>Tap, Install and Upgrade
 
@@ -314,39 +172,19 @@ But there's a trade off as well. Since we didn't name the tap repository properl
 
 `brew tap` clones the repository from GitHub and puts it into the taps directory. This is how you can do it directly
 
-```bash
-TAP_NAME=i4napps-atlassian-cli
-# find out what's the tap directory
-TAP_DIR="$(brew --repository)/Library/Taps/${TAP_NAME}"
-# clone the formula repository to tap directory
-git clone --quiet ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git ${TAP_DIR}
-# tell brew to repair the taps, that will make brew to pick up newly added tap
-brew tap --repair
-```
+{% gist b3e342fabd3b135ebbc8054de89d036d %}
 
 ### Install
 
 Now you can install, this part is simple
 
-```bash
-# no username/password customization
-brew install i4napps-atlassian-cli
-# set username/password for service account
-ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew install i4napps-app-tools
-```
+{% gist 0dcccc4be0031ea03636583fe6b298b8 %}
 
 ### Upgrade
 
 To upgrade you need to update brew repositories, including the taps, then upgrade the specific package.
 
-```bash
-# update brew
-brew update
-# upgrade i4napps atlassian cli
-brew upgrade i4napps-atlassian-cli
-# customized upgrade
-ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew upgrade i4napps-atlassian-cli
-```
+{% gist 85cef3758ee1469ecd739800516a1f09 %}
 
 # <a name="tldr"/> Summary
 
@@ -356,24 +194,4 @@ ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew upgrade i4napps-atlassian-cli
 
 - Create a Homebrew tap, install and upgrade
 
-```bash
-TAP_NAME=i4napps-atlassian-cli
-# find out what's the tap directory
-TAP_DIR="$(brew --repository)/Library/Taps/${TAP_NAME}"
-# clone the formula repository to tap directory
-git clone --quiet ssh://git@stash.i4napps.com.au/mobile/i4napps-atlassian-cli.git ${TAP_DIR}
-# tell brew to repair the taps, that will make brew to pick up newly added tap
-brew tap --repair
-
-# install
-brew install i4napps-atlassian-cli
-# or customized install
-ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew install i4napps-atlassian-cli
-
-# update
-brew update
-# then upgrade
-brew upgrade i4napps-atlassian-cli
-# or customized upgrade
-ATLAS_USERNAME=i4niac ATLAS_PASSWORD=password brew upgrade i4napps-atlassian-cli
-```
+{% gist 14070ba19be8b6af697c5226d6436538 %}
