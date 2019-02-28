@@ -50,17 +50,7 @@ This code is put directly into `collapse_nested_if_statement.swift` file and `li
 
 Here's the detailed breakdown of the test spec:
 
-| Parameter                            | Description                                                                                                                                                                                  |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `// RUN`                             | `lit` directive followed by shell command                                                                                                                                                    |
-| `%refactor`                          | Placeholder for `swift-refactor` executable. Expanded into `build/.../swift-macosx-x86_64/bin/swift-refactor`                                                                                |
-| `-source-filename %s`                | Path to current file                                                                                                                                                                         |
-| `-pos=4:4`                           | `row`:`col` position in the file to check for applicable refactoring                                                                                                                         |
-| `|`                                  | Just a shell pipeline command                                                                                                                                                                |
-| `%FileCheck`                         | Placeholder for `FileCheck` executable. Expanded into `build/.../swift-macosx-x86_64/bin/FileCheck`. The input of `FileCheck` command is an output of `swift-refactor` passed using `|` pipe |
-| `%s`                                 | Path to a _match file_ - a file where `FileCheck` will look for patterns definitions. In this case current `collapse_nested_if_statement.swift` is used as a _match file_ as well            |
-| `-check-prefix=`                     | Tell `FileCheck` to look for a prefix in a _match file_                                                                                                                                      |
-| `CHECK-COLLAPSE-NESTED-IF-STATEMENT` | A prefix `FileCheck` should be looking for                                                                                                                                                   |
+{% gist 34e7c2b0da5c7ca93d8fa788d475b71f %}
 
 The `CHECK-COLLAPSE-NESTED-IF-STATEMENT` is also defined in `collapse_nested_if_statement.swift` like so:
 
