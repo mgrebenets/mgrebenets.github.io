@@ -116,7 +116,7 @@ It has a handful of methods to walk the AST, specifically it can walk the _state
 
 For our implementation we have used `bool walk(Stmt *S)`.
 
-The method also offers customization points:
+The type also offers customization points:
 
 {% gist e3a136f327eeb99fff8c8ac157978216 %}
 
