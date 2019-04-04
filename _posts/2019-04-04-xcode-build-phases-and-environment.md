@@ -19,16 +19,7 @@ The problem is that shell scripts ran in Xcode build phases **do not** source th
 
 Try to put the following in your shell profiles`~/.profile`:
 
-```shell
-# In ~/.profile
-echo "Loading ~/.profile"
-
-# In ~/.bash_profile
-echo "Loading ~/.bash_profile"
-
-# In ~/.bashrc
-echo "Loading ~/.bashrc"
-```
+{% gist 78700337a9fbe957553136ab72c7f5fb %}
 
 Then run the build phase by building Xcode project.
 
@@ -76,15 +67,7 @@ Another way to tackle this problem is to source just the things that matter as p
 
 For example, to use RVM for loading Ruby version in non-interactive shell, you could use this code:
 
-```shell
-export PATH="$HOME/.rvm/bin:$PATH" # Add RVM to PATH for scripting.
-
-# Read Ruby version for the project from .ruby-version.
-RUBY_VERSION="$(cat .ruby-version)"
-
-# Source the Ruby environment for selected Ruby version.
-source "$(rvm "${RUBY_VERSION}" do rvm env --path | tail -n1)"
-```
+{% gist d4366ceaa3593310244d81800cf5160c %}
 
 Here we first add `rvm` command to the `PATH`.
 Then we read Ruby version used by the project from `.ruby-version` file, which is one of the common setups.
