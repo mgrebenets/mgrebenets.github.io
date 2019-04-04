@@ -30,4 +30,3 @@ No, I would probably not try to implement another refactoring action via `swift-
 Instead, I'd look into using [libSyntax](https://github.com/apple/swift/tree/master/lib/Syntax) library.
 
 Yes, if I had more time to spare I'd look at one of the many [Swift starter tasks](https://bugs.swift.org/browse/TF-130?jql=labels%20%3D%20StarterBug).
-
