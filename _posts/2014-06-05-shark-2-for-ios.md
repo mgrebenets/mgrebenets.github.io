@@ -13,4 +13,4 @@ This script is created to build framework for Shark version 2.3.4.
 
 <!--more-->
 
-To read the full article please [follow the link](http://mgrebenets.github.io/shark2-iosx/).
+To read the full article please [follow the link](https://mgrebenets.github.io/shark2-iosx/).
